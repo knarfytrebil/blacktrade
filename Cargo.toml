@@ -1,0 +1,6 @@
+[package]
+name = "polorust"
+version = "0.1.0"
+authors = ["Frank Yao <frank@neon.local>"]
+
+[dependencies]
