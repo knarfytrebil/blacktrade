@@ -1,11 +1,13 @@
-// Websocket Client
+// A WebSocket client that sends one message then closes
 extern crate ws;
-use ws::listen;
+
+use ws::{connect, CloseCode};
 
 fn main() {
-    listen("127.0.0.1:3012", |out| {
+    connect("wss://api2.poloniex.com", |out| {
         move |msg| {
-            out.send(msg)
+            println!("Got message: {}", msg);
+            out.close(CloseCode::Normal)
         }
     }).unwrap()
 } 
