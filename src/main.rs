@@ -1,7 +1,10 @@
 extern crate ws;
+extern crate serde_json;
+
 
 // use ws::{connect, Handler, Sender, Handshake, Result, Message, CloseCode};
 use ws::{connect, Handler, Sender, Handshake, Result, Message};
+use serde_json::{Value, Error};
 
 // Our Handler struct.
 // Here we explicity indicate that the Client needs a Sender,
@@ -20,7 +23,8 @@ impl Handler for Client {
 
     fn on_message(&mut self, msg: Message) -> Result<()> {
         println!("Got message: {}", msg);
-        //self.out.close(CloseCode::Normal)
+        // let v: Value = serde_json::from_str(msg)?;
+        // self.out.close(CloseCode::Normal)
         Ok(())
     }
 
