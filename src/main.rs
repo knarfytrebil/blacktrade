@@ -23,8 +23,9 @@ impl Handler for Client {
     fn on_message(&mut self, msg: Message) -> Result<()> {
         // msg as string type
         let msg = &String::from(msg.as_text()?);
-        // let v: Value = serde_json::from_str(msg)?;
-        println!("Got message: {}", msg);
+        let msg_slice: &str = &*msg;
+        // let v: Value = serde_json::from_str(msg_slice)?;
+        println!("Got message: {}", msg_slice);
         // self.out.close(CloseCode::Normal)
         Ok(())
     }
@@ -32,5 +33,6 @@ impl Handler for Client {
 }
 
 fn main() {
-    connect("wss://api2.poloniex.com", |out| Client { out: out } ).unwrap()
+    // connect("wss://api2.poloniex.com", |out| Client { out: out } ).unwrap()
+    connect("wss://sandboxsocket.b2c2.net/quotes", |out| Client { out: out } ).unwrap()
 }
