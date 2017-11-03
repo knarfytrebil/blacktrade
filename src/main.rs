@@ -1,9 +1,8 @@
 extern crate ws;
-extern crate serde_json;
+extern crate json;
 
 // use ws::{connect, Handler, Sender, Handshake, Result, Message, CloseCode};
 use ws::{connect, Handler, Sender, Handshake, Result, Message};
-use serde_json::{Value, Error};
 
 // Our Handler struct.
 // Here we explicity indicate that the Client needs a Sender,
@@ -23,9 +22,9 @@ impl Handler for Client {
     fn on_message(&mut self, msg: Message) -> Result<()> {
         // msg as string type
         let msg = &String::from(msg.as_text()?);
-        let msg_slice: &str = &*msg;
-        // let v: Value = serde_json::from_str(msg_slice)?;
-        println!("Got message: {}", msg_slice);
+        let msg_str: &str = &*msg;
+        // let v: Value = serde_json::from_str(msg_str)?;
+        println!("Got message: {}", msg_str);
         // self.out.close(CloseCode::Normal)
         Ok(())
     }
@@ -33,6 +32,5 @@ impl Handler for Client {
 }
 
 fn main() {
-    // connect("wss://api2.poloniex.com", |out| Client { out: out } ).unwrap()
-    connect("wss://sandboxsocket.b2c2.net/quotes", |out| Client { out: out } ).unwrap()
+    connect("wss://api2.poloniex.com", |out| Client { out: out } ).unwrap()
 }
