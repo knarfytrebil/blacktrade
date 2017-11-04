@@ -23,7 +23,8 @@ impl Handler for Client {
         // msg as string type
         let msg = &String::from(msg.as_text()?);
         let msg_str: &str = &*msg;
-        // let v: Value = serde_json::from_str(msg_str)?;
+        let parsed = json::parse(msg_str).unwrap();
+
         println!("Got message: {}", msg_str);
         // self.out.close(CloseCode::Normal)
         Ok(())
