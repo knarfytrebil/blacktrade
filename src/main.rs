@@ -4,15 +4,19 @@ extern crate json;
 // use ws::{connect, Handler, Sender, Handshake, Result, Message, CloseCode};
 use ws::{connect, Handler, Sender, Handshake, Result, Message};
 
-// Our Handler struct.
 // Here we explicity indicate that the Client needs a Sender,
 // whereas a closure captures the Sender for us automatically.
 struct Client {
     out: Sender,
 }
 
-// We implement the Handler trait for Client so that we can get more
-// fine-grained control of the connection.
+fn parse_data(raw: Message) {
+    // msg -> String -> &str -> enum
+    let msg = &String::from(raw.as_text().unwrap());
+    let parsed = json::parse(&*msg).unwrap();
+    println!("Got message: {}", parsed);
+}
+
 impl Handler for Client {
 
     fn on_open(&mut self, _: Handshake) -> Result<()> {
@@ -20,14 +24,9 @@ impl Handler for Client {
     }
 
     fn on_message(&mut self, msg: Message) -> Result<()> {
-        // msg as string type
-        let msg = &String::from(msg.as_text()?);
-        let msg_str: &str = &*msg;
-        let parsed = json::parse(msg_str).unwrap();
-
-        println!("Got message: {}", msg_str);
-        // self.out.close(CloseCode::Normal)
+        parse_data(msg);
         Ok(())
+        // self.out.close(CloseCode::Normal)
     }
 
 }
