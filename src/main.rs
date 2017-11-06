@@ -4,7 +4,6 @@ extern crate json;
 use ws::{connect, Handler, Sender, Handshake, Result, Message};
 
 // Here we explicity indicate that the Client needs a Sender,
-// whereas a closure captures the Sender for us automatically.
 struct Client {
     out: Sender,
 }
@@ -18,6 +17,7 @@ fn parse_raw(raw: Message) {
     let msg = &String::from(raw.as_text().unwrap());
     let parsed_raw = json::parse(&*msg).unwrap();
 
+    // Start of borrow
     {
         let channel = &parsed_raw[0];
         if channel == 1010 {
@@ -25,8 +25,9 @@ fn parse_raw(raw: Message) {
             return;
         }
     }
+    // End of borrow
 
-    parse_market_data(parsed_raw)
+    parse_market_data(parsed_raw);
 
 }
 
