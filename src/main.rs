@@ -9,7 +9,21 @@ struct Client {
 }
 
 fn parse_market_data(mkt_data: json::JsonValue) {
-    println!("Got MarketData: {}", mkt_data)
+
+    // Determin Data Type
+    let version = &mkt_data[1];                 // Version of the Orderbook
+    let orderbook_flag = &mkt_data[2][0][0];    // Orderbook Type Identifier
+    let orderbook_data = &mkt_data[2][0];       // Orderbook Data
+
+    if orderbook_flag == "i" {
+        println!("[{}] Got Full Orderbook: {}", version, orderbook_flag);
+    }
+
+    if orderbook_flag == "o" {
+        println!("[{}] Got Incremental: {}", version, orderbook_data);
+    }
+
+       
 }
 
 fn parse_raw(raw: Message) {
@@ -17,16 +31,15 @@ fn parse_raw(raw: Message) {
     let msg = &String::from(raw.as_text().unwrap());
     let parsed_raw = json::parse(&*msg).unwrap();
 
-    // Start of borrow
-    {
+    
+    { // Start of borrow
         let channel = &parsed_raw[0];
         if channel == 1010 {
             println!("Got Heartbeat");
             return;
         }
-    }
-    // End of borrow
-
+    } // End of borrow
+    
     parse_market_data(parsed_raw);
 
 }
