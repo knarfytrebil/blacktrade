@@ -1,41 +1,48 @@
 extern crate ws;
 extern crate json;
 
-use ws::{connect, Handler, Sender, Handshake, Result, Message};
+use ws::{ connect, Handler, Sender, Handshake, Result, Message };
+use std::collections::HashMap;
 
 // Here we explicity indicate that the Client needs a Sender,
 struct Client {
     out: Sender,
 }
 
+// Orderbook
+let mut Orderbook = HashMap::new();
+
 fn parse_market_data(mkt_data: json::JsonValue) {
 
+    // =======================
     // Determin Data Type
+    // =======================
     let version = &mkt_data[1];                 // Version of the Orderbook
     let orderbook_flag = &mkt_data[2][0][0];    // Orderbook Type Identifier
     let orderbook_data = &mkt_data[2][0];       // Orderbook Data
 
+    // Process the initial full orderbook
     if orderbook_flag == "i" {
-        println!("[{}] Got Full Orderbook: {}", version, orderbook_flag);
+        println!("[{}][FULL]:{}", version, orderbook_flag);  
     }
 
+    // Process the incremental orderbook
     if orderbook_flag == "o" {
-        println!("[{}] Got Incremental: {}", version, orderbook_data);
+        println!("[{}][INCREMENTAL]:{}", version, orderbook_data);
     }
-
        
 }
 
 fn parse_raw(raw: Message) {
+
     // msg -> String -> &str -> enum
     let msg = &String::from(raw.as_text().unwrap());
     let parsed_raw = json::parse(&*msg).unwrap();
-
     
     { // Start of borrow
         let channel = &parsed_raw[0];
         if channel == 1010 {
-            println!("Got Heartbeat");
+            println!("[HEARTBEAT]");
             return;
         }
     } // End of borrow
