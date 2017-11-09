@@ -9,9 +9,6 @@ struct Client {
     out: Sender,
 }
 
-// Orderbook
-let mut Orderbook = HashMap::new();
-
 fn parse_market_data(mkt_data: json::JsonValue) {
 
     // =======================
@@ -23,7 +20,8 @@ fn parse_market_data(mkt_data: json::JsonValue) {
 
     // Process the initial full orderbook
     if orderbook_flag == "i" {
-        println!("[{}][FULL]:{}", version, orderbook_flag);  
+        let raw_orderbook = &mkt_data[2][0][1];
+        println!("[{}][FULL]:{}", version, raw_orderbook);  
     }
 
     // Process the incremental orderbook
@@ -62,5 +60,8 @@ impl Handler for Client {
 }
 
 fn main() {
+    // Orderbook
+    let mut Orderbook: HashMap<&str, isize> = HashMap::new();
+    // Connect to websocket
     connect("wss://api2.poloniex.com", |out| Client { out: out } ).unwrap()
 }
