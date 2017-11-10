@@ -9,19 +9,31 @@ struct Client {
     out: Sender,
 }
 
+struct Orderbook {
+    version: i32,                                               // Version
+    asks: HashMap<String, isize>,                               // Ask Orders
+    bids: HashMap<String, isize>,                               // Bid Orders
+}
+
 fn parse_market_data(mkt_data: json::JsonValue) {
 
     // =======================
     // Determin Data Type
     // =======================
-    let version = &mkt_data[1];                 // Version of the Orderbook
-    let orderbook_flag = &mkt_data[2][0][0];    // Orderbook Type Identifier
-    let orderbook_data = &mkt_data[2][0];       // Orderbook Data
+    let version = &mkt_data[1];                                 // Version of the Orderbook
+    let orderbook_data = &mkt_data[2][0];                       // Orderbook Data
+    let orderbook_flag = &orderbook_data[0];                    // Orderbook Type Identifier
 
     // Process the initial full orderbook
     if orderbook_flag == "i" {
-        let raw_orderbook = &mkt_data[2][0][1];
+        // Get Orderbook from "i" initial
+        let raw_orderbook = &orderbook_data[1]["orderBook"];
+        let ask_orders = &raw_orderbook[0];                     // Ask Orders
+        let bid_orders = &raw_orderbook[1];                     // Bid Orders
         println!("[{}][FULL]:{}", version, raw_orderbook);  
+        println!("[{}][0]:{}", version, ask_orders);
+        println!("[{}][1]:{}", version, bid_orders);
+
     }
 
     // Process the incremental orderbook
@@ -60,8 +72,6 @@ impl Handler for Client {
 }
 
 fn main() {
-    // Orderbook
-    let mut Orderbook: HashMap<&str, isize> = HashMap::new();
     // Connect to websocket
     connect("wss://api2.poloniex.com", |out| Client { out: out } ).unwrap()
 }
