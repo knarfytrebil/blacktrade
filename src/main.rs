@@ -33,7 +33,6 @@ fn parse_market_data(mkt_data: json::JsonValue) {
         println!("[{}][FULL]:{}", version, raw_orderbook);  
         println!("[{}][0]:{}", version, ask_orders);
         println!("[{}][1]:{}", version, bid_orders);
-
     }
 
     // Process the incremental orderbook
