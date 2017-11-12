@@ -15,6 +15,11 @@ struct Orderbook {
     bids: HashMap<isize, isize>,                                // Bid Orders
 }
 
+// fn init_orderbook(entries: json::object::Iter) -> HashMap<f32, f32> {
+//     let mut _orderbook = HashMap::<f32, f32>::new();
+//     return _orderbook;
+// }
+
 fn parse_market_data(mkt_data: json::JsonValue) {
 
     // ######################## 
@@ -28,10 +33,15 @@ fn parse_market_data(mkt_data: json::JsonValue) {
     // Get Orderbook from "i" initial
     if orderbook_flag == "i" {
         let raw_orderbook = &orderbook_data[1]["orderBook"];
-        let ask_orders = raw_orderbook[0].entries();            // Ask Orders
-        let bid_orders = raw_orderbook[1].entries();            // Bid Orders
-        println!("[AKS COUNT][0]:{}", ask_orders.count());
-        println!("[BID COUNT][1]:{}", bid_orders.count());
+        let mut ask_orders = raw_orderbook[0].entries();        // Ask Orders
+        let mut bid_orders = raw_orderbook[1].entries();        // Bid Orders
+        // println!("[AKS COUNT][0]:{}", ask_orders.count());
+        // println!("[BID COUNT][1]:{}", bid_orders.count());
+        for x in bid_orders {
+            println!("[ENTRY]:{:?}", x);
+        }
+
+        // ask_orders.map(|x| println!("{:?}", x));
     }
 
     // Process the incremental orderbook
