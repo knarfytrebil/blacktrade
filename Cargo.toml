@@ -10,3 +10,8 @@ json = "*"
 [dependencies.ws]
 version = "*"
 features = ["ssl"]
+
+[dependencies.tui]
+version = "0.1.3"
+default-features = false
+features = ['rustbox']

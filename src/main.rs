@@ -1,7 +1,11 @@
 extern crate ws;
 extern crate json;
+extern crate tui;
+
 use ws::{ connect, Handler, Sender, Handshake, Result, Message };
 use std::collections::HashMap;
+use tui::Terminal;
+use tui::backend::RustboxBackend;
 
 // Here we explicity indicate that the Client needs a Sender,
 struct Client {
@@ -12,7 +16,7 @@ struct Orderbook {
     version: i32,                                                   // Version
     asks: HashMap<String, f32>,                                     // Ask Orders
     bids: HashMap<String, f32>,                                     // Bid Orders
-    trades: HashMap<String, String>,                                // Trades
+//    trades: HashMap<String, String>,                                // Trades
 }
 
 fn get_orderbook_from_iter(entries: json::object::Iter) -> HashMap<String, f32> {
@@ -25,15 +29,19 @@ fn get_orderbook_from_iter(entries: json::object::Iter) -> HashMap<String, f32> 
     return _orderbook;
 }
 
-fn parse_market_data(mkt_data: json::JsonValue) -> Orderbook {
+// fn parse_market_data(mkt_data: json::JsonValue) -> Orderbook {
+fn parse_market_data(mkt_data: json::JsonValue) {
     // ######################## 
     // # Determin Data Type
     // ########################
     let version = mkt_data[1].to_string().parse::<i32>().unwrap();  // [Version] of the Orderbook
     let orderbook_data = &mkt_data[2];                              // Orderbook Data
     let orderbook_flag = &orderbook_data[0][0];                     // Orderbook Type Identifier
-    // Process the initial full orderbook
-    // Get Orderbook from "i" initial
+    
+    // ########################
+    // # Process the initial full orderbook
+    // # Get Orderbook from "i" initial
+    // ########################
     if orderbook_flag == "i" {
         let raw_orderbook = &orderbook_data[0][1]["orderBook"];
         let mut ask_orders = raw_orderbook[0].entries();            // [Ask Orders]
@@ -43,10 +51,13 @@ fn parse_market_data(mkt_data: json::JsonValue) -> Orderbook {
             bids: get_orderbook_from_iter(bid_orders),
             asks: get_orderbook_from_iter(ask_orders),
         };
-        return _orderbook;
+        // return _orderbook;
     }
-    // Process the incremental orderbook and trades
-    // "o" or "t"
+
+    // ########################
+    // # Process the incremental orderbook and trades
+    // # "o" or "t"
+    // ########################
     if orderbook_flag != "i" { 
         println!("[{}][INCREMENTAL]:{}", version, orderbook_data);
     }
@@ -77,6 +88,7 @@ impl Handler for Client {
 }
 
 fn main() {
-    // Connect to websocket
+    let backend = RustboxBackend::new().unwrap();
+    let mut terminal = Terminal::new(backend);
     connect("wss://api2.poloniex.com", |out| Client { out: out } ).unwrap()
 }
