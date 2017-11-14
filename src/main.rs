@@ -1,6 +1,5 @@
 extern crate ws;
 extern crate json;
-
 use ws::{ connect, Handler, Sender, Handshake, Result, Message };
 use std::collections::HashMap;
 
@@ -10,9 +9,10 @@ struct Client {
 }
 
 struct Orderbook {
-    version: i32,                                               // Version
-    asks: HashMap<String, f32>,                                 // Ask Orders
-    bids: HashMap<String, f32>,                                 // Bid Orders
+    version: i32,                                                   // Version
+    asks: HashMap<String, f32>,                                     // Ask Orders
+    bids: HashMap<String, f32>,                                     // Bid Orders
+    trades: HashMap<String, String>,                                // Trades
 }
 
 fn get_orderbook_from_iter(entries: json::object::Iter) -> HashMap<String, f32> {
@@ -25,43 +25,37 @@ fn get_orderbook_from_iter(entries: json::object::Iter) -> HashMap<String, f32> 
     return _orderbook;
 }
 
-fn parse_market_data(mkt_data: json::JsonValue) {
-
+fn parse_market_data(mkt_data: json::JsonValue) -> Orderbook {
     // ######################## 
     // # Determin Data Type
     // ########################
-    let version = &mkt_data[1];                                 // Version of the Orderbook
-    let orderbook_data = &mkt_data[2][0];                       // Orderbook Data
-    let orderbook_flag = &orderbook_data[0];                    // Orderbook Type Identifier
-
+    let version = mkt_data[1].to_string().parse::<i32>().unwrap();  // [Version] of the Orderbook
+    let orderbook_data = &mkt_data[2];                              // Orderbook Data
+    let orderbook_flag = &orderbook_data[0][0];                     // Orderbook Type Identifier
     // Process the initial full orderbook
     // Get Orderbook from "i" initial
     if orderbook_flag == "i" {
-        let raw_orderbook = &orderbook_data[1]["orderBook"];
-        let mut ask_orders = raw_orderbook[0].entries();        // Ask Orders
-        let mut bid_orders = raw_orderbook[1].entries();        // Bid Orders
-
-        // println!("[AKS COUNT][0]:{}", ask_orders.count());
-        // println!("[BID COUNT][1]:{}", bid_orders.count());
-        
-        get_orderbook_from_iter(bid_orders);
-        get_orderbook_from_iter(ask_orders);
-
+        let raw_orderbook = &orderbook_data[0][1]["orderBook"];
+        let mut ask_orders = raw_orderbook[0].entries();            // [Ask Orders]
+        let mut bid_orders = raw_orderbook[1].entries();            // [Bid Orders]
+        let _orderbook = Orderbook {
+            version: version,
+            bids: get_orderbook_from_iter(bid_orders),
+            asks: get_orderbook_from_iter(ask_orders),
+        };
+        return _orderbook;
     }
-
-    // Process the incremental orderbook
-    if orderbook_flag == "o" {
+    // Process the incremental orderbook and trades
+    // "o" or "t"
+    if orderbook_flag != "i" { 
         println!("[{}][INCREMENTAL]:{}", version, orderbook_data);
     }
-       
 }
 
 fn parse_raw(raw: Message) {
-
     // msg -> String -> &str -> enum
     let msg = &String::from(raw.as_text().unwrap());
     let parsed_raw = json::parse(&*msg).unwrap();
-    
     { // Start of borrow
         let channel = &parsed_raw[0];
         if channel == 1010 {
@@ -69,9 +63,7 @@ fn parse_raw(raw: Message) {
             return;
         }
     } // End of borrow
-    
     parse_market_data(parsed_raw);
-
 }
 
 impl Handler for Client {
