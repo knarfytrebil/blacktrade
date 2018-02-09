@@ -16,7 +16,7 @@ struct Orderbook {
     version: i32,                                                   // Version
     asks: HashMap<String, f32>,                                     // Ask Orders
     bids: HashMap<String, f32>,                                     // Bid Orders
-//    trades: HashMap<String, String>,                                // Trades
+//    trades: HashMap<String, String>,                              // Trades
 }
 
 fn get_orderbook_from_iter(entries: json::object::Iter) -> HashMap<String, f32> {
@@ -88,7 +88,7 @@ impl Handler for Client {
 }
 
 fn main() {
-    let backend = RustboxBackend::new().unwrap();
-    let mut terminal = Terminal::new(backend);
+    // let backend = RustboxBackend::new().unwrap();
+    // let mut terminal = Terminal::new(backend);
     connect("wss://api2.poloniex.com", |out| Client { out: out } ).unwrap()
 }
