@@ -4,8 +4,11 @@ version = "0.1.0"
 authors = ["Frank Yao <frank.yao@cyanide.io>"]
 
 [dependencies]
-env_logger = "*"
+log = "*"
 json = "*"
+termion = "*"
+stderrlog = "*"
+env_logger = "*"
 
 [dependencies.ws]
 version = "*"
@@ -13,5 +16,5 @@ features = ["ssl"]
 
 [dependencies.tui]
 version = "0.2.1"
-default-features = false
-features = ['rustbox']
+default-features = true 
+features = ['termion']

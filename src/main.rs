@@ -5,7 +5,6 @@ extern crate tui;
 use ws::{ connect, Handler, Sender, Handshake, Result, Message };
 use std::collections::HashMap;
 use tui::Terminal;
-use tui::backend::RustboxBackend;
 
 // Here we explicity indicate that the Client needs a Sender,
 struct Client {
