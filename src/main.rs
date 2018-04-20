@@ -1,93 +1,134 @@
-extern crate ws;
-extern crate json;
+extern crate log;
+extern crate stderrlog;
+extern crate termion; 
 extern crate tui;
 
-use ws::{ connect, Handler, Sender, Handshake, Result, Message };
-use std::collections::HashMap;
+mod store;
+
+use std::io;
+use std::io::{Write};
+use std::thread;
+use std::sync::mpsc;
+
+use termion::event;
+use termion::input::TermRead;
+
 use tui::Terminal;
+use tui::backend::MouseBackend;
+use tui::style::{Color, Modifier, Style};
+use tui::widgets::{Block, Borders, Widget, Paragraph, Tabs};
+use tui::layout::{Direction, Group, Rect, Size};
 
-// Here we explicity indicate that the Client needs a Sender,
-struct Client {
-    out: Sender,
+use store::*;
+
+struct App<'a> {
+    size: Rect,
+    tabs: TopTabs<'a>,
 }
 
-struct Orderbook {
-    version: i32,                                                   // Version
-    asks: HashMap<String, f32>,                                     // Ask Orders
-    bids: HashMap<String, f32>,                                     // Bid Orders
-//    trades: HashMap<String, String>,                              // Trades
-}
-
-fn get_orderbook_from_iter(entries: json::object::Iter) -> HashMap<String, f32> {
-    let mut _orderbook = HashMap::<String, f32>::new();
-    for item in entries {
-        let quantity = item.1.to_string().parse::<f32>().unwrap();
-        let price = item.0.to_string();
-        _orderbook.insert(price, quantity);
-    }
-    return _orderbook;
-}
-
-// fn parse_market_data(mkt_data: json::JsonValue) -> Orderbook {
-fn parse_market_data(mkt_data: json::JsonValue) {
-    // ######################## 
-    // # Determin Data Type
-    // ########################
-    let version = mkt_data[1].to_string().parse::<i32>().unwrap();  // [Version] of the Orderbook
-    let orderbook_data = &mkt_data[2];                              // Orderbook Data
-    let orderbook_flag = &orderbook_data[0][0];                     // Orderbook Type Identifier
-    
-    // ########################
-    // # Process the initial full orderbook
-    // # Get Orderbook from "i" initial
-    // ########################
-    if orderbook_flag == "i" {
-        let raw_orderbook = &orderbook_data[0][1]["orderBook"];
-        let mut ask_orders = raw_orderbook[0].entries();            // [Ask Orders]
-        let mut bid_orders = raw_orderbook[1].entries();            // [Bid Orders]
-        let _orderbook = Orderbook {
-            version: version,
-            bids: get_orderbook_from_iter(bid_orders),
-            asks: get_orderbook_from_iter(ask_orders),
-        };
-        // return _orderbook;
-    }
-
-    // ########################
-    // # Process the incremental orderbook and trades
-    // # "o" or "t"
-    // ########################
-    if orderbook_flag != "i" { 
-        println!("[{}][INCREMENTAL]:{}", version, orderbook_data);
-    }
-}
-
-fn parse_raw(raw: Message) {
-    // msg -> String -> &str -> enum
-    let msg = &String::from(raw.as_text().unwrap());
-    let parsed_raw = json::parse(&*msg).unwrap();
-    { // Start of borrow
-        let channel = &parsed_raw[0];
-        if channel == 1010 {
-            println!("[HEARTBEAT]");
-            return;
+impl<'a> App<'a> {
+    fn new() -> App<'a> {
+        App {
+            size: Rect::default(),
+            tabs: TopTabs {
+                titles: vec!["Poloniex", "Logs"],
+                selection: 0,
+            }
         }
-    } // End of borrow
-    parse_market_data(parsed_raw);
+    }
 }
 
-impl Handler for Client {
-    fn on_open(&mut self, _: Handshake) -> Result<()> {
-        self.out.send(r#"{"command":"subscribe","channel":"BTC_ETH"}"#)
-    }
-    fn on_message(&mut self, msg: Message) -> Result<()> {
-        parse_raw(msg);
-        Ok(())
-    }
+enum Event {
+    Input(event::Key),
 }
 
 fn main() {
-    // let backend = RustboxBackend::new().unwrap();
-    // let mut terminal = Terminal::new(backend);
-    connect("wss://api2.poloniex.com", |out| Client { out: out } ).unwrap()
+    stderrlog::new().verbosity(4).init().unwrap();
+    // Terminal initialization
+    let backend = MouseBackend::new().unwrap();
+    let mut terminal = Terminal::new(backend).unwrap();
+    // Channels
+    let (tx, rx) = mpsc::channel();
+    let input_tx = tx.clone();
+    // Input
+    thread::spawn(move || {
+        let mut input_cmd = String::new();
+        let stdin = io::stdin();
+        for c in stdin.keys() {
+            let evt = c.unwrap();
+            input_tx.send(Event::Input(evt)).unwrap();
+            if evt == event::Key::Char('q') {
+                break;
+            }
+        }
+    });
+    // App
+    let mut app = App::new();
+    // First draw call
+    terminal.clear().unwrap();
+    terminal.hide_cursor().unwrap();
+    app.size = terminal.size().unwrap();
+    renderApp(&mut terminal, &app);
+    loop {
+        let size = terminal.size().unwrap();
+        if size != app.size {
+            terminal.resize(size).unwrap();
+            app.size = size;
+        }
+        let evt = rx.recv().unwrap();
+        match evt {
+            Event::Input(input) => match input {
+                event::Key::Char('q') => {
+                    break;
+                }
+               _ => {}
+            },
+        }
+        renderApp(&mut terminal, &app);
+    }
+    terminal.show_cursor().unwrap();
+}
+
+fn renderApp(t: &mut Terminal<MouseBackend>, app: &App) -> Result<(), io::Error> {
+    Group::default()
+        .direction(Direction::Vertical)
+        .sizes(&[Size::Fixed(3), Size::Min(1), Size::Fixed(1), Size::Fixed(1)])
+        .render(t, &app.size, |t, chunks| {
+            Tabs::default()
+                .block(Block::default().borders(Borders::ALL).title("Tabs"))
+                .titles(&app.tabs.titles)
+                .style(Style::default().fg(Color::Green))
+                .highlight_style(Style::default().fg(Color::Yellow))
+                .select(app.tabs.selection)
+                .render(t, &chunks[0]);
+            match app.tabs.selection {
+                0 => { renderText(t, app, &chunks[1]) }
+                1 => { }
+                _ => { }
+            }
+            renderStatusBar(t, app, &chunks[2]);
+            renderCommandBar(t, app, &chunks[3]);
+        });
+    try!(t.draw());
+    Ok(())
+}
+
+fn renderText(t: &mut Terminal<MouseBackend>, app: &App, area: &Rect) {
+     Paragraph::default()
+        .block(Block::default().title("Text"))
+        .wrap(true)
+        .text("text")
+        .render(t, area);
+}
+
+fn renderStatusBar(t: &mut Terminal<MouseBackend>, app: &App, area: &Rect) {
+    Paragraph::default()
+        .text("Paragraph 1")
+        .render(t, area);
+}
+
+fn renderCommandBar(t: &mut Terminal<MouseBackend>, app: &App, area: &Rect) {
+    Paragraph::default()
+        .text("Paragraph 2")
+        .render(t, area);
 }
