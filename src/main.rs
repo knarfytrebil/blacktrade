@@ -4,6 +4,7 @@ extern crate termion;
 extern crate tui;
 
 mod store;
+mod component;
 
 use std::io;
 use std::io::{Write};
@@ -19,24 +20,25 @@ use tui::style::{Color, Modifier, Style};
 use tui::widgets::{Block, Borders, Widget, Paragraph, Tabs};
 use tui::layout::{Direction, Group, Rect, Size};
 
-use store::*;
+use component::*;
+use store::loops::App;
 
-struct App<'a> {
-    size: Rect,
-    tabs: TopTabs<'a>,
-}
-
-impl<'a> App<'a> {
-    fn new() -> App<'a> {
-        App {
-            size: Rect::default(),
-            tabs: TopTabs {
-                titles: vec!["Poloniex", "Logs"],
-                selection: 0,
-            }
-        }
-    }
-}
+// struct App<'a> {
+//     size: Rect,
+//     tabs: TopTabs<'a>,
+// }
+// 
+// impl<'a> App<'a> {
+//     fn new() -> App<'a> {
+//         App {
+//             size: Rect::default(),
+//             tabs: TopTabs {
+//                 titles: vec!["Poloniex", "Logs"],
+//                 selection: 0,
+//             }
+//         }
+//     }
+// }
 
 enum Event {
     Input(event::Key),
@@ -68,7 +70,8 @@ fn main() {
     terminal.clear().unwrap();
     terminal.hide_cursor().unwrap();
     app.size = terminal.size().unwrap();
-    renderApp(&mut terminal, &app);
+    render_app(&mut terminal, &app);
+
     loop {
         let size = terminal.size().unwrap();
         if size != app.size {
@@ -81,15 +84,18 @@ fn main() {
                 event::Key::Char('q') => {
                     break;
                 }
+                event::Key::Char(':') => {
+                    break;
+                }
                _ => {}
             },
         }
-        renderApp(&mut terminal, &app);
+        render_app(&mut terminal, &app);
     }
     terminal.show_cursor().unwrap();
 }
 
-fn renderApp(t: &mut Terminal<MouseBackend>, app: &App) -> Result<(), io::Error> {
+fn render_app(t: &mut Terminal<MouseBackend>, app: &App) -> Result<(), io::Error> {
     Group::default()
         .direction(Direction::Vertical)
         .sizes(&[Size::Fixed(3), Size::Min(1), Size::Fixed(1), Size::Fixed(1)])
@@ -102,18 +108,18 @@ fn renderApp(t: &mut Terminal<MouseBackend>, app: &App) -> Result<(), io::Error>
                 .select(app.tabs.selection)
                 .render(t, &chunks[0]);
             match app.tabs.selection {
-                0 => { renderText(t, app, &chunks[1]) }
+                0 => { render_text(t, app, &chunks[1]) }
                 1 => { }
                 _ => { }
             }
-            renderStatusBar(t, app, &chunks[2]);
-            renderCommandBar(t, app, &chunks[3]);
+            render_status_bar(t, app, &chunks[2]);
+            render_command_bar(t, app, &chunks[3]);
         });
     try!(t.draw());
     Ok(())
 }
 
-fn renderText(t: &mut Terminal<MouseBackend>, app: &App, area: &Rect) {
+fn render_text(t: &mut Terminal<MouseBackend>, app: &App, area: &Rect) {
      Paragraph::default()
         .block(Block::default().title("Text"))
         .wrap(true)
@@ -121,14 +127,14 @@ fn renderText(t: &mut Terminal<MouseBackend>, app: &App, area: &Rect) {
         .render(t, area);
 }
 
-fn renderStatusBar(t: &mut Terminal<MouseBackend>, app: &App, area: &Rect) {
+fn render_status_bar(t: &mut Terminal<MouseBackend>, app: &App, area: &Rect) {
     Paragraph::default()
-        .text("Paragraph 1")
+        .text("NORMAL")
         .render(t, area);
 }
 
-fn renderCommandBar(t: &mut Terminal<MouseBackend>, app: &App, area: &Rect) {
+fn render_command_bar(t: &mut Terminal<MouseBackend>, app: &App, area: &Rect) {
     Paragraph::default()
-        .text("Paragraph 2")
+        .text("")
         .render(t, area);
 }
