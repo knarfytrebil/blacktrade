@@ -12,7 +12,7 @@ impl<'a> App<'a> {
         App {
             size: Rect::default(),
             tabs: TopTabs {
-                titles: vec!["Poloniex", "Logs"],
+                titles: vec!["CMD", "Poloniex"],
                 selection: 0,
             }
         }

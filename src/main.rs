@@ -16,13 +16,9 @@ use termion::input::TermRead;
 
 use tui::Terminal;
 use tui::backend::MouseBackend;
-use tui::style::{Color, Modifier, Style};
-use tui::widgets::{Block, Borders, Widget, Paragraph, Tabs};
-use tui::layout::{Direction, Group, Rect, Size};
 
 use store::loops::App;
-use components::status_bar;
-use components::command_bar;
+use components::application;
 
 enum Event {
     Input(event::Key),
@@ -38,7 +34,7 @@ fn main() {
     let input_tx = tx.clone();
     // Input
     thread::spawn(move || {
-        let mut input_cmd = String::new();
+        let mut _input_cmd = String::new();
         let stdin = io::stdin();
         for c in stdin.keys() {
             let evt = c.unwrap();
@@ -54,7 +50,7 @@ fn main() {
     terminal.clear().unwrap();
     terminal.hide_cursor().unwrap();
     app.size = terminal.size().unwrap();
-    render_app(&mut terminal, &app);
+    application::instance::render(&mut terminal, &app);
 
     loop {
         let size = terminal.size().unwrap();
@@ -74,39 +70,7 @@ fn main() {
                _ => {}
             },
         }
-        render_app(&mut terminal, &app);
+        application::instance::render(&mut terminal, &app);
     }
     terminal.show_cursor().unwrap();
-}
-
-fn render_app(t: &mut Terminal<MouseBackend>, app: &App) -> Result<(), io::Error> {
-    Group::default()
-        .direction(Direction::Vertical)
-        .sizes(&[Size::Fixed(3), Size::Min(1), Size::Fixed(1), Size::Fixed(1)])
-        .render(t, &app.size, |t, chunks| {
-            Tabs::default()
-                .block(Block::default().borders(Borders::ALL).title("Tabs"))
-                .titles(&app.tabs.titles)
-                .style(Style::default().fg(Color::Green))
-                .highlight_style(Style::default().fg(Color::Yellow))
-                .select(app.tabs.selection)
-                .render(t, &chunks[0]);
-            match app.tabs.selection {
-                0 => { render_text(t, app, &chunks[1]) }
-                1 => { }
-                _ => { }
-            }
-            status_bar::instance::render(t, app, &chunks[2]);
-            command_bar::instance::render(t, app, &chunks[3]);
-        });
-    try!(t.draw());
-    Ok(())
-}
-
-fn render_text(t: &mut Terminal<MouseBackend>, app: &App, area: &Rect) {
-     Paragraph::default()
-        .block(Block::default().title("Text"))
-        .wrap(true)
-        .text("text")
-        .render(t, area);
 }

@@ -7,7 +7,7 @@ pub mod instance {
     use tui::widgets::Paragraph;
     use store::loops::App;
 
-    pub fn render(t: &mut Terminal<MouseBackend>, app: &App, area: &Rect) {
+    pub fn render(t: &mut Terminal<MouseBackend>, _app: &App, area: &Rect) {
         Paragraph::default()
             .text("NORMAL")
             .render(t, area);
