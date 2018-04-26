@@ -96,8 +96,8 @@ fn render_app(t: &mut Terminal<MouseBackend>, app: &App) -> Result<(), io::Error
                 1 => { }
                 _ => { }
             }
-            status_bar::status_bar::render(t, app, &chunks[2]);
-            command_bar::command_bar::render(t, app, &chunks[3]);
+            status_bar::instance::render(t, app, &chunks[2]);
+            command_bar::instance::render(t, app, &chunks[3]);
         });
     try!(t.draw());
     Ok(())

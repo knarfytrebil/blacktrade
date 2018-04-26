@@ -1,4 +1,4 @@
-pub mod command_bar {
+pub mod instance {
 
     use tui::Terminal;
     use tui::backend::MouseBackend;
