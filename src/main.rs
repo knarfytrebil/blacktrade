@@ -4,7 +4,7 @@ extern crate termion;
 extern crate tui;
 
 mod store;
-mod component;
+mod components;
 
 use std::io;
 use std::io::{Write};
@@ -20,25 +20,9 @@ use tui::style::{Color, Modifier, Style};
 use tui::widgets::{Block, Borders, Widget, Paragraph, Tabs};
 use tui::layout::{Direction, Group, Rect, Size};
 
-use component::*;
 use store::loops::App;
-
-// struct App<'a> {
-//     size: Rect,
-//     tabs: TopTabs<'a>,
-// }
-// 
-// impl<'a> App<'a> {
-//     fn new() -> App<'a> {
-//         App {
-//             size: Rect::default(),
-//             tabs: TopTabs {
-//                 titles: vec!["Poloniex", "Logs"],
-//                 selection: 0,
-//             }
-//         }
-//     }
-// }
+use components::status_bar;
+use components::command_bar;
 
 enum Event {
     Input(event::Key),
@@ -112,8 +96,8 @@ fn render_app(t: &mut Terminal<MouseBackend>, app: &App) -> Result<(), io::Error
                 1 => { }
                 _ => { }
             }
-            render_status_bar(t, app, &chunks[2]);
-            render_command_bar(t, app, &chunks[3]);
+            status_bar::status_bar::render(t, app, &chunks[2]);
+            command_bar::command_bar::render(t, app, &chunks[3]);
         });
     try!(t.draw());
     Ok(())
@@ -124,17 +108,5 @@ fn render_text(t: &mut Terminal<MouseBackend>, app: &App, area: &Rect) {
         .block(Block::default().title("Text"))
         .wrap(true)
         .text("text")
-        .render(t, area);
-}
-
-fn render_status_bar(t: &mut Terminal<MouseBackend>, app: &App, area: &Rect) {
-    Paragraph::default()
-        .text("NORMAL")
-        .render(t, area);
-}
-
-fn render_command_bar(t: &mut Terminal<MouseBackend>, app: &App, area: &Rect) {
-    Paragraph::default()
-        .text("")
         .render(t, area);
 }

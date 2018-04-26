@@ -1,13 +1,14 @@
 #![allow(dead_code)]
 use tui::layout::{Rect};
+use store::tab::{TopTabs};
 
-struct App<'a> {
-    size: Rect,
-    tabs: TopTabs<'a>,
+pub struct App<'a> {
+    pub size: Rect,
+    pub tabs: TopTabs<'a>,
 }
 
 impl<'a> App<'a> {
-    fn new() -> App<'a> {
+    pub fn new() -> App<'a> {
         App {
             size: Rect::default(),
             tabs: TopTabs {
