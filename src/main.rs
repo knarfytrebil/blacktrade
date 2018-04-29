@@ -2,6 +2,7 @@ extern crate log;
 extern crate stderrlog;
 extern crate termion; 
 extern crate tui;
+extern crate redux;
 
 mod store;
 mod components;
@@ -26,12 +27,15 @@ enum Event {
 
 fn main() {
     stderrlog::new().verbosity(4).init().unwrap();
+
     // Terminal initialization
     let backend = MouseBackend::new().unwrap();
     let mut terminal = Terminal::new(backend).unwrap();
+
     // Channels
     let (tx, rx) = mpsc::channel();
     let input_tx = tx.clone();
+
     // Input
     thread::spawn(move || {
         let mut _input_cmd = String::new();
@@ -44,6 +48,7 @@ fn main() {
             }
         }
     });
+
     // App
     let mut app = App::new();
     // First draw call

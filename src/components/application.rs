@@ -3,8 +3,8 @@ pub mod instance {
     use std::io;
     use tui::Terminal;
     use tui::backend::MouseBackend;
-    use tui::style::{Color, Modifier, Style};
-    use tui::layout::{Direction, Group, Rect, Size};
+    use tui::style::{Color, Style};
+    use tui::layout::{Direction, Group, Size};
     use tui::widgets::{Block, Borders, Widget, Tabs};
     use store::loops::App;
 

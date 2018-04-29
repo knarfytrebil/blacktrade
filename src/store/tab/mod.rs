@@ -1,3 +1,4 @@
+#[derive(Clone, Debug)]
 pub struct TopTabs<'a> {    
     pub titles: Vec<&'a str>,   
     pub selection: usize,   

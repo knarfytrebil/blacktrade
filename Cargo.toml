@@ -1,6 +1,6 @@
 [package]
 name = "polorust"
-version = "0.1.0"
+version = "0.0.1"
 authors = ["Frank Yao <frank.yao@cyanide.io>"]
 
 [dependencies]
@@ -9,7 +9,7 @@ json = "*"
 termion = "*"
 stderrlog = "*"
 env_logger = "*"
-redux = "0.1.0"
+redux = { git = "https://github.com/knarfytrebil/redux-rs.git", branch = "master" }
 
 [dependencies.ws]
 version = "*"
