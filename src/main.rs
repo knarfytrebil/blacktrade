@@ -18,6 +18,8 @@ use termion::input::TermRead;
 use tui::Terminal;
 use tui::backend::MouseBackend;
 
+use redux::{Store};
+
 use store::loops::App;
 use components::application;
 
@@ -51,6 +53,8 @@ fn main() {
 
     // App
     let mut app = App::new();
+    // let app : Store<App> = Store::new(vec![]);
+
     // First draw call
     terminal.clear().unwrap();
     terminal.hide_cursor().unwrap();
