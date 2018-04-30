@@ -21,10 +21,10 @@ impl<'a> App<'a> {
     }
 }
 
-
 #[derive(Clone)]
 pub enum AppAction {
     Insert(&'static str),
+    ResizeApp(Rect),
 }
 
 impl<'a> Default for App<'a> {
@@ -37,12 +37,14 @@ impl<'a> Reducer for App<'a> {
     type Action = AppAction;
     type Error = String;
 
-
     fn reduce(&mut self, action: Self::Action) -> Result<Self, Self::Error> {
         match action {
             AppAction::Insert(name) => {
                 // let todo = Todo { name: name, };
                 // self.push(todo);
+            },
+            AppAction::ResizeApp(size) => {
+                self.size = size;
             },
         }
         Ok(self.clone())

@@ -51,18 +51,28 @@ fn main() {
         }
     });
 
-    // App
-    let mut app = App::new();
-    // let app : Store<App> = Store::new(vec![]);
+    // App & State
+    let store : Store<App> = Store::new(vec![]);
+    let app = store.get_state();
 
     // First draw call
     terminal.clear().unwrap();
     terminal.hide_cursor().unwrap();
-    app.size = terminal.size().unwrap();
+
+    let size = terminal.size().unwrap();
+
+    let action = AppAction::ResizeApp(size);
+    let _ = store.dispatch(action);
+
+    // app.size = terminal.size().unwrap();
+    
     application::instance::render(&mut terminal, &app);
 
     loop {
         let size = terminal.size().unwrap();
+        let action = AppAction::ResizeApp(size);
+        let _ = store.dispatch(action);
+
         if size != app.size {
             terminal.resize(size).unwrap();
             app.size = size;
