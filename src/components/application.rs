@@ -24,11 +24,11 @@ pub mod instance {
                     .highlight_style(Style::default().fg(Color::Yellow))
                     .select(app.tabs.selection)
                     .render(t, &chunks[0]);
-                match app.tabs.selection {
-                    0 => { command_output::instance::render(t, app, &chunks[1]) }
-                    1 => { }
-                    _ => { }
-                }
+                    match app.tabs.selection {
+                        0 => { command_output::instance::render(t, app, &chunks[1]) }
+                        1 => { }
+                        _ => { }
+                    }
                 status_bar::instance::render(t, app, &chunks[2]);
                 command_bar::instance::render(t, app, &chunks[3]);
             });

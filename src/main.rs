@@ -20,7 +20,7 @@ use tui::backend::MouseBackend;
 
 use redux::{Store};
 
-use store::loops::App;
+use store::loops::{App, AppAction};
 use components::application;
 
 enum Event {
@@ -52,30 +52,30 @@ fn main() {
     });
 
     // App & State
-    let store : Store<App> = Store::new(vec![]);
-    let app = store.get_state();
+    let store:Store<App> = Store::new(vec![]);
+    // let mut app = store.get_state();
 
     // First draw call
     terminal.clear().unwrap();
     terminal.hide_cursor().unwrap();
 
     let size = terminal.size().unwrap();
-
     let action = AppAction::ResizeApp(size);
     let _ = store.dispatch(action);
-
+    let app = store.get_state();
     // app.size = terminal.size().unwrap();
-    
     application::instance::render(&mut terminal, &app);
 
     loop {
         let size = terminal.size().unwrap();
-        let action = AppAction::ResizeApp(size);
-        let _ = store.dispatch(action);
+        // let action = AppAction::ResizeApp(size);
+        // let _ = store.dispatch(action);
 
         if size != app.size {
             terminal.resize(size).unwrap();
-            app.size = size;
+            let action = AppAction::ResizeApp(size);
+            let _ = store.dispatch(action);
+            // app.size = size;
         }
         let evt = rx.recv().unwrap();
         match evt {
@@ -89,7 +89,11 @@ fn main() {
                _ => {}
             },
         }
+
+        let app = store.get_state();
         application::instance::render(&mut terminal, &app);
     }
+     
     terminal.show_cursor().unwrap();
+
 }
