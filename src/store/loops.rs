@@ -44,6 +44,7 @@ impl<'a> Reducer for App<'a> {
                 // self.push(todo);
             },
             AppAction::ResizeApp(size) => {
+                print!("size: {:?}", self.size);
                 self.size = size;
             },
         }

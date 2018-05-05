@@ -55,7 +55,7 @@ fn main() {
     let store:Store<App> = Store::new(vec![]);
 
     // First draw call
-    terminal.clear().unwrap();
+    // terminal.clear().unwrap();
     terminal.hide_cursor().unwrap();
 
     let size = terminal.size().unwrap();
@@ -65,12 +65,22 @@ fn main() {
     application::instance::render(&mut terminal, &app);
 
     loop {
+        let app = store.get_state();
+        
+        // print!("app_size: {:?}\n", app.size);
+
         let size = terminal.size().unwrap();
+        // print!("term_size: {:?}\n", size);
+
         if size != app.size {
             terminal.resize(size).unwrap();
             let action = AppAction::ResizeApp(size);
             let _ = store.dispatch(action);
         }
+
+        let app = store.get_state();
+        application::instance::render(&mut terminal, &app);
+
         let evt = rx.recv().unwrap();
         match evt {
             Event::Input(input) => match input {
@@ -84,8 +94,6 @@ fn main() {
             },
         }
 
-        let app = store.get_state();
-        application::instance::render(&mut terminal, &app);
     }
      
     terminal.show_cursor().unwrap();
