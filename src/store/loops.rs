@@ -1,12 +1,19 @@
 #![allow(dead_code)]
 use tui::layout::{Rect};
+
+use tui::Terminal;
+use tui::backend::Backend;
+use tui::backend::MouseBackend;
+
 use store::tab::{TopTabs};
 use redux::{Store, Reducer};
+
 
 #[derive(Clone, Debug)]
 pub struct App<'a> {
     pub size: Rect,
     pub tabs: TopTabs<'a>,
+    pub terminal: Terminal<Backend>,
 }
 
 impl<'a> App<'a> {
@@ -16,14 +23,14 @@ impl<'a> App<'a> {
             tabs: TopTabs {
                 titles: vec!["CMD", "Poloniex"],
                 selection: 0,
-            }
+            },
+            terminal: Terminal::new(MouseBackend::new().unwrap()).unwrap()
         }
     }
 }
 
 #[derive(Clone)]
 pub enum AppAction {
-    Insert(&'static str),
     ResizeApp(Rect),
 }
 
@@ -39,10 +46,6 @@ impl<'a> Reducer for App<'a> {
 
     fn reduce(&mut self, action: Self::Action) -> Result<Self, Self::Error> {
         match action {
-            AppAction::Insert(_name) => {
-                // let todo = Todo { name: _name, };
-                // self.push(todo);
-            },
             AppAction::ResizeApp(size) => {
                 self.size = size;
             },
