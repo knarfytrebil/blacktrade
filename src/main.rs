@@ -1,5 +1,3 @@
-#[macro_use]
-extern crate log;
 extern crate stderrlog;
 extern crate termion; 
 extern crate tui;
@@ -9,7 +7,6 @@ mod store;
 mod components;
 
 use std::io;
-use std::io::{Write};
 use std::thread;
 use std::sync::mpsc;
 use std::boxed::Box;
@@ -55,7 +52,6 @@ fn main() {
 
     // App & State
     let store:Store<App> = Store::new(vec![]);
-
     // Create Subscription from store to render
     store.subscribe(Box::new(|store, _| {
         let app = store.get_state();

@@ -39,8 +39,8 @@ impl<'a> Reducer for App<'a> {
 
     fn reduce(&mut self, action: Self::Action) -> Result<Self, Self::Error> {
         match action {
-            AppAction::Insert(name) => {
-                // let todo = Todo { name: name, };
+            AppAction::Insert(_name) => {
+                // let todo = Todo { name: _name, };
                 // self.push(todo);
             },
             AppAction::ResizeApp(size) => {
