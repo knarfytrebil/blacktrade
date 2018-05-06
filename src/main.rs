@@ -95,6 +95,7 @@ fn main() {
 
     }
      
+    // show cursor on end
     terminal.show_cursor().unwrap();
 
 }
