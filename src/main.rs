@@ -12,6 +12,7 @@ use std::io;
 use std::io::{Write};
 use std::thread;
 use std::sync::mpsc;
+use std::boxed::Box;
 
 use termion::event;
 use termion::input::TermRead;
@@ -55,6 +56,12 @@ fn main() {
     // App & State
     let store:Store<App> = Store::new(vec![]);
 
+    // Create Subscription from store to render
+    store.subscribe(Box::new(|store, _| {
+        let app = store.get_state();
+        application::instance::render(&mut terminal, &app);
+    }));
+
     // First draw call
     terminal.clear().unwrap();
     terminal.hide_cursor().unwrap();
@@ -62,19 +69,20 @@ fn main() {
     let size = terminal.size().unwrap();
     let _ = store.dispatch(AppAction::ResizeApp(size));
 
-    let app = store.get_state();
-    application::instance::render(&mut terminal, &app);
+    // let app = store.get_state();
+    // application::instance::render(&mut terminal, &app);
 
     loop {
         let size = terminal.size().unwrap();
+        let app = store.get_state();
 
         if size != app.size {
             terminal.resize(size).unwrap();
             let _ = store.dispatch(AppAction::ResizeApp(size));
         }
 
-        let app = store.get_state();
-        application::instance::render(&mut terminal, &app);
+        // let app = store.get_state();
+        // application::instance::render(&mut terminal, &app);
 
         let evt = rx.recv().unwrap();
         match evt {
