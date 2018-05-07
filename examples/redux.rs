@@ -1,6 +1,12 @@
 extern crate redux;
+extern crate tui;
+
 use redux::{Store, Reducer};
 use std::default::Default;
+use std::boxed::Box;
+
+use tui::Terminal;
+use tui::backend::MouseBackend;
 
 #[derive(Clone, Debug)]
 struct Todo {
@@ -10,6 +16,7 @@ struct Todo {
 #[derive(Clone, Debug)]
 struct TodoState {
     todos: Vec<Todo>,
+    terminal: Terminal<MouseBackend>
 }
 
 impl TodoState {
@@ -51,10 +58,21 @@ impl Reducer for TodoState {
     }
 }
 
-fn main() {
-    let store : Store<TodoState> = Store::new(vec![]);
-    let action = TodoAction::Insert("Clean the bathroom");
-    let _ = store.dispatch(action);
+fn log(st: &Store<TodoState>) {
+    println!("{:?}", st.get_state());
+}
 
-    println!("{:?}", store.get_state());
+fn main() {
+
+    // Terminal initialization
+    let backend = MouseBackend::new().unwrap();
+    let mut terminal = Terminal::new(backend).unwrap();
+
+    let store : Store<TodoState> = Store::new(vec![]);
+    store.subscribe(Box::new(|store, _| { 
+        log(store); 
+    }));
+
+    let _ = store.dispatch(TodoAction::Insert("Clean the bathroom"));
+    let _ = store.dispatch(TodoAction::Insert("Clean the kitchen"));
 }

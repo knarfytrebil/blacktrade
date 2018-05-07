@@ -1,5 +1,4 @@
 #![allow(dead_code)]
-use std::boxed::Box;
 use tui::layout::{Rect};
 
 use tui::Terminal;
@@ -14,7 +13,6 @@ use redux::{Store, Reducer};
 pub struct App<'a> {
     pub size: Rect,
     pub tabs: TopTabs<'a>,
-    pub terminal: Box<Terminal<Backend>>,
 }
 
 impl<'a> App<'a> {
@@ -25,7 +23,6 @@ impl<'a> App<'a> {
                 titles: vec!["CMD", "Poloniex"],
                 selection: 0,
             },
-            terminal: Terminal::new(MouseBackend::new().unwrap()).unwrap()
         }
     }
 }
