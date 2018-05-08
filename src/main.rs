@@ -65,9 +65,6 @@ fn main() {
     let size = terminal.size().unwrap();
     let _ = store.dispatch(AppAction::ResizeApp(size));
 
-    // let app = store.get_state();
-    // application::instance::render(&mut terminal, &app);
-
     loop {
         let size = terminal.size().unwrap();
         let app = store.get_state();
@@ -76,9 +73,6 @@ fn main() {
             terminal.resize(size).unwrap();
             let _ = store.dispatch(AppAction::ResizeApp(size));
         }
-
-        // let app = store.get_state();
-        // application::instance::render(&mut terminal, &app);
 
         let evt = rx.recv().unwrap();
         match evt {
@@ -92,7 +86,6 @@ fn main() {
                _ => {}
             },
         }
-
     }
      
     // show cursor on end
