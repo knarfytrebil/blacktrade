@@ -24,6 +24,7 @@ use components::application;
 
 enum Event {
     Input(event::Key),
+    Render(App<'static>), // <- FIXME: Probably wrong lifetime here
 }
 
 fn main() {
@@ -36,6 +37,7 @@ fn main() {
     // Channels
     let (tx, rx) = mpsc::channel();
     let input_tx = tx.clone();
+    let render_tx = tx.clone();
 
     // Input
     thread::spawn(move || {
@@ -52,10 +54,11 @@ fn main() {
 
     // App & State
     let store:Store<App> = Store::new(vec![]);
+
     // Create Subscription from store to render
-    store.subscribe(Box::new(|store, _| {
+    store.subscribe(Box::new(move |store, _| {
         let app = store.get_state();
-        application::instance::render(&mut terminal, &app);
+        render_tx.send(Event::Render(app)).unwrap();
     }));
 
     // First draw call
@@ -64,6 +67,7 @@ fn main() {
 
     let size = terminal.size().unwrap();
     let _ = store.dispatch(AppAction::ResizeApp(size));
+
 
     loop {
         let size = terminal.size().unwrap();
@@ -85,6 +89,11 @@ fn main() {
                 }
                _ => {}
             },
+            Event::Render(app) => match app {  
+                _ => { 
+                    application::instance::render(&mut terminal, &app);
+                }
+            }
         }
     }
      
