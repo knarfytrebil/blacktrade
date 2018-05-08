@@ -89,11 +89,8 @@ fn main() {
                 }
                _ => {}
             },
-            Event::Render(app) => match app {  
-                _ => { 
-                    application::instance::render(&mut terminal, &app);
-                }
-            }
+            Event::Render(app) => { application::instance::render(&mut terminal, &app); },
+            _ => {}
         }
     }
      
