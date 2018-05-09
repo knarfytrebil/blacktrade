@@ -83,9 +83,7 @@ fn main() {
                 event::Key::Char('q') => {
                     break; 
                 },
-                _ => {
-                    
-                }
+                _ => { store.dispatch(AppAction::Keyboard(input));  }
             },
             Event::Render(app_state) => { 
                 app::instance::render(&mut terminal, &app_state); 
