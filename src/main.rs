@@ -22,7 +22,6 @@ use redux::{Store};
 
 use store::loops::{AppState, AppAction};
 use components::app;
-use utils::keys::conv;
 
 enum Event {
     Input(event::Key),
@@ -78,11 +77,15 @@ fn main() {
             terminal.resize(size).unwrap();
             let _ = store.dispatch(AppAction::ResizeApp(size));
         }
-
         let evt = rx.recv().unwrap();
         match evt {
-            Event::Input(input) => { 
-                conv::evt_to_str(input);
+            Event::Input(input) => match input { 
+                event::Key::Char('q') => {
+                    break; 
+                },
+                _ => {
+                    
+                }
             },
             Event::Render(app_state) => { 
                 app::instance::render(&mut terminal, &app_state); 

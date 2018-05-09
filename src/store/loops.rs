@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+use termion::event;
 use tui::layout::{Rect};
 
 use tui::Terminal;
@@ -30,6 +31,7 @@ impl<'a> AppState<'a> {
 #[derive(Clone)]
 pub enum AppAction {
     ResizeApp(Rect),
+    Keyboard(event::Key), 
 }
 
 impl<'a> Default for AppState<'a> {
@@ -47,6 +49,9 @@ impl<'a> Reducer for AppState<'a> {
             AppAction::ResizeApp(size) => {
                 self.size = size;
             },
+            _ => {
+
+            }
         }
         Ok(self.clone())
     }
