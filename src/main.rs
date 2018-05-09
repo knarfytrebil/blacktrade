@@ -80,9 +80,7 @@ fn main() {
         let evt = rx.recv().unwrap();
         match evt {
             Event::Input(input) => match input { 
-                event::Key::Char('q') => {
-                    break; 
-                },
+                event::Key::Char('q') => { break; },
                 _ => { store.dispatch(AppAction::Keyboard(input));  }
             },
             Event::Render(app_state) => { 
@@ -94,5 +92,4 @@ fn main() {
 
     // show cursor on end
     terminal.show_cursor().unwrap();
-
 }
