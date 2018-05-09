@@ -9,10 +9,9 @@ use tui::backend::MouseBackend;
 use store::tab::{TopTabs};
 use redux::{Store, Reducer};
 
-
 #[derive(Clone, Debug)]
 pub struct AppState<'a> {
-    pub mode: i8,
+    pub mode: i8, // <- FIXME Better use enum
     pub size: Rect,
     pub tabs: TopTabs<'a>,
 }
@@ -55,9 +54,7 @@ impl<'a> Reducer for AppState<'a> {
             AppAction::Keyboard(key_evt) => { 
                 Self::key_event_handler(self, key_evt); 
             },
-            _ => {
-
-            }
+            _ => { }
         }
         Ok(self.clone())
     }
