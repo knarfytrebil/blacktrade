@@ -10,14 +10,14 @@ use redux::{Store, Reducer};
 
 
 #[derive(Clone, Debug)]
-pub struct App<'a> {
+pub struct AppState<'a> {
     pub size: Rect,
     pub tabs: TopTabs<'a>,
 }
 
-impl<'a> App<'a> {
-    pub fn new() -> App<'a> {
-        App {
+impl<'a> AppState<'a> {
+    pub fn new() -> AppState<'a> {
+        AppState {
             size: Rect::default(),
             tabs: TopTabs {
                 titles: vec!["CMD", "Poloniex"],
@@ -32,13 +32,13 @@ pub enum AppAction {
     ResizeApp(Rect),
 }
 
-impl<'a> Default for App<'a> {
+impl<'a> Default for AppState<'a> {
     fn default() -> Self {
-        App::new()
+        AppState::new()
     }
 }
 
-impl<'a> Reducer for App<'a> {
+impl<'a> Reducer for AppState<'a> {
     type Action = AppAction;
     type Error = String;
 

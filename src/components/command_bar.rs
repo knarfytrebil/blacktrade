@@ -5,9 +5,9 @@ pub mod instance {
     use tui::layout::Rect;
     use tui::widgets::Widget;
     use tui::widgets::Paragraph;
-    use store::loops::App;
+    use store::loops::AppState;
 
-    pub fn render(t: &mut Terminal<MouseBackend>, _app: &App, area: &Rect) {
+    pub fn render(t: &mut Terminal<MouseBackend>, _app: &AppState, area: &Rect) {
         Paragraph::default()
             .text("")
             .render(t, area);

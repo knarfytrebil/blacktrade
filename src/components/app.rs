@@ -6,13 +6,14 @@ pub mod instance {
     use tui::style::{Color, Style};
     use tui::layout::{Direction, Group, Size};
     use tui::widgets::{Block, Borders, Widget, Tabs};
-    use store::loops::App;
+    use store::loops::AppState;
 
     use components::status_bar;
     use components::command_bar;
     use components::command_output;
 
-    pub fn render(t: &mut Terminal<MouseBackend>, app: &App) -> Result<(), io::Error> {
+    pub fn render(t: &mut Terminal<MouseBackend>, app: &AppState) 
+        -> Result<(), io::Error> {
         Group::default()
             .direction(Direction::Vertical)
             .sizes(&[Size::Fixed(3), Size::Min(1), Size::Fixed(1), Size::Fixed(1)])

@@ -5,6 +5,7 @@ extern crate redux;
 
 mod store;
 mod components;
+mod utils;
 
 use std::io;
 use std::thread;
@@ -19,12 +20,13 @@ use tui::backend::MouseBackend;
 
 use redux::{Store};
 
-use store::loops::{App, AppAction};
-use components::application;
+use store::loops::{AppState, AppAction};
+use components::app;
+use utils::keys::conv;
 
 enum Event {
     Input(event::Key),
-    Render(App<'static>), // <- FIXME: Probably wrong lifetime here
+    Render(AppState<'static>), // <- FIXME: Probably wrong lifetime here
 }
 
 fn main() {
@@ -53,12 +55,12 @@ fn main() {
     });
 
     // App & State
-    let store:Store<App> = Store::new(vec![]);
+    let store:Store<AppState> = Store::new(vec![]);
 
     // Create Subscription from store to render
     store.subscribe(Box::new(move |store, _| {
-        let app = store.get_state();
-        render_tx.send(Event::Render(app)).unwrap();
+        let app_state = store.get_state();
+        render_tx.send(Event::Render(app_state)).unwrap();
     }));
 
     // First draw call
@@ -68,32 +70,27 @@ fn main() {
     let size = terminal.size().unwrap();
     let _ = store.dispatch(AppAction::ResizeApp(size));
 
-
     loop {
         let size = terminal.size().unwrap();
-        let app = store.get_state();
+        let app_state = store.get_state();
 
-        if size != app.size {
+        if size != app_state.size {
             terminal.resize(size).unwrap();
             let _ = store.dispatch(AppAction::ResizeApp(size));
         }
 
         let evt = rx.recv().unwrap();
         match evt {
-            Event::Input(input) => match input {
-                event::Key::Char('q') => {
-                    break;
-                }
-                event::Key::Char(':') => {
-                    break;
-                }
-               _ => {}
+            Event::Input(input) => { 
+                conv::evt_to_str(input);
             },
-            Event::Render(app) => { application::instance::render(&mut terminal, &app); },
+            Event::Render(app_state) => { 
+                app::instance::render(&mut terminal, &app_state); 
+            },
             _ => {}
         }
     }
-     
+
     // show cursor on end
     terminal.show_cursor().unwrap();
 
