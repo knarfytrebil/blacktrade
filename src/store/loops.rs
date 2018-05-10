@@ -101,8 +101,9 @@ impl<'a> AppState<'a> {
         match evt { 
             event::Key::Esc => { self.mode = NORMALMODE; }
             event::Key::Backspace => { self.command.pop(); }
-            event::Key::Char(c) => { self.command.push(c); },
+            // Must be above Char(c)
             event::Key::Char('\n') => { self.command.pop(); },
+            event::Key::Char(c) => { self.command.push(c); },
             _ => { }
         }
     }
