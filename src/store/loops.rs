@@ -9,31 +9,49 @@ use tui::backend::MouseBackend;
 use store::tab::{TopTabs};
 use redux::{Store, Reducer};
 
-#[derive(Clone, Debug)]
-pub struct AppState<'a> {
-    pub mode: i8, // <- FIXME Better use enum
-    pub size: Rect,
-    pub tabs: TopTabs<'a>,
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum ModeCategory { Normal, Command }
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct AppMode<'a> {
+    pub category: ModeCategory,
+    pub symbol: &'a str,
 }
 
-impl<'a> AppState<'a> {
-    pub fn new() -> AppState<'a> {
-        AppState {
-            // mode: 0=NORMAL 1=COMMAND
-            mode: 0,
-            size: Rect::default(),
-            tabs: TopTabs {
-                titles: vec!["CMD", "Poloniex"],
-                selection: 0,
-            },
-        }
-    }
+#[derive(Clone, Debug)]
+pub struct AppState<'a> {
+    pub mode: AppMode<'a>,
+    pub size: Rect,
+    pub tabs: TopTabs<'a>,
 }
 
 #[derive(Clone)]
 pub enum AppAction {
     ResizeApp(Rect),
     Keyboard(event::Key), 
+}
+
+const NORMALMODE: AppMode = AppMode { 
+    category: ModeCategory::Normal, 
+    symbol: "NORMAL"
+};
+
+const COMMANDMODE: AppMode = AppMode { 
+    category: ModeCategory::Command, 
+    symbol: "COMMAND"
+};
+
+impl<'a> AppState<'a> {
+    pub fn new() -> AppState<'a> {
+        AppState {
+            mode: NORMALMODE,
+            size: Rect::default(),
+            tabs: TopTabs {
+                titles: vec!["Console", "Poloniex"],
+                selection: 0,
+            },
+        }
+    }
 }
 
 impl<'a> Default for AppState<'a> {
@@ -64,17 +82,23 @@ impl<'a> Reducer for AppState<'a> {
 impl<'a> AppState<'a> {
     fn key_event_handler(&mut self, evt: event::Key) {
         match self.mode {
-            0 => { Self::normal_key_handler(self, evt); },
-            1 => { Self::command_key_handler(self, evt); },
+            NORMALMODE => { Self::normal_key_handler(self, evt); },
+            COMMANDMODE => { Self::command_key_handler(self, evt); },
             _ => {}
         }
     }
     
     fn normal_key_handler(&mut self, evt: event::Key) {
-
+        match evt { 
+            event::Key::Char(':') => { self.mode = COMMANDMODE; }
+            _ => {}
+        }
     }
 
     fn command_key_handler(&mut self, evt: event::Key) {
-
+        match evt { 
+            event::Key::Esc => { self.mode = NORMALMODE; }
+            _ => {}
+        }
     }
 }
