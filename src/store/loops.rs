@@ -23,6 +23,7 @@ pub struct AppState<'a> {
     pub mode: AppMode<'a>,
     pub size: Rect,
     pub tabs: TopTabs<'a>,
+    pub command: String,
 }
 
 #[derive(Clone)]
@@ -50,6 +51,7 @@ impl<'a> AppState<'a> {
                 titles: vec!["Console", "Poloniex"],
                 selection: 0,
             },
+            command: String::from(""),
         }
     }
 }
@@ -98,7 +100,10 @@ impl<'a> AppState<'a> {
     fn command_key_handler(&mut self, evt: event::Key) {
         match evt { 
             event::Key::Esc => { self.mode = NORMALMODE; }
-            _ => {}
+            event::Key::Backspace => { self.command.pop(); }
+            event::Key::Char(c) => { self.command.push(c); },
+            event::Key::Char('\n') => { self.command.pop(); },
+            _ => { }
         }
     }
 }

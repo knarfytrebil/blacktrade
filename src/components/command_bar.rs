@@ -9,7 +9,7 @@ pub mod instance {
 
     pub fn render(t: &mut Terminal<MouseBackend>, _app: &AppState, area: &Rect) {
         Paragraph::default()
-            .text("")
+            .text(&_app.command)
             .render(t, area);
     }
 
