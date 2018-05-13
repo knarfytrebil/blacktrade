@@ -6,7 +6,7 @@ extern crate redux;
 mod store;
 mod components;
 mod utils;
-// mod middlewares;
+mod middlewares;
 
 use std::io;
 use std::thread;
@@ -22,7 +22,7 @@ use tui::backend::MouseBackend;
 use redux::{Store};
 
 use store::loops::{AppState, AppAction};
-// use middlewares::term::Term;
+use middlewares::term::Term;
 use components::app;
 
 enum Event {
@@ -82,7 +82,7 @@ fn main() {
         match evt {
             Event::Input(input) => match input { 
                 event::Key::Char('q') => { break; },
-                _ => { store.dispatch(AppAction::Keyboard(input));  }
+                _ => { store.dispatch(AppAction::Keyboard(input)); }
             },
             Event::Render(app_state) => { 
                 app::instance::render(&mut terminal, &app_state); 

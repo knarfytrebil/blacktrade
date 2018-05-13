@@ -7,8 +7,8 @@ impl Middleware<AppState> for Term {
     fn dispatch(
         &self, store: &Store<AppState>, 
         action: AppAction, 
-        next: &DispatchFunc<AppState>) -> Result<AppState, String> {
-
+        next: &DispatchFunc<AppState>
+    ) -> Result<AppState, String> {
         let result = next(store, action);
         result
     }
