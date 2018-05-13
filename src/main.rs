@@ -42,7 +42,6 @@ fn main() {
 
     // Input
     thread::spawn(move || {
-        let mut _input_cmd = String::new();
         let stdin = io::stdin();
         for c in stdin.keys() {
             let evt = c.unwrap();
