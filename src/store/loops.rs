@@ -13,16 +13,35 @@ use redux::{Store, Reducer};
 pub enum ModeCategory { Normal, Command }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct AppMode<'a> {
+pub struct AppMode {
     pub category: ModeCategory,
-    pub symbol: &'a str,
+    pub symbol: String
+}
+
+impl AppMode {
+    pub fn get_mode(mode_name: &str) -> AppMode {
+        match mode_name {
+            "normal" => AppMode { 
+                category: ModeCategory::Normal, 
+                symbol: String::from("NORMAL") 
+            }, 
+            "command" => AppMode { 
+                category: ModeCategory::Command,
+                symbol: String::from("COMMAND") 
+            }, 
+            &_ => AppMode { 
+                category: ModeCategory::Command,
+                symbol: String::from("Unknown Mode") 
+            }        
+        }
+    }    
 }
 
 #[derive(Clone, Debug)]
-pub struct AppState<'a> {
-    pub mode: AppMode<'a>,
+pub struct AppState {
+    pub mode: AppMode,
     pub size: Rect,
-    pub tabs: TopTabs<'a>,
+    pub tabs: TopTabs,
     pub command: String,
 }
 
@@ -32,23 +51,15 @@ pub enum AppAction {
     Keyboard(event::Key), 
 }
 
-const NORMALMODE: AppMode = AppMode { 
-    category: ModeCategory::Normal, 
-    symbol: "NORMAL"
-};
-
-const COMMANDMODE: AppMode = AppMode { 
-    category: ModeCategory::Command, 
-    symbol: "COMMAND"
-};
-
-impl<'a> AppState<'a> {
-    pub fn new() -> AppState<'a> {
+impl AppState {
+    pub fn new() -> AppState {
         AppState {
-            mode: NORMALMODE,
+            mode: AppMode::get_mode("normal"),
             size: Rect::default(),
             tabs: TopTabs {
-                titles: vec!["Console", "Poloniex"],
+                titles: vec![
+                    String::from("Console") 
+                ],
                 selection: 0,
             },
             command: String::from(""),
@@ -56,13 +67,13 @@ impl<'a> AppState<'a> {
     }
 }
 
-impl<'a> Default for AppState<'a> {
+impl Default for AppState {
     fn default() -> Self {
         AppState::new()
     }
 }
 
-impl<'a> Reducer for AppState<'a> {
+impl Reducer for AppState {
     type Action = AppAction;
     type Error = String;
 
@@ -81,25 +92,25 @@ impl<'a> Reducer for AppState<'a> {
 }
 
 // Event Handlers for Key Input
-impl<'a> AppState<'a> {
+impl AppState {
     fn key_event_handler(&mut self, evt: event::Key) {
-        match self.mode {
-            NORMALMODE => { Self::normal_key_handler(self, evt); },
-            COMMANDMODE => { Self::command_key_handler(self, evt); },
+        match self.mode.category {
+            ModeCategory::Normal => { Self::normal_key_handler(self, evt); },
+            ModeCategory::Command => { Self::command_key_handler(self, evt); },
             _ => {}
         }
     }
     
     fn normal_key_handler(&mut self, evt: event::Key) {
         match evt { 
-            event::Key::Char(':') => { self.mode = COMMANDMODE; }
+            event::Key::Char(':') => { self.mode = AppMode::get_mode("command"); }
             _ => {}
         }
     }
 
     fn command_key_handler(&mut self, evt: event::Key) {
         match evt { 
-            event::Key::Esc => { self.mode = NORMALMODE; }
+            event::Key::Esc => { self.mode = AppMode::get_mode("normal"); }
             event::Key::Backspace => { self.command.pop(); }
             // Must be above Char(c)
             event::Key::Char('\n') => { self.command.pop(); },

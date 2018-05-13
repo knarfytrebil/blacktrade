@@ -6,6 +6,7 @@ extern crate redux;
 mod store;
 mod components;
 mod utils;
+// mod middlewares;
 
 use std::io;
 use std::thread;
@@ -21,16 +22,16 @@ use tui::backend::MouseBackend;
 use redux::{Store};
 
 use store::loops::{AppState, AppAction};
+// use middlewares::term::Term;
 use components::app;
 
 enum Event {
     Input(event::Key),
-    Render(AppState<'static>), // <- FIXME: Probably wrong lifetime here
+    Render(AppState),
 }
 
 fn main() {
-    stderrlog::new().verbosity(4).init().unwrap();
-
+    stderrlog::new().verbosity(4).init().unwrap(); 
     // Terminal initialization
     let backend = MouseBackend::new().unwrap();
     let mut terminal = Terminal::new(backend).unwrap();
@@ -57,8 +58,9 @@ fn main() {
 
     // Create Subscription from store to render
     store.subscribe(Box::new(move |store, _| {
-        let app_state = store.get_state();
-        render_tx.send(Event::Render(app_state)).unwrap();
+        render_tx.send(
+            Event::Render(store.get_state())
+        ).unwrap();
     }));
 
     // First draw call

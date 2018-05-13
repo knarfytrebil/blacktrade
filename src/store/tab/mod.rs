@@ -1,10 +1,10 @@
 #[derive(Clone, Debug)]
-pub struct TopTabs<'a> {    
-    pub titles: Vec<&'a str>,   
+pub struct TopTabs {    
+    pub titles: Vec<String>,   
     pub selection: usize,   
 }   
     
-impl<'a> TopTabs<'a> {  
+impl TopTabs {  
     pub fn next(&mut self) {    
         self.selection = (self.selection + 1) % self.titles.len();  
     }   
