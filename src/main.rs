@@ -22,24 +22,21 @@ use tui::backend::MouseBackend;
 use redux::{Store};
 
 use store::loops::{AppState, AppAction};
+use store::events::Event;
 use middlewares::term::Term;
 use components::app;
 
-enum Event {
-    Input(event::Key),
-    Render(AppState),
-}
-
 fn main() {
+    // Logs
     stderrlog::new().verbosity(4).init().unwrap(); 
+
     // Terminal initialization
     let backend = MouseBackend::new().unwrap();
     let mut terminal = Terminal::new(backend).unwrap();
 
     // Channels
     let (tx, rx) = mpsc::channel();
-    let input_tx = tx.clone();
-    let render_tx = tx.clone();
+    let (input_tx, render_tx, term_tx) = (tx.clone(), tx.clone(), tx.clone());
 
     // Input
     thread::spawn(move || {
@@ -53,8 +50,11 @@ fn main() {
         }
     });
 
+    // Middlewares
+    let term_mw = Box::new(Term{ tx: term_tx }); 
+            
     // App & State
-    let store:Store<AppState> = Store::new(vec![]);
+    let store:Store<AppState> = Store::new(vec![term_mw]);
 
     // Create Subscription from store to render
     store.subscribe(Box::new(move |store, _| {
