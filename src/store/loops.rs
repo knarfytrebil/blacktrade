@@ -45,7 +45,7 @@ pub struct AppState {
     pub command: String,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum AppAction {
     ResizeApp(Rect),
     Keyboard(event::Key), 
