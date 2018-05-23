@@ -5,10 +5,9 @@ authors = ["Frank Yao <frank.yao@cyanide.io>"]
 
 [dependencies]
 log = "*"
+syslog = "*"
 json = "*"
 termion = "*"
-stderrlog = "*"
-env_logger = "*"
 redux = { git = "https://github.com/knarfytrebil/redux-rs.git", branch = "master" }
 
 [dependencies.ws]

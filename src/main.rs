@@ -1,12 +1,17 @@
-extern crate stderrlog;
 extern crate termion; 
 extern crate tui;
 extern crate redux;
+
+#[macro_use]
+extern crate log;
+extern crate syslog;
 
 mod store;
 mod components;
 mod utils;
 mod middlewares;
+
+use syslog::{Facility,Formatter3164};
 
 use std::io;
 use std::thread;
@@ -28,7 +33,13 @@ use components::app;
 
 fn main() {
     // Logs
-    stderrlog::new().verbosity(4).init().unwrap(); 
+    syslog::init(Facility::LOG_USER, log::LevelFilter::Debug, Some("polorust"));
+    error!("this is an error!");
+    warn!("this is an warning!");
+
+    info!("this is an info!");
+    trace!("this is an trace!");
+    debug!("this is a debug {}", "message");
 
     // Terminal initialization
     let backend = MouseBackend::new().unwrap();
