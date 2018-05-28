@@ -42,13 +42,6 @@ fn main() {
             .unwrap())
     ]).unwrap();
 
-    error!("this is an error!");
-    warn!("this is an warning!");
-
-    info!("this is an info!");
-    trace!("this is an trace!");
-    debug!("this is a debug {}", "message");
-
     // Terminal initialization
     let backend = MouseBackend::new().unwrap();
     let mut terminal = Terminal::new(backend).unwrap();
