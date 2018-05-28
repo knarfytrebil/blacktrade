@@ -4,14 +4,15 @@ extern crate redux;
 
 #[macro_use]
 extern crate log;
-extern crate syslog;
+extern crate simplelog;
 
 mod store;
 mod components;
 mod utils;
 mod middlewares;
 
-use syslog::{Facility,Formatter3164};
+use simplelog::*;
+use std::fs::File;
 
 use std::io;
 use std::thread;
@@ -33,7 +34,14 @@ use components::app;
 
 fn main() {
     // Logs
-    syslog::init(Facility::LOG_USER, log::LevelFilter::Debug, Some("polorust"));
+    CombinedLogger::init(vec![
+        WriteLogger::new(
+            LevelFilter::Debug, 
+            Config::default(), 
+            File::create("debug.log")
+            .unwrap())
+    ]).unwrap();
+
     error!("this is an error!");
     warn!("this is an warning!");
 
