@@ -23,11 +23,11 @@ impl AppMode {
         match mode_name {
             "normal" => AppMode { 
                 category: ModeCategory::Normal, 
-                symbol: String::from("NORMAL") 
+                symbol: String::from("NORM") 
             }, 
             "command" => AppMode { 
                 category: ModeCategory::Command,
-                symbol: String::from("COMMAND") 
+                symbol: String::from("CTRL") 
             }, 
             &_ => AppMode { 
                 category: ModeCategory::Command,
@@ -97,25 +97,48 @@ impl AppState {
         match self.mode.category {
             ModeCategory::Normal => { Self::normal_key_handler(self, evt); },
             ModeCategory::Command => { Self::command_key_handler(self, evt); },
-            _ => {}
+            _ => { error!("Wrong Command Type"); }
         }
     }
     
     fn normal_key_handler(&mut self, evt: event::Key) {
         match evt { 
-            event::Key::Char(':') => { self.mode = AppMode::get_mode("command"); }
-            _ => {}
+            event::Key::Char(':') => { self.set_mode("command"); }
+            _ => { info!("unimplemented"); }
         }
     }
 
     fn command_key_handler(&mut self, evt: event::Key) {
         match evt { 
-            event::Key::Esc => { self.mode = AppMode::get_mode("normal"); }
-            event::Key::Backspace => { self.command.pop(); }
-            // Must be above Char(c)
-            event::Key::Char('\n') => { self.command.pop(); },
-            event::Key::Char(c) => { self.command.push(c); },
+            event::Key::Esc => { 
+                self.set_mode("normal");
+            },
+            event::Key::Backspace => { 
+                if self.command == ":" { self.set_mode("normal"); } 
+                else { self.command.pop(); }
+            },
+            // Must be above Char(_char)
+            event::Key::Char('\n') => { 
+                let cmd = self.command.split_off(1);
+                info!("Command Issued: {:?}", cmd);
+            },
+            event::Key::Char(_char) => { self.command.push(_char); },
             _ => { }
+        }
+    }
+
+    // helper functions
+    fn set_mode(&mut self, mode: &str) {
+        match mode {
+            "command" => {
+                self.mode = AppMode::get_mode("command"); 
+                self.command.push(':');                             
+            }
+            "normal" => {
+                self.mode = AppMode::get_mode("normal"); 
+                self.command.clear();                               
+            }
+            _ => {}
         }
     }
 }

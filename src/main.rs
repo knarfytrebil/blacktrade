@@ -33,7 +33,7 @@ use middlewares::term::Term;
 use components::app;
 
 fn main() {
-    // Logs
+    // Init Logs
     CombinedLogger::init(vec![
         WriteLogger::new(
             LevelFilter::Debug, 
