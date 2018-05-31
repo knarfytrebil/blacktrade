@@ -75,9 +75,8 @@ fn main() {
     //watcher
     let mut log_watcher = LogWatcher::register("debug.log".to_string()).unwrap();
     thread::spawn(move || {
-        log_watcher.watch(move |line: String| { 
-            console_tx.send(line);
-        });
+        let f = MainStore::get_writeConsole(console_tx);
+        log_watcher.watch(f);
     });
 
     // Create Subscription from store to render

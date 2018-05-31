@@ -1,4 +1,5 @@
 use std::sync::mpsc;
+use store::events::Event;
 use redux::{Store};
 use store::loops::AppState;
 
