@@ -1,6 +1,7 @@
 extern crate termion; 
 extern crate tui;
 extern crate redux;
+extern crate logwatcher;
 
 #[macro_use]
 extern crate log;
@@ -11,13 +12,14 @@ mod components;
 mod utils;
 mod middlewares;
 
-use simplelog::*;
-use std::fs::File;
-
 use std::io;
 use std::thread;
 use std::sync::mpsc;
 use std::boxed::Box;
+use std::fs::File;
+
+use logwatcher::LogWatcher;
+use simplelog::*;
 
 use termion::event;
 use termion::input::TermRead;
@@ -68,6 +70,14 @@ fn main() {
     // App & State
     let store:Store<AppState> = Store::new(vec![term_mw]);
 
+    //watcher
+    let mut log_watcher = LogWatcher::register("debug.log".to_string()).unwrap();
+    thread::spawn(move || {
+        log_watcher.watch(move |line: String| {
+            store.dispatch(AppAction::ConsoleWrite(line));
+        });
+    });
+
     // Create Subscription from store to render
     store.subscribe(Box::new(move |store, _| {
         render_tx.send(
@@ -90,8 +100,7 @@ fn main() {
             terminal.resize(size).unwrap();
             let _ = store.dispatch(AppAction::ResizeApp(size));
         }
-        let evt = rx.recv().unwrap();
-        match evt {
+        match rx.recv().unwrap() {
             Event::Input(input) => match input { 
                 event::Key::Char('q') => { break; },
                 _ => { store.dispatch(AppAction::Keyboard(input)); }

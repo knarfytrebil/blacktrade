@@ -49,6 +49,7 @@ pub struct AppState {
 pub enum AppAction {
     ResizeApp(Rect),
     Keyboard(event::Key), 
+    ConsoleWrite(String),    
 }
 
 impl AppState {
@@ -65,6 +66,7 @@ impl AppState {
             command: String::from(""),
         }
     }
+    
 }
 
 impl Default for AppState {
@@ -85,6 +87,9 @@ impl Reducer for AppState {
             AppAction::Keyboard(key_evt) => { 
                 Self::key_event_handler(self, key_evt); 
             },
+            AppAction::ConsoleWrite(line) => {
+                info!("to write line: {:?}", line);
+            },
             _ => { }
         }
         Ok(self.clone())
@@ -93,6 +98,7 @@ impl Reducer for AppState {
 
 // Event Handlers for Key Input
 impl AppState {
+
     fn key_event_handler(&mut self, evt: event::Key) {
         match self.mode.category {
             ModeCategory::Normal => { Self::normal_key_handler(self, evt); },

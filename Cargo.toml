@@ -9,6 +9,7 @@ simplelog = "^0.5.0"
 redux = { git = "https://github.com/knarfytrebil/redux-rs.git", branch = "master" }
 json = "*"
 termion = "*"
+logwatcher = "0.1"
 
 [dependencies.ws]
 version = "*"
