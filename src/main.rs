@@ -28,6 +28,7 @@ use tui::Terminal;
 use tui::backend::MouseBackend;
 
 use redux::{Store};
+use store::helpers::MainStore;
 
 use store::loops::{AppState, AppAction};
 use store::events::Event;
@@ -50,7 +51,8 @@ fn main() {
 
     // Channels
     let (tx, rx) = mpsc::channel();
-    let (input_tx, render_tx, term_tx) = (tx.clone(), tx.clone(), tx.clone());
+    let (input_tx, render_tx, term_tx, console_tx) 
+        = (tx.clone(), tx.clone(), tx.clone(), tx.clone());
 
     // Input
     thread::spawn(move || {
@@ -73,8 +75,8 @@ fn main() {
     //watcher
     let mut log_watcher = LogWatcher::register("debug.log".to_string()).unwrap();
     thread::spawn(move || {
-        log_watcher.watch(move |line: String| {
-            store.dispatch(AppAction::ConsoleWrite(line));
+        log_watcher.watch(move |line: String| { 
+            console_tx.send(line);
         });
     });
 
