@@ -28,7 +28,7 @@ use tui::Terminal;
 use tui::backend::MouseBackend;
 
 use redux::{Store};
-use store::helpers::MainStore;
+use store::helpers::{MainStore, writeConsole};
 
 use store::loops::{AppState, AppAction};
 use store::events::Event;
@@ -75,8 +75,7 @@ fn main() {
     //watcher
     let mut log_watcher = LogWatcher::register("debug.log".to_string()).unwrap();
     thread::spawn(move || {
-        let f = MainStore::get_writeConsole(console_tx);
-        log_watcher.watch(f);
+        log_watcher.watch(writeConsole);
     });
 
     // Create Subscription from store to render

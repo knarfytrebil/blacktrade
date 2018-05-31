@@ -3,8 +3,7 @@ use store::events::Event;
 use redux::{Store};
 use store::loops::AppState;
 
-
-fn writeConsole(line: String) {
+pub fn writeConsole(line: String) {
     debug!("line: {:?}", line);
 }
 
