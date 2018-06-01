@@ -13,7 +13,7 @@ impl Middleware<AppState> for Term {
         action: AppAction, 
         next: &DispatchFunc<AppState>
     ) -> Result<AppState, String> {
-        // debug!("Called action: {:?}", action);
+        debug!("Called action: {:?}", action);
         let result = next(store, action);
         result
     }
