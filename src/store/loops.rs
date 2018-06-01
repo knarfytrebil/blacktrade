@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use termion::event;
+use termion::{event, color, style};
 use tui::layout::{Rect};
 
 use tui::Terminal;
@@ -43,6 +43,7 @@ pub struct AppState {
     pub size: Rect,
     pub tabs: TopTabs,
     pub command: String,
+    pub console_txt: String,
 }
 
 #[derive(Clone, Debug)]
@@ -64,6 +65,7 @@ impl AppState {
                 selection: 0,
             },
             command: String::from(""),
+            console_txt: String::from(""),
         }
     }
     
@@ -88,7 +90,7 @@ impl Reducer for AppState {
                 Self::key_event_handler(self, key_evt); 
             },
             AppAction::ConsoleWrite(line) => {
-                info!("to write line: {:?}", line);
+                self.console_txt.push_str(&line);
             },
             _ => { }
         }
@@ -127,6 +129,8 @@ impl AppState {
             event::Key::Char('\n') => { 
                 let cmd = self.command.split_off(1);
                 info!("Command Issued: {:?}", cmd);
+                let line = String::from("{fg=green [command] }") + &cmd + &String::from("\n");
+                self.console_txt.push_str(&line);
             },
             event::Key::Char(_char) => { self.command.push(_char); },
             _ => { }

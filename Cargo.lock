@@ -137,11 +137,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "logwatcher"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-
-[[package]]
 name = "magenta"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -256,7 +251,6 @@ version = "0.0.1"
 dependencies = [
  "json 0.11.10 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "logwatcher 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "redux 0.0.1 (git+https://github.com/knarfytrebil/redux-rs.git)",
  "simplelog 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "termion 1.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -469,7 +463,6 @@ dependencies = [
 "checksum libc 0.2.30 (registry+https://github.com/rust-lang/crates.io-index)" = "2370ca07ec338939e356443dac2296f581453c35fe1e3a3ed06023c49435f915"
 "checksum log 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)" = "880f77541efa6e5cc74e76910c9884d9859683118839d6a1dc3b11e63512565b"
 "checksum log 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "89f010e843f2b1a31dbd316b3b8d443758bc634bed37aabade59c686d644e0a2"
-"checksum logwatcher 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "a831163bae0fe9f4121bc0ef9d9940f6c61bc0895611e09a89e4cc472018dea5"
 "checksum magenta 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "4bf0336886480e671965f794bc9b6fce88503563013d1bfb7a502c81fe3ac527"
 "checksum magenta-sys 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "40d014c7011ac470ae28e2f76a02bfea4a8480f73e701353b49ad7a8d75f4699"
 "checksum matches 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "100aabe6b8ff4e4a7e32c1c13523379802df0772b82466207ac25b013f193376"

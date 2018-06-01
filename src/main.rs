@@ -1,7 +1,6 @@
 extern crate termion; 
 extern crate tui;
 extern crate redux;
-extern crate logwatcher;
 
 #[macro_use]
 extern crate log;
@@ -18,7 +17,6 @@ use std::sync::mpsc;
 use std::boxed::Box;
 use std::fs::File;
 
-use logwatcher::LogWatcher;
 use simplelog::*;
 
 use termion::event;
@@ -51,8 +49,9 @@ fn main() {
 
     // Channels
     let (tx, rx) = mpsc::channel();
-    let (input_tx, render_tx, term_tx, console_tx) 
-        = (tx.clone(), tx.clone(), tx.clone(), tx.clone());
+
+    let (input_tx, render_tx, term_tx) 
+        = (tx.clone(), tx.clone(), tx.clone());
 
     // Input
     thread::spawn(move || {
@@ -71,12 +70,6 @@ fn main() {
             
     // App & State
     let store:Store<AppState> = Store::new(vec![term_mw]);
-
-    //watcher
-    let mut log_watcher = LogWatcher::register("debug.log".to_string()).unwrap();
-    thread::spawn(move || {
-        log_watcher.watch(writeConsole);
-    });
 
     // Create Subscription from store to render
     store.subscribe(Box::new(move |store, _| {

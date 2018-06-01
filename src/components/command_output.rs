@@ -12,7 +12,7 @@ pub mod instance {
          Paragraph::default()
             .block(Block::default().title("Text"))
             .wrap(true)
-            .text("text")
+            .text(&_app.console_txt)
             .render(t, area);
     }
 

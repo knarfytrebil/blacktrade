@@ -4,7 +4,7 @@ use redux::{Store};
 use store::loops::AppState;
 
 pub fn writeConsole(line: String) {
-    debug!("line: {:?}", line);
+    
 }
 
 pub trait MainStore {

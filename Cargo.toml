@@ -4,12 +4,11 @@ version = "0.0.1"
 authors = ["Frank Yao <frank.yao@cyanide.io>"]
 
 [dependencies]
+redux = { git = "https://github.com/knarfytrebil/redux-rs.git", branch = "master" }
 log = { version = "^0.4.1", features = ["max_level_debug"] } 
 simplelog = "^0.5.0"
-redux = { git = "https://github.com/knarfytrebil/redux-rs.git", branch = "master" }
 json = "*"
 termion = "*"
-logwatcher = "0.1"
 
 [dependencies.ws]
 version = "*"
