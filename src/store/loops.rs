@@ -129,7 +129,9 @@ impl AppState {
             event::Key::Char('\n') => { 
                 let cmd = self.command.split_off(1);
                 info!("Command Issued: {:?}", cmd);
-                let line = String::from("{fg=green [command] }") + &cmd + &String::from("\n");
+                let line = String::from("{fg=green [command] }") 
+                    + &cmd 
+                    + &String::from("\n");
                 self.console_txt.push_str(&line);
             },
             event::Key::Char(_char) => { self.command.push(_char); },
