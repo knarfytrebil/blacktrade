@@ -19,7 +19,7 @@ pub mod instance {
             .sizes(&[Size::Fixed(3), Size::Min(1), Size::Fixed(1), Size::Fixed(1)])
             .render(t, &app.size, |t, chunks| {
                 Tabs::default()
-                    .block(Block::default().borders(Borders::ALL).title("Tabs"))
+                    .block(Block::default().borders(Borders::ALL))
                     .titles(&app.tabs.titles)
                     .style(Style::default().fg(Color::Green))
                     .highlight_style(Style::default().fg(Color::Yellow))
