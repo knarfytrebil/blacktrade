@@ -55,8 +55,7 @@ fn main() {
 
     // Input
     thread::spawn(move || {
-        let stdin = io::stdin();
-        for c in stdin.keys() {
+        for c in io::stdin().keys() {
             let evt = c.unwrap();
             input_tx.send(Event::Input(evt)).unwrap();
         }
@@ -99,5 +98,5 @@ fn main() {
     }
 
     // show cursor on end
-    terminal.show_cursor().unwrap();
+    // terminal.show_cursor().unwrap();
 }
