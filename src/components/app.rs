@@ -16,10 +16,10 @@ pub mod instance {
         -> Result<(), io::Error> {
         Group::default()
             .direction(Direction::Vertical)
-            .sizes(&[Size::Fixed(3), Size::Min(1), Size::Fixed(1), Size::Fixed(1)])
+            .sizes(&[Size::Fixed(1), Size::Min(1), Size::Fixed(1), Size::Fixed(1)])
             .render(t, &app.size, |t, chunks| {
                 Tabs::default()
-                    .block(Block::default().borders(Borders::ALL))
+                    // .block(Block::default().borders(Borders::TOP))
                     .titles(&app.tabs.titles)
                     .style(Style::default().fg(Color::Green))
                     .highlight_style(Style::default().fg(Color::Yellow))

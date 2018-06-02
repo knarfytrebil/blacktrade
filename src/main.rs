@@ -59,9 +59,6 @@ fn main() {
         for c in stdin.keys() {
             let evt = c.unwrap();
             input_tx.send(Event::Input(evt)).unwrap();
-            if evt == event::Key::Char('q') {
-                break;
-            }
         }
     });
 
@@ -93,14 +90,10 @@ fn main() {
             terminal.resize(size).unwrap();
             let _ = store.dispatch(AppAction::ResizeApp(size));
         }
+
         match rx.recv().unwrap() {
-            Event::Input(input) => match input { 
-                event::Key::Char('q') => { break; },
-                _ => { store.dispatch(AppAction::Keyboard(input)); }
-            },
-            Event::Render(app_state) => { 
-                app::instance::render(&mut terminal, &app_state); 
-            },
+            Event::Input(input) => { store.dispatch(AppAction::Keyboard(input)); },
+            Event::Render(app_state) => { app::instance::render(&mut terminal, &app_state); },
             _ => {}
         }
     }

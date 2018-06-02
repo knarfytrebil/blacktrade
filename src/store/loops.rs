@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+use std::process;
 use termion::{event, color, style};
 use tui::layout::{Rect};
 
@@ -128,6 +129,7 @@ impl AppState {
             // Must be above Char(_char)
             event::Key::Char('\n') => { 
                 let cmd = self.command.split_off(1);
+                if &cmd == "q" { process::exit(0); };
                 info!("Command Issued: {:?}", cmd);
                 let line = String::from("{fg=green [command] }") 
                     + &cmd 
