@@ -11,8 +11,7 @@ mod components;
 mod utils;
 mod middlewares;
 
-use std::io;
-use std::thread;
+use std::{io, thread};
 use std::sync::mpsc;
 use std::boxed::Box;
 use std::fs::File;
@@ -27,7 +26,6 @@ use tui::backend::MouseBackend;
 
 use redux::{Store};
 use store::helpers::{MainStore, writeConsole};
-
 use store::loops::{AppState, AppAction};
 use store::events::Event;
 use middlewares::term::Term;
