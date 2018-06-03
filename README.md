@@ -1,4 +1,4 @@
-# crypto.rs
+# Crypto Commander 
 
 ## Prerequisites
 
