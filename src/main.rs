@@ -1,6 +1,5 @@
 extern crate termion; 
-extern crate tui;
-extern crate redux;
+extern crate tui; extern crate redux;
 
 #[macro_use]
 extern crate log;
