@@ -1,12 +1,12 @@
 #![allow(dead_code)]
-use termion::{color, event, style};
+use termion::event;
 use tui::layout::Rect;
 
-use tui::backend::Backend;
-use tui::backend::MouseBackend;
-use tui::Terminal;
+// use tui::backend::Backend;
+// use tui::backend::MouseBackend;
+// use tui::Terminal;
 
-use redux::{Reducer, Store};
+use redux::Reducer;
 use store::tab::TopTabs;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -94,7 +94,6 @@ impl Reducer for AppState {
             AppAction::ConsoleWrite(line) => {
                 self.console_txt.push_str(&line);
             }
-            _ => {}
         }
         Ok(self.clone())
     }
@@ -109,9 +108,6 @@ impl AppState {
             }
             ModeCategory::Command => {
                 Self::command_key_handler(self, evt);
-            }
-            _ => {
-                error!("Wrong Command Type");
             }
         }
     }

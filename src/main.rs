@@ -18,7 +18,6 @@ use std::io::ErrorKind;
 use std::sync::mpsc;
 use std::{io, process, thread};
 
-use termion::event;
 use termion::input::TermRead;
 
 use tui::backend::MouseBackend;
@@ -28,7 +27,6 @@ use components::app;
 use middlewares::term::Term;
 use redux::Store;
 use store::events::Event;
-use store::helpers::{writeConsole, MainStore};
 use store::loops::{AppAction, AppState};
 
 fn main() {
