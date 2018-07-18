@@ -14,6 +14,7 @@ mod utils;
 use simplelog::*;
 use std::boxed::Box;
 use std::fs::File;
+use std::io::ErrorKind;
 use std::sync::mpsc;
 use std::{io, process, thread};
 
@@ -89,7 +90,7 @@ fn main() {
             Event::Render(app_state) => {
                 match app::instance::render(&mut terminal, &app_state) {
                     Err(e) => match e.kind() {
-                        io::ErrorKind::Interrupted => {
+                        ErrorKind::Interrupted => {
                             break;
                         }
                         _ => {
