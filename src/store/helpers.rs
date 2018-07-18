@@ -3,14 +3,18 @@ use std::sync::mpsc;
 use store::events::Event;
 use store::loops::AppState;
 
-pub fn writeConsole(line: String) {}
+pub fn write_console(line: String) {
+    println!("{}", line);
+}
 
 pub trait MainStore {
-    fn get_writeConsole(tx: mpsc::Sender<Event>) -> fn(String);
+    fn get_write_console(tx: mpsc::Sender<Event>) -> fn(String);
 }
 
 impl MainStore for Store<AppState> {
-    fn get_writeConsole(tx: mpsc::Sender<Event>) -> fn(String) {
-        writeConsole
+    fn get_write_console(tx: mpsc::Sender<Event>) -> fn(String) {
+        match tx {
+            _ => return |line| write_console(line),
+        }
     }
 }

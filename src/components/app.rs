@@ -2,12 +2,11 @@ pub mod instance {
 
     use std::io;
     use std::io::{Error, ErrorKind};
-    use std::process;
     use store::loops::AppState;
     use tui::backend::MouseBackend;
     use tui::layout::{Direction, Group, Size};
     use tui::style::{Color, Style};
-    use tui::widgets::{Block, Borders, Tabs, Widget};
+    use tui::widgets::{Tabs, Widget};
     use tui::Terminal;
 
     use components::command_bar;
@@ -40,5 +39,4 @@ pub mod instance {
         try!(terminal.draw());
         return Ok(());
     }
-
 }
