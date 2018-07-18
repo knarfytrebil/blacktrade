@@ -1,23 +1,27 @@
 pub mod instance {
 
     use std::io;
-    use tui::Terminal;
-    use tui::backend::MouseBackend;
-    use tui::style::{Color, Style};
-    use tui::layout::{Direction, Group, Size};
-    use tui::widgets::{Block, Borders, Widget, Tabs};
+    use std::io::{Error, ErrorKind};
+    use std::process;
     use store::loops::AppState;
+    use tui::backend::MouseBackend;
+    use tui::layout::{Direction, Group, Size};
+    use tui::style::{Color, Style};
+    use tui::widgets::{Block, Borders, Tabs, Widget};
+    use tui::Terminal;
 
-    use components::status_bar;
     use components::command_bar;
     use components::command_output;
+    use components::status_bar;
 
-    pub fn render(t: &mut Terminal<MouseBackend>, app: &AppState) 
-        -> Result<(), io::Error> {
+    pub fn render(terminal: &mut Terminal<MouseBackend>, app: &AppState) -> Result<(), io::Error> {
+        if app.exiting {
+            return Err(Error::new(ErrorKind::Interrupted, "Exit App"));
+        }
         Group::default()
             .direction(Direction::Vertical)
             .sizes(&[Size::Fixed(1), Size::Min(1), Size::Fixed(1), Size::Fixed(1)])
-            .render(t, &app.size, |t, chunks| {
+            .render(terminal, &app.size, |t, chunks| {
                 Tabs::default()
                     // .block(Block::default().borders(Borders::TOP))
                     .titles(&app.tabs.titles)
@@ -25,16 +29,16 @@ pub mod instance {
                     .highlight_style(Style::default().fg(Color::Yellow))
                     .select(app.tabs.selection)
                     .render(t, &chunks[0]);
-                    match app.tabs.selection {
-                        0 => { command_output::instance::render(t, app, &chunks[1]) }
-                        1 => { }
-                        _ => { }
-                    }
+                match app.tabs.selection {
+                    0 => command_output::instance::render(t, app, &chunks[1]),
+                    1 => {}
+                    _ => {}
+                }
                 status_bar::instance::render(t, app, &chunks[2]);
                 command_bar::instance::render(t, app, &chunks[3]);
             });
-        try!(t.draw());
-        Ok(())
+        try!(terminal.draw());
+        return Ok(());
     }
 
 }
