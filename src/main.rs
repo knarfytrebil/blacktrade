@@ -1,3 +1,4 @@
+extern crate cpython;
 extern crate redux;
 extern crate termion;
 extern crate tui;

@@ -5,7 +5,7 @@ authors = ["Frank Yao <frank.yao@cyanide.io>"]
 
 [dependencies]
 redux = { git = "https://github.com/knarfytrebil/redux-rs.git", branch = "master" }
-log = { version = "^0.4.1", features = ["max_level_debug"] } 
+log = { version = "^0.4.1", features = ["max_level_debug"] }
 simplelog = "^0.5.0"
 json = "*"
 termion = "*"
@@ -16,5 +16,11 @@ features = ["ssl"]
 
 [dependencies.tui]
 version = "0.2.1"
-default-features = true 
+default-features = true
 features = ['termion']
+
+[dependencies.cpython]
+version = "0.2.0"
+default-features = false
+features = ["python27-sys"]
+# features = ["python3-sys"]
