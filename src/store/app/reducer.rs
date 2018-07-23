@@ -1,3 +1,7 @@
+use redux::Reducer;
+use store::app::{AppState};
+use store::action::AppAction;
+
 impl Reducer for AppState {
     type Action = AppAction;
     type Error = String;

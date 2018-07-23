@@ -1,5 +1,8 @@
+use termion::event;
+use store::app::{AppState};
+
 impl AppState {
-    fn normal_key_handler(&mut self, evt: event::Key) {
+    pub fn normal_key_handler(&mut self, evt: event::Key) {
         match evt {
             event::Key::Char(':') => {
                 self.set_mode("command");

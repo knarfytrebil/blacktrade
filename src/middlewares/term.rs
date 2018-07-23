@@ -1,7 +1,8 @@
 use redux::{DispatchFunc, Middleware, Store};
 use std::sync::mpsc;
 use store::events::Event;
-use store::loops::{AppAction, AppState};
+use store::app::{AppState};
+use store::action::AppAction;
 
 pub struct Term {
     pub tx: mpsc::Sender<Event>,

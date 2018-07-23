@@ -1,6 +1,6 @@
 pub mod instance {
 
-    use store::loops::AppState;
+    use store::app::{AppState};
     use tui::backend::MouseBackend;
     use tui::layout::Rect;
     use tui::widgets::Block;

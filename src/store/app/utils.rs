@@ -1,6 +1,9 @@
+use store::app::mode::{AppMode};
+use store::app::{AppState};
+
 impl AppState {
     // helper functions
-    fn set_mode(&mut self, mode: &str) {
+    pub fn set_mode(&mut self, mode: &str) {
         match mode {
             "command" => {
                 self.mode = AppMode::get_mode("command");

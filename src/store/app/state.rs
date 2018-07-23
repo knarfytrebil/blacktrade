@@ -1,3 +1,7 @@
+use tui::layout::Rect;
+use store::ui::TopTabs;
+use store::app::mode::{AppMode};
+
 #[derive(Clone, Debug)]
 pub struct AppState {
     pub mode: AppMode,

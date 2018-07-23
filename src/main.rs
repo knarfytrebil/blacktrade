@@ -28,7 +28,8 @@ use components::app;
 use middlewares::term::Term;
 use redux::Store;
 use store::events::Event;
-use store::loops::{AppAction, AppState};
+use store::action::AppAction;
+use store::app::{AppState};
 
 fn main() {
     // Init Logs
