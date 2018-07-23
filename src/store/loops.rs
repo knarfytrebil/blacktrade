@@ -223,12 +223,12 @@ impl ToPyObject for Quote {
     }
 }
 
-fn run_python(py: Python, data: &Vec<Quote>, func_code: &str) -> PyResult<(i32, i32)> {
-    let locals = PyDict::new(py);
-    locals.set_item(py, "data", data)?;
-    match py.run(func_code, None, Some(&locals)) {
+fn run_python(py: Python, data: &Vec<Quote>, func_code: &str) -> PyResult<(i64)> {
+    match py.run(func_code, None, None) {
         Ok(_) => {
-            let res: (i32, i32) = py.eval("trade()", None, Some(&locals))?.extract(py)?;
+            let globals: PyDict = py.eval("globals()", None, None)?.extract(py)?;
+            globals.set_item(py, "data", data)?;
+            let res = py.eval("trade()", Some(&globals), None)?.extract(py)?;
             return Ok(res);
         }
         Err(e) => {
