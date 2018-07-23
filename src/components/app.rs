@@ -1,5 +1,4 @@
 pub mod instance {
-
     use std::io;
     use std::io::{Error, ErrorKind};
     use store::loops::AppState;

@@ -3,7 +3,7 @@ use termion::event;
 use tui::layout::Rect;
 
 use redux::Reducer;
-use store::tab::TopTabs;
+use store::ui::TopTabs;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ModeCategory {

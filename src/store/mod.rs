@@ -2,4 +2,4 @@
 pub mod events;
 pub mod helpers;
 pub mod loops;
-pub mod tab;
+pub mod ui;
