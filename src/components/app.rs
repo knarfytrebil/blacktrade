@@ -1,8 +1,7 @@
 pub mod instance {
-
     use std::io;
     use std::io::{Error, ErrorKind};
-    use store::loops::AppState;
+    use store::app::{AppState};
     use tui::backend::MouseBackend;
     use tui::layout::{Direction, Group, Size};
     use tui::style::{Color, Style};

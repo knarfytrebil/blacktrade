@@ -1,7 +1,7 @@
 use redux::Store;
 use std::sync::mpsc;
 use store::events::Event;
-use store::loops::AppState;
+use store::app::{AppState};
 
 pub fn write_console(line: String) {
     println!("{}", line);
