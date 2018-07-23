@@ -2,10 +2,6 @@ use cpython::{PyDict, PyResult, Python, ToPyObject};
 use termion::event;
 use tui::layout::Rect;
 
-// use tui::backend::Backend;
-// use tui::backend::MouseBackend;
-// use tui::Terminal;
-
 use redux::Reducer;
 use store::tab::TopTabs;
 
