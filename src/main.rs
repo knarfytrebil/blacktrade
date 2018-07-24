@@ -27,9 +27,9 @@ use tui::Terminal;
 use components::app;
 use middlewares::term::Term;
 use redux::Store;
-use store::events::Event;
 use store::action::AppAction;
-use store::app::{AppState};
+use store::app::AppState;
+use store::events::Event;
 
 fn main() {
     // Init Logs

@@ -1,6 +1,14 @@
 use cpython::{PyDict, PyResult, Python, ToPyObject};
+// use std::fmt;
+use store::app::AppState;
 use termion::event;
-use store::app::{AppState};
+
+// impl fmt::Display for PyResult<i64> {
+//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//         // Use `self.number` to refer to each positional data point.
+//         write!(f, "{:?}", self)
+//     }
+// }
 
 struct Quote {
     symbol: String,
@@ -26,18 +34,51 @@ impl ToPyObject for Quote {
     }
 }
 
-fn run_python(py: Python, data: &Vec<Quote>, func_code: &str) -> PyResult<(i64)> {
+fn run_python(py: Python, data: &Vec<Quote>, func_code: &str) -> PyResult<i64> {
     match py.run(func_code, None, None) {
         Ok(_) => {
             let globals: PyDict = py.eval("globals()", None, None)?.extract(py)?;
             globals.set_item(py, "data", data)?;
-            let res = py.eval("trade()", Some(&globals), None)?.extract(py)?;
+            let res = py.eval("main()", Some(&globals), None)?.extract(py)?;
             return Ok(res);
         }
         Err(e) => {
             return Err(e);
         }
     }
+}
+
+fn get_quotes() -> Vec<Quote> {
+    let quotes = vec![
+        Quote {
+            symbol: String::from("btc-usd"),
+            bid_price: 1000,
+            ask_price: 1100,
+            bid_size: 100,
+            ask_size: 100,
+            timestamp: 13213123,
+        },
+        Quote {
+            symbol: String::from("btc-usd"),
+            bid_price: 1000,
+            ask_price: 1100,
+            bid_size: 100,
+            ask_size: 100,
+            timestamp: 13213123,
+        },
+    ];
+
+    return quotes;
+}
+
+fn get_snippet() -> &'static str {
+    return "\n\nimport random\n\ndef main():\n    if random.randint(0, 2) == 0:\n        return 1    \n    return sum([i['ask_price'] for i in data])\n";
+}
+
+macro_rules! format_output {
+    ($color:expr, $title:expr, $output:expr) => {
+        format!("{{fg={} [{}] }} {:?}\n", $color, $title, $output)
+    };
 }
 
 impl AppState {
@@ -56,42 +97,22 @@ impl AppState {
             // Must be above Char(_char)
             event::Key::Char('\n') => {
                 let cmd = self.command.split_off(1);
-                if &cmd == "q" {
-                    self.exiting = true;
-                } else {
-                    info!("Command Issued: {:?}", cmd);
-                    let line = format!("{{fg=green [command] }} {}\n", &cmd);
-                    self.console_txt.push_str(&line);
-                    let gil = Python::acquire_gil();
-                    let py = gil.python();
-                    let quotes = vec![
-                        Quote {
-                            symbol: String::from("btc"),
-                            bid_price: 1000,
-                            ask_price: 1100,
-                            bid_size: 100,
-                            ask_size: 100,
-                            timestamp: 13213123,
-                        },
-                        Quote {
-                            symbol: String::from("btc"),
-                            bid_price: 1000,
-                            ask_price: 1100,
-                            bid_size: 100,
-                            ask_size: 100,
-                            timestamp: 13213123,
-                        },
-                    ];
-                    let res = run_python(
-                        py,
-                        &quotes,
-"\n\nimport random\n\ndef trade():\n    if random.randint(0, 2) == 0:\n        return 1    \n    return sum([i['ask_price'] for i in data])\n"
-                    );
-                    self.console_txt
-                        .push_str(&format!("{{fg=yellow [pyout] }}{:?}\n", &res));
-                    let res = py.eval("sum([1, 2, 3, 4])", None, None);
-                    self.console_txt
-                        .push_str(&format!("{{fg=yellow [pyout] }}{:?}\n", &res));
+                match cmd.as_str() {
+                    "q" => {
+                        self.exiting = true;
+                    }
+                    _ => {
+                        info!("Command Issued: {:?}", cmd);
+                        let line = format_output!("green", "command", &cmd);
+                        self.console_txt.push_str(&line);
+                        let gil = Python::acquire_gil();
+                        let py = gil.python();
+                        let quotes = get_quotes();
+                        let code = get_snippet();
+                        let res = run_python(py, &quotes, code);
+                        self.console_txt
+                            .push_str(&format_output!("yellow", "pyout", &res));
+                    }
                 }
             }
             event::Key::Char(_char) => {

@@ -1,5 +1,5 @@
+use store::app::AppState;
 use termion::event;
-use store::app::{AppState};
 
 impl AppState {
     pub fn normal_key_handler(&mut self, evt: event::Key) {

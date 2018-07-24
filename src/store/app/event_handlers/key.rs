@@ -1,6 +1,6 @@
+use store::app::mode::ModeCategory;
+use store::app::AppState;
 use termion::event;
-use store::app::{AppState};
-use store::app::mode::{ModeCategory};
 
 impl AppState {
     pub fn key_event_handler(&mut self, evt: event::Key) {

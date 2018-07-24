@@ -1,6 +1,6 @@
 use redux::Reducer;
-use store::app::{AppState};
 use store::action::AppAction;
+use store::app::AppState;
 
 impl Reducer for AppState {
     type Action = AppAction;

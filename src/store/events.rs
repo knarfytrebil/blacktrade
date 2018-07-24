@@ -1,4 +1,4 @@
-use store::app::{AppState};
+use store::app::AppState;
 use termion::event;
 
 pub enum Event {

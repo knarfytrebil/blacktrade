@@ -1,5 +1,5 @@
-use tui::layout::Rect;
 use termion::event;
+use tui::layout::Rect;
 
 #[derive(Clone, Debug)]
 pub enum AppAction {

@@ -1,2 +1,2 @@
 mod tabs;
-pub use self::tabs::{TopTabs};
+pub use self::tabs::TopTabs;

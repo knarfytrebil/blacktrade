@@ -1,5 +1,5 @@
-use store::app::mode::{AppMode};
-use store::app::{AppState};
+use store::app::mode::AppMode;
+use store::app::AppState;
 
 impl AppState {
     // helper functions

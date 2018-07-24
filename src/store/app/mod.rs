@@ -1,8 +1,8 @@
+mod event_handlers;
 mod mode;
+mod reducer;
 mod state;
 mod utils;
-mod reducer;
-mod event_handlers;
 
+pub use self::mode::{AppMode, ModeCategory};
 pub use self::state::AppState;
-pub use self::mode::{ModeCategory,AppMode};
