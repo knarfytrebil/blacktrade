@@ -1,11 +1,11 @@
-extern crate cpython;
-extern crate redux;
-extern crate termion;
-extern crate tui;
-
 #[macro_use]
 extern crate log;
+
+extern crate cpython;
+extern crate redux;
 extern crate simplelog;
+extern crate termion;
+extern crate tui;
 
 mod components;
 mod middlewares;
