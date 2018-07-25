@@ -2,10 +2,10 @@
 mod utils;
 
 mod event_handlers;
-mod mode;
 mod reducer;
 mod state;
 mod structs;
 
-pub use self::mode::{AppMode, ModeCategory};
 pub use self::state::AppState;
+pub use self::structs::AppMode;
+pub use self::structs::ModeCategory;

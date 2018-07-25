@@ -1,4 +1,4 @@
-use store::app::mode::ModeCategory;
+use store::app::ModeCategory;
 use store::app::AppState;
 use termion::event;
 

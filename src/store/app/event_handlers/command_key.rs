@@ -1,5 +1,5 @@
 use cpython::Python;
-use store::app::structs::get_quotes;
+use store::app::structs::quote::get_quotes;
 use store::app::utils::{get_snippet, python};
 use store::app::AppState;
 use termion::event;

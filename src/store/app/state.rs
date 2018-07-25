@@ -1,4 +1,4 @@
-use store::app::mode::AppMode;
+use store::app::AppMode;
 use store::ui::TopTabs;
 use tui::layout::Rect;
 

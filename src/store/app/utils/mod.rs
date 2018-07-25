@@ -1,4 +1,4 @@
-use store::app::mode::AppMode;
+use store::app::AppMode;
 use store::app::AppState;
 
 pub mod python;
