@@ -1,3 +1,6 @@
+use std::fs::File;
+use std::io::{Read, Result};
+use std::path::Path;
 use store::app::AppMode;
 use store::app::AppState;
 
@@ -10,15 +13,18 @@ macro_rules! format_output {
     };
 }
 
-pub fn get_snippet() -> &'static str {
-    return 
-"
-import random
-def main():
-    if random.randint(0, 2) == 0:
-        return 1
-    return sum([i['ask_price'] for i in data])
-";
+fn read_file(path: &Path) -> Result<String> {
+    let mut file = File::open(path)?;
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)?;
+    return Ok(contents);
+}
+
+pub fn get_snippet() -> String {
+    match read_file(Path::new("example.py")) {
+        Ok(code) => code,
+        Err(_) => String::from("raise IOError"),
+    }
 }
 
 impl AppState {

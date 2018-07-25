@@ -7,7 +7,7 @@ fn main() {
     hello(gil.python()).unwrap();
 }
 
-fn hello(py: Python) -> PyResult<(i32)> {
+fn hello(py: Python) -> PyResult<i32> {
     let code = "\n\nimport random\n\ndef trade():\n    if random.randint(0, 2) == 0:\n        return 1    \n    return sum(data)\n";
     let data = vec![1, 2, 3, 4];
 

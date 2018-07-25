@@ -1,6 +1,6 @@
 use cpython::{PyDict, PyResult, Python, ToPyObject};
 
-pub fn run<TPO>(py: Python, data: &Vec<TPO>, code: &str) -> PyResult<i64>
+pub fn run<TPO>(py: Python, data: &Vec<TPO>, code: &String) -> PyResult<i64>
 where
     TPO: ToPyObject,
 {

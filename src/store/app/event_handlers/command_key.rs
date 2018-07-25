@@ -32,7 +32,7 @@ impl AppState {
                         let py = gil.python();
                         let quotes = get_quotes();
                         let code = get_snippet();
-                        let res = python::run(py, &quotes, code);
+                        let res = python::run(py, &quotes, &code);
                         self.console_txt
                             .push_str(&format_output!("yellow", "pyout", &res));
                     }
