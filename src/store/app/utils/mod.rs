@@ -11,7 +11,14 @@ macro_rules! format_output {
 }
 
 pub fn get_snippet() -> &'static str {
-    return "\n\nimport random\n\ndef main():\n    if random.randint(0, 2) == 0:\n        return 1    \n    return sum([i['ask_price'] for i in data])\n";
+    return 
+"
+import random
+def main():
+    if random.randint(0, 2) == 0:
+        return 1
+    return sum([i['ask_price'] for i in data])
+";
 }
 
 impl AppState {
