@@ -23,4 +23,5 @@ features = ['termion']
 version = "0.2.0"
 default-features = false
 features = ["python27-sys"]
+# Uncomment the line below when python37 support is available
 # features = ["python3-sys"]

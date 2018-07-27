@@ -1,6 +1,7 @@
+use std::env;
 use store::app::AppMode;
 use store::app::AppState;
-
+use utils::fs::read_file;
 pub mod python;
 
 #[macro_export]
@@ -10,15 +11,11 @@ macro_rules! format_output {
     };
 }
 
-pub fn get_snippet() -> &'static str {
-    return 
-"
-import random
-def main():
-    if random.randint(0, 2) == 0:
-        return 1
-    return sum([i['ask_price'] for i in data])
-";
+pub fn get_snippet(_filepath: &str) -> String {
+    let base_path = env::home_dir().unwrap().join(".cryptocmd");
+    let snippet_path = base_path.join(_filepath); 
+    let _path_str = snippet_path.to_string_lossy();
+    return read_file(&_path_str);
 }
 
 impl AppState {
