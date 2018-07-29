@@ -1,4 +1,5 @@
 use store::app::AppMode;
+use store::app::structs::CommandHandler;
 use store::ui::TopTabs;
 use tui::layout::Rect;
 
@@ -10,6 +11,7 @@ pub struct AppState {
     pub command: String,
     pub console_txt: String,
     pub exiting: bool,
+    pub command_handlers: CommandHandler,
 }
 
 impl AppState {
@@ -24,6 +26,7 @@ impl AppState {
             command: String::from(""),
             console_txt: String::from(""),
             exiting: false,
+            command_handlers: CommandHandler::new(),
         }
     }
 }
