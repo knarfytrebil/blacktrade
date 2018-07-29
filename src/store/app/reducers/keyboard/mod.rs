@@ -1,3 +1,6 @@
+mod command_key;
+mod normal_key;
+
 use store::app::ModeCategory;
 use store::app::AppState;
 use termion::event;

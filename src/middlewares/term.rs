@@ -20,9 +20,8 @@ impl Middleware<AppState> for Term {
         match &action {
             &AppAction::Keyboard(Key::Char('\n')) => {
                 let cmd = store.get_state().command.split_off(1);
-                debug!("Command Issued {:?}", cmd);
-
                 let line = format_output!("green", "In", &cmd);
+                debug!("Command Issued {:?}", cmd);
                 let _ = store.dispatch(AppAction::ConsoleWrite(line));
                 let _ = store.dispatch(AppAction::Command(cmd));
             }

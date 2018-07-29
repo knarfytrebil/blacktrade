@@ -25,7 +25,6 @@ use termion::input::TermRead;
 use tui::backend::MouseBackend;
 use tui::Terminal;
 
-use utils::format;
 use components::app;
 use middlewares::term::Term;
 use redux::Store;
