@@ -7,10 +7,11 @@ extern crate simplelog;
 extern crate termion;
 extern crate tui;
 
+#[macro_use]
+mod utils;
 mod components;
 mod middlewares;
 mod store;
-mod utils;
 
 use simplelog::*;
 use std::boxed::Box;
@@ -24,6 +25,7 @@ use termion::input::TermRead;
 use tui::backend::MouseBackend;
 use tui::Terminal;
 
+use utils::format;
 use components::app;
 use middlewares::term::Term;
 use redux::Store;
@@ -90,9 +92,7 @@ fn main() {
             Event::Render(app_state) => {
                 match app::instance::render(&mut terminal, &app_state) {
                     Err(e) => match e.kind() {
-                        ErrorKind::Interrupted => {
-                            break;
-                        }
+                        ErrorKind::Interrupted => { break; }
                         _ => {
                             eprintln!("Application Error: {}", e);
                             process::exit(1);

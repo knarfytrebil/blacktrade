@@ -17,6 +17,11 @@ impl Reducer for AppState {
             AppAction::ConsoleWrite(line) => {
                 self.console_txt.push_str(&line);
             }
+            AppAction::Command(command) => {
+                // let line = format_output!("green", "In", &command);
+                // self.console_txt.push_str(&line);
+            }
+
         }
         Ok(self.clone())
     }

@@ -1,5 +1,6 @@
-use redux::{DispatchFunc, Middleware, Store};
 use std::sync::mpsc;
+use termion::event::Key;
+use redux::{DispatchFunc, Middleware, Store};
 use store::action::AppAction;
 use store::app::AppState;
 use store::events::Event;
@@ -16,7 +17,17 @@ impl Middleware<AppState> for Term {
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
         debug!("Called action: {:?}", action);
-        let result = next(store, action);
-        result
+        match &action {
+            &AppAction::Keyboard(Key::Char('\n')) => {
+                let cmd = store.get_state().command.split_off(1);
+                debug!("Command Issued {:?}", cmd);
+
+                let line = format_output!("green", "In", &cmd);
+                let _ = store.dispatch(AppAction::ConsoleWrite(line));
+                let _ = store.dispatch(AppAction::Command(cmd));
+            }
+            _ => { }
+        }
+        next(store, action)
     }
 }

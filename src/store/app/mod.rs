@@ -1,10 +1,9 @@
-#[macro_use]
 mod utils;
-
 mod event_handlers;
-mod reducer;
+mod reducers;
 mod state;
 mod structs;
+mod commands;
 
 pub use self::state::AppState;
 pub use self::structs::AppMode;

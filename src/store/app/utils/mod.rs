@@ -4,15 +4,16 @@ use store::app::AppState;
 use utils::fs::read_file;
 pub mod python;
 
-#[macro_export]
-macro_rules! format_output {
-    ($color:expr, $title:expr, $output:expr) => {
-        format!("{{fg={} [{}] }} {:?}\n", $color, $title, $output)
-    };
-}
+// #[macro_export]
+// macro_rules! format_output {
+//     ($color:expr, $title:expr, $output:expr) => {
+//         format!("{{fg={} [{}] }} {:?}\n", $color, $title, $output)
+//     };
+// }
 
 pub fn get_snippet(_filepath: &str) -> String {
-    let base_path = env::home_dir().unwrap().join(".cryptocmd");
+    let config_dir = ".cryptocmd";
+    let base_path = env::home_dir().unwrap().join(config_dir);
     let snippet_path = base_path.join(_filepath); 
     let _path_str = snippet_path.to_string_lossy();
     return read_file(&_path_str);
