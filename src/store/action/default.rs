@@ -7,4 +7,5 @@ pub enum AppAction {
     Keyboard(event::Key),
     ConsoleWrite(String),
     Command(String),
+    Error(String),
 }

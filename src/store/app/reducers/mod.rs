@@ -1,5 +1,7 @@
 mod commands;
+mod error;
 mod keyboard;
+
 use redux::Reducer;
 use store::action::AppAction;
 use store::app::AppState;
@@ -10,10 +12,21 @@ impl Reducer for AppState {
 
     fn reduce(&mut self, action: Self::Action) -> Result<Self, Self::Error> {
         match action {
-            AppAction::ResizeApp(size) => { self.size = size; }
-            AppAction::ConsoleWrite(line) => { self.console_txt.push_str(&line); }
-            AppAction::Keyboard(key_evt) => { Self::key_event_handler(self, key_evt); }
-            AppAction::Command(command) => { Self::command_handler(self, command); }
+            AppAction::ResizeApp(size) => {
+                self.size = size;
+            }
+            AppAction::ConsoleWrite(line) => {
+                self.console_txt.push_str(&line);
+            }
+            AppAction::Keyboard(key_evt) => {
+                Self::key_event_handler(self, key_evt);
+            }
+            AppAction::Command(command) => {
+                Self::command_handler(self, command);
+            }
+            AppAction::Error(error) => {
+                Self::error_handler(self, error);
+            }
         }
         Ok(self.clone())
     }
