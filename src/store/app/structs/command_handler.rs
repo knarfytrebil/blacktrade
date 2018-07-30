@@ -1,20 +1,15 @@
-use std::collections::HashMap;
+use store::app::AppState;
 
-type Callback = fn(String) -> Option<()>;
+pub type CmdCallback = fn(&mut AppState, String) -> bool;
 
-#[derive(Clone, Debug)]
-pub struct CommandHandler {
-    command_function: HashMap<String, Callback>,
-}
-
-impl CommandHandler {
-    pub fn new() -> CommandHandler {
-        CommandHandler {
-            command_function: HashMap::new()
-        }
+impl AppState {
+    pub fn add_command_function(&mut self, name: String, func: CmdCallback) {
+        self.cmd_reg.insert(name, func);
     }
 
-    fn add_command_function(&mut self, name: String, func: Callback) {
-        self.command_function.insert(name, func);
+    pub fn test_cb(&mut self, txt: String) -> bool {
+        debug!("hello, {:?}", txt);
+        self.exiting = true;
+        true
     }
 }
