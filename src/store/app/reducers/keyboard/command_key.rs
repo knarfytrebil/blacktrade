@@ -15,13 +15,7 @@ impl AppState {
                 }
             }
             // Must be above Char(_char)
-            event::Key::Char('\n') => {
-                let cmd = self.command.split_off(1);
-                match cmd.as_str() {
-                    "q" => { self.exiting = true; }
-                    _ => { }
-                }
-            }
+            event::Key::Char('\n') => { self.command.split_off(1); }
             event::Key::Char(_char) => { self.command.push(_char); }
             _ => {}
         }

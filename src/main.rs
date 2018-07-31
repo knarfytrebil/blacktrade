@@ -24,13 +24,13 @@ use termion::input::TermRead;
 
 use tui::backend::MouseBackend;
 use tui::Terminal;
-
-use components::app;
-use middlewares::term::Term;
 use redux::Store;
+
+use middlewares::{KeyboardMiddleWare, CommandMiddleWare};
 use store::action::AppAction;
 use store::app::AppState;
 use store::events::Event;
+use components::app;
 
 fn main() {
     // Init Logs
@@ -47,7 +47,7 @@ fn main() {
     // Channels
     let (tx, rx) = mpsc::channel();
 
-    let (input_tx, render_tx, term_tx) = (tx.clone(), tx.clone(), tx.clone());
+    let (input_tx, render_tx) = (tx.clone(), tx.clone());
 
     // Input
     thread::spawn(move || {
@@ -58,10 +58,14 @@ fn main() {
     });
 
     // Middlewares
-    let term_mw = Box::new(Term { tx: term_tx });
+    let keyboard_mw = Box::new(KeyboardMiddleWare { });
+    let command_mw = Box::new(CommandMiddleWare { });
 
     // App & State
-    let store: Store<AppState> = Store::new(vec![term_mw]);
+    let store: Store<AppState> = Store::new(vec![
+        keyboard_mw,
+        command_mw,
+    ]);
 
     // Create Subscription from store to render
     store.subscribe(Box::new(move |store, _| {
