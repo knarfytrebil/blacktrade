@@ -27,7 +27,7 @@ fn validate_action(state: &AppState, action: &AppAction) -> AppAction {
         AppAction::Command(ref cmd) => match state.cmd_reg.contains_key(cmd) {
             true => return action.clone(),
             false => {
-                let error = format_output!("red", "Error", "Unregistered command");
+                let error = format_output!("red", "Error", "Invalid Command");
                 return AppAction::Error(error);
             }
         },
