@@ -23,7 +23,13 @@ impl Middleware<AppState> for KeyboardMiddleWare {
             &AppAction::Keyboard(key) => {
                 debug!("Called Keyboard Action: {:?}", action);
                 let _state = store.get_state();
-                let _action = get_key_action(action, _state);
+                match get_key_action(key, _state) {
+                    Ok(_action) => { 
+                        debug!("Dispatching: {:?}", &_action);
+                        let _ = store.dispatch(_action); 
+                    }
+                    Err(err) => { debug!("Got Error {:?}", err) }
+                }
             }
             _ => {}
         }
@@ -31,31 +37,31 @@ impl Middleware<AppState> for KeyboardMiddleWare {
     }
 }
 
-fn get_key_action(_action: AppAction, _state: AppState) -> AppAction {
+fn get_key_action(_key: Key, _state: AppState) -> Result<AppAction, String> {
     match _state.mode.category {
-        ModeCategory::Normal => get_normal_key_action(_action, _state),
-        ModeCategory::Command => get_command_key_action(_action, _state)
+        ModeCategory::Normal => normal_key(_key, _state),
+        ModeCategory::Command => command_key(_key, _state)
     }
 }
 
-fn get_normal_key_action (action: AppAction, state: AppState) -> AppAction {
-    match action {
-        AppAction::Keyboard(Key::Char(':')) => AppAction::SetMode(ModeCategory::Command),
-        _ => action
+fn normal_key (_key: Key, state: AppState) -> Result<AppAction, String> {
+    match _key {
+        Key::Char(':') => Ok(AppAction::SetMode(ModeCategory::Command)),
+        _ => Err(String::from("Key not Implemented"))
     }
 }   
 
 
-fn get_command_key_action (action: AppAction, mut state: AppState) -> AppAction {
-    match action {
-        AppAction::Keyboard(Key::Char('\n')) => {
+fn command_key (_key: Key, mut state: AppState) -> Result<AppAction, String> {
+    match _key {
+        Key::Char('\n') => {
             let cmd = state.command.split_off(1);
             // let prompt_in = format_output!("green", "In", &cmd);
             // let _ = store.dispatch(AppAction::ConsoleWrite(prompt_in));
-            AppAction::Command(Phase::Validate(cmd))
+            Ok(AppAction::Command(Phase::Validate(cmd)))
         }
-        AppAction::Keyboard(Key::Char(_char)) => AppAction::CommandBarAppend(_char.to_string()),
-        AppAction::Keyboard(Key::Esc) => AppAction::SetMode(ModeCategory::Normal),
-        _  => action 
+        Key::Esc => Ok(AppAction::SetMode(ModeCategory::Normal)),
+        Key::Char(_char) => Ok(AppAction::CommandBarAppend(_char.to_string())),
+        _  => Err(String::from("Key not Implemented")) 
     }
 }
