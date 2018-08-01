@@ -6,19 +6,19 @@ use termion::event;
 
 impl AppState {
     pub fn command_key_handler(&mut self, evt: event::Key) {
-        match evt {
-            event::Key::Esc => { self.set_mode("normal"); }
-            event::Key::Backspace => {
-                match self.command.as_ref() {
-                    ":" => { self.set_mode("normal"); }
-                    _ =>  { self.command.pop(); }
-                }
-            }
-            // Must be above Char(_char)
-            event::Key::Char('\n') => { self.command.split_off(1); }
-            event::Key::Char(_char) => { self.command.push(_char); }
-            _ => {}
-        }
+        // match evt {
+        //     event::Key::Esc => { self.set_mode("normal"); }
+        //     event::Key::Backspace => {
+        //         match self.command.as_ref() {
+        //             ":" => { self.set_mode("normal"); }
+        //             _ =>  { self.command.pop(); }
+        //         }
+        //     }
+        //     // Must be above Char(_char)
+        //     event::Key::Char('\n') => { self.command.split_off(1); }
+        //     event::Key::Char(_char) => { self.command.push(_char); }
+        //     _ => {}
+        // }
     }
 }
 

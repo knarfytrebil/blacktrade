@@ -19,19 +19,11 @@ impl Middleware<AppState> for KeyboardMiddleWare {
         action: AppAction,
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
-        debug!("Called action: {:?}", action);
-        let mut _state = store.get_state();
         match &action {
-            &AppAction::Keyboard(Key::Char('\n')) => {
-                let cmd = _state.command.split_off(1);
-                let prompt_in = format_output!("green", "In", &cmd);
-                let _ = store.dispatch(AppAction::ConsoleWrite(prompt_in));
-                let _ = store.dispatch(AppAction::Command(Phase::Validate(cmd)));
-            }
-            &AppAction::Keyboard(Key::Char(':')) => {
-
-            }
-            &AppAction::Keyboard(Key::Esc) => {
+            &AppAction::Keyboard(key) => {
+                debug!("Called Keyboard Action: {:?}", action);
+                let _state = store.get_state();
+                let _action = get_key_action(action, _state);
             }
             _ => {}
         }
@@ -39,21 +31,31 @@ impl Middleware<AppState> for KeyboardMiddleWare {
     }
 }
 
-fn get_mode_change_action (state: AppState, key: Key) -> AppAction {
-    match state.mode.category {
-        ModeCategory::Normal => {
-            match key {
-                Key::Char(':') => AppAction::SetMode(ModeCategory::Command),
-                _ => {},
-            }
-        }
-        ModeCategory::Command => {
-            match key {
-                Key::Char(_char) => AppAction::CommandBarAppend(_char),
-                Key::Esc => AppAction::SetMode(ModeCategory::Normal),
-                _  => {}
-            }
+fn get_key_action(_action: AppAction, _state: AppState) -> AppAction {
+    match _state.mode.category {
+        ModeCategory::Normal => get_normal_key_action(_action, _state),
+        ModeCategory::Command => get_command_key_action(_action, _state)
+    }
+}
 
+fn get_normal_key_action (action: AppAction, state: AppState) -> AppAction {
+    match action {
+        AppAction::Keyboard(Key::Char(':')) => AppAction::SetMode(ModeCategory::Command),
+        _ => action
+    }
+}   
+
+
+fn get_command_key_action (action: AppAction, mut state: AppState) -> AppAction {
+    match action {
+        AppAction::Keyboard(Key::Char('\n')) => {
+            let cmd = state.command.split_off(1);
+            // let prompt_in = format_output!("green", "In", &cmd);
+            // let _ = store.dispatch(AppAction::ConsoleWrite(prompt_in));
+            AppAction::Command(Phase::Validate(cmd))
         }
-    }   
+        AppAction::Keyboard(Key::Char(_char)) => AppAction::CommandBarAppend(_char.to_string()),
+        AppAction::Keyboard(Key::Esc) => AppAction::SetMode(ModeCategory::Normal),
+        _  => action 
+    }
 }
