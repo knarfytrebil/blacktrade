@@ -22,8 +22,7 @@ impl Middleware<AppState> for CommandMiddleWare {
             &AppAction::Command(Phase::Validate(ref cmd)) => {
                 match store.get_state().cmd_reg.contains_key(cmd) {
                     true => {
-                        let command = cmd.clone();
-                        let _ = store.dispatch(AppAction::Command(Phase::Run(command)));
+                        let _ = store.dispatch(AppAction::Command(Phase::Run(cmd.clone())));
                     },
                     false => {
                         let error = format_output!("red", "Error", "Invalid Command");
