@@ -51,7 +51,6 @@ fn normal_key (_key: Key, state: AppState) -> Result<AppAction, String> {
     }
 }   
 
-
 fn command_key (_key: Key, mut state: AppState) -> Result<AppAction, String> {
     match _key {
         Key::Char('\n') => {
