@@ -1,6 +1,7 @@
 mod commands;
 mod error;
 mod keyboard;
+mod mode;
 
 use redux::Reducer;
 use store::action::AppAction;
@@ -13,8 +14,9 @@ impl Reducer for AppState {
 
     fn reduce(&mut self, action: Self::Action) -> Result<Self, Self::Error> {
         match action {
-            AppAction::ResizeApp(size) => {
-                self.size = size;
+            AppAction::ResizeApp(size) => { self.size = size; }
+            AppAction::SetMode(mode) => { 
+                let _state = mode::set_mode(self, mode);
             }
             AppAction::ConsoleWrite(line) => {
                 self.console_txt.push_str(&line);
@@ -32,4 +34,10 @@ impl Reducer for AppState {
         }
         Ok(self.clone())
     }
+}
+
+type ReducerFunc = fn(&mut AppState, AppAction) -> Result<&mut AppState, String>;
+
+fn map_reducers (reducers: Vec<ReducerFunc>) -> ReducerFunc {
+
 }

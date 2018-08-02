@@ -1,7 +1,7 @@
 pub mod command;
 use termion::event;
 use tui::layout::Rect;
-use store::app::{ModeCategory};
+use store::app::{AppMode};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum AppAction {
@@ -11,5 +11,5 @@ pub enum AppAction {
     Command(command::Phase),
     CommandBarAppend(String),
     Error(String),
-    SetMode(ModeCategory),
+    SetMode(AppMode),
 }

@@ -1,7 +1,7 @@
 use redux::{DispatchFunc, Middleware, Store};
 use store::action::AppAction;
 use store::action::command::Phase;
-use store::app::{AppState, ModeCategory};
+use store::app::{AppState, AppMode, ModeCategory};
 use termion::event::Key;
 
 // use std::sync::mpsc;
@@ -46,7 +46,7 @@ fn get_key_action(_key: Key, _state: AppState) -> Result<AppAction, String> {
 
 fn normal_key (_key: Key, state: AppState) -> Result<AppAction, String> {
     match _key {
-        Key::Char(':') => Ok(AppAction::SetMode(ModeCategory::Command)),
+        Key::Char(':') => Ok(AppAction::SetMode(AppMode::get_mode("command"))),
         _ => Err(String::from("Key not Implemented"))
     }
 }   
@@ -59,7 +59,7 @@ fn command_key (_key: Key, mut state: AppState) -> Result<AppAction, String> {
             // let _ = store.dispatch(AppAction::ConsoleWrite(prompt_in));
             Ok(AppAction::Command(Phase::Validate(cmd)))
         }
-        Key::Esc => Ok(AppAction::SetMode(ModeCategory::Normal)),
+        Key::Esc => Ok(AppAction::SetMode(AppMode::get_mode("normal"))),
         Key::Char(_char) => Ok(AppAction::CommandBarAppend(_char.to_string())),
         _  => Err(String::from("Key not Implemented")) 
     }
