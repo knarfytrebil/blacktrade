@@ -38,6 +38,18 @@ impl Reducer for AppState {
 
 type ReducerFunc = fn(&mut AppState, AppAction) -> Result<&mut AppState, String>;
 
-fn map_reducers (reducers: Vec<ReducerFunc>) -> ReducerFunc {
-
-}
+// fn map_reducers (reducers: Vec<ReducerFunc>) -> Box<ReducerFunc> {
+//     // let _combined_reducer = |state: &mut AppState, action: AppAction| {
+//     //     reducers.iter().fold(action, |reducer| {
+//     //         match reducer(state, action) {
+//     //             Ok(state) => { state }
+//     //             Err(error) => { error }
+//     //         }
+//     //     })
+//     // };
+//     // fn combined_reducer(state: &mut AppState, action: AppAction) -> Result<&mut AppState, String> {
+//     // }
+//     Box::new(move |state, action| {
+//         Ok(reducers[0])
+//     })
+// }
