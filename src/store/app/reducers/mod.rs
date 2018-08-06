@@ -1,22 +1,37 @@
 mod commands;
 mod error;
 mod keyboard;
-mod mode;
+// mod mode;
 
 use redux::Reducer;
 use store::action::AppAction;
 use store::action::command::Phase;
 use store::app::AppState;
 
+type ReducerFn = Fn(AppState, AppAction) -> Result<AppState, String>;
+type ReducerArray = Vec<Box<ReducerFn>>;
+
 impl Reducer for AppState {
     type Action = AppAction;
     type Error = String;
 
     fn reduce(&mut self, action: Self::Action) -> Result<Self, Self::Error> {
+        let set_mode = Box::new(|mut state: AppState, action: AppAction| -> Result<AppState, String> {
+            match action {
+                AppAction::SetMode(mode) => {
+                    state.mode = mode;
+                    Ok(state)
+                }
+                _ => { Ok(state) }
+            }
+
+        });
         match action {
             AppAction::ResizeApp(size) => { self.size = size; }
             AppAction::SetMode(mode) => { 
-                let _state = mode::set_mode(self, mode);
+                let reducers: ReducerArray = vec![set_mode];
+                let _state = combined_reducer(reducers)(self.clone(), action.clone()).unwrap();
+                // let _state = mode::set_mode(self, mode);
             }
             AppAction::ConsoleWrite(line) => {
                 self.console_txt.push_str(&line);
@@ -36,20 +51,11 @@ impl Reducer for AppState {
     }
 }
 
-type ReducerFunc = fn(&mut AppState, AppAction) -> Result<&mut AppState, String>;
-
-// fn map_reducers (reducers: Vec<ReducerFunc>) -> Box<ReducerFunc> {
-//     // let _combined_reducer = |state: &mut AppState, action: AppAction| {
-//     //     reducers.iter().fold(action, |reducer| {
-//     //         match reducer(state, action) {
-//     //             Ok(state) => { state }
-//     //             Err(error) => { error }
-//     //         }
-//     //     })
-//     // };
-//     // fn combined_reducer(state: &mut AppState, action: AppAction) -> Result<&mut AppState, String> {
-//     // }
-//     Box::new(move |state, action| {
-//         Ok(reducers[0])
-//     })
-// }
+fn combined_reducer(reducers: Vec<Box<ReducerFn>>) -> Box<ReducerFn> {
+    Box::new(move |mut state, action| {
+        for reducer in &reducers {
+            state = reducer(state, action).unwrap() 
+        }
+        Ok(state)
+    })
+}
