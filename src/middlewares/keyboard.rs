@@ -19,16 +19,13 @@ impl Middleware<AppState> for KeyboardMiddleWare {
         action: AppAction,
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
+        debug!("[ACT]: {:?}", action);
         match &action {
             &AppAction::Keyboard(key) => {
-                debug!("Called Keyboard Action: {:?}", action);
                 let _state = store.get_state();
                 match get_key_action(key, _state) {
-                    Ok(_action) => { 
-                        debug!("Dispatching: {:?}", &_action);
-                        let _ = store.dispatch(_action); 
-                    }
-                    Err(err) => { debug!("Got Error {:?}", err) }
+                    Ok(_action) => { let _ = store.dispatch(_action); }
+                    Err(err) => { debug!("[ERR] {:?}", err) }
                 }
             }
             _ => {}
@@ -44,7 +41,7 @@ fn get_key_action(_key: Key, _state: AppState) -> Result<AppAction, String> {
     }
 }
 
-fn normal_key (_key: Key, state: AppState) -> Result<AppAction, String> {
+fn normal_key (_key: Key, _state: AppState) -> Result<AppAction, String> {
     match _key {
         Key::Char(':') => Ok(AppAction::SetMode(AppMode::get_mode("command"))),
         _ => Err(String::from("Key not Implemented"))
@@ -53,14 +50,14 @@ fn normal_key (_key: Key, state: AppState) -> Result<AppAction, String> {
 
 fn command_key (_key: Key, mut state: AppState) -> Result<AppAction, String> {
     match _key {
+        Key::Esc => Ok(AppAction::SetMode(AppMode::get_mode("normal"))),
         Key::Char('\n') => {
             let cmd = state.command.split_off(1);
             // let prompt_in = format_output!("green", "In", &cmd);
             // let _ = store.dispatch(AppAction::ConsoleWrite(prompt_in));
             Ok(AppAction::Command(Phase::Validate(cmd)))
         }
-        Key::Esc => Ok(AppAction::SetMode(AppMode::get_mode("normal"))),
-        Key::Char(_char) => Ok(AppAction::CommandBarAppend(_char.to_string())),
+        Key::Char(_char) => Ok(AppAction::CommandBarPush(_char)),
         _  => Err(String::from("Key not Implemented")) 
     }
 }

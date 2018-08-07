@@ -26,7 +26,7 @@ use tui::backend::MouseBackend;
 use tui::Terminal;
 use redux::Store;
 
-use middlewares::{KeyboardMiddleWare, CommandMiddleWare};
+use middlewares::{KeyboardMiddleWare, CommandMiddleWare, CommandBarMiddleWare};
 use store::action::AppAction;
 use store::app::AppState;
 use store::events::Event;
@@ -59,11 +59,13 @@ fn main() {
 
     // Middlewares
     let keyboard_mw = Box::new(KeyboardMiddleWare { });
+    let command_bar_mw = Box::new(CommandBarMiddleWare { });
     let command_mw = Box::new(CommandMiddleWare { });
 
     // App & State
     let store: Store<AppState> = Store::new(vec![
         keyboard_mw,
+        command_bar_mw,
         command_mw,
     ]);
 

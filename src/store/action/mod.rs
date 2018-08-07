@@ -9,7 +9,8 @@ pub enum AppAction {
     Keyboard(event::Key),
     ConsoleWrite(String),
     Command(command::Phase),
-    CommandBarAppend(String),
+    CommandBarPush(char),
+    CommandBarSet(String),
     Error(String),
     SetMode(AppMode),
 }
