@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate log;
 
+extern crate uuid;
 extern crate cpython;
 extern crate redux;
 extern crate simplelog;

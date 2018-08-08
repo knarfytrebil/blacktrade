@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use tui::layout::Rect;
 use store::ui::TopTabs;
 use store::app::AppMode;
-use store::app::structs::CmdCallback;
+use store::app::structs::{CmdCallback, Command};
 
 #[derive(Clone)]
 pub struct AppState {
@@ -13,9 +13,9 @@ pub struct AppState {
     pub command: String,
     pub console_txt: String,
     pub cmd_reg: HashMap<String, CmdCallback>,
-    pub cmd_issued: Vec<String>,
-    pub cmd_running: Vec<String>,
-    pub cmd_ended: Vec<String>,
+    pub cmd_issued: HashMap<String, Command>,
+    pub cmd_running: HashMap<String, Command>,
+    pub cmd_ended: HashMap<String, Command>,
     pub exiting: bool,
 }
 
@@ -32,9 +32,9 @@ impl AppState {
             console_txt: String::from(""),
             exiting: false,
             cmd_reg: HashMap::new(),
-            cmd_issued: Vec::new(),
-            cmd_running: Vec::new(),
-            cmd_ended: Vec::new(),
+            cmd_issued: HashMap::new(),
+            cmd_running: HashMap::new(),
+            cmd_ended: HashMap::new(),
         }
     }
 }
