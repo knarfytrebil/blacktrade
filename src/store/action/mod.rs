@@ -7,10 +7,12 @@ use store::app::{AppMode};
 pub enum AppAction {
     ResizeApp(Rect),
     Keyboard(event::Key),
-    ConsoleWrite(String),
-    Command(command::Phase),
+    CommandValidate,
+    CommandRun(String),
     CommandBarPush(char),
     CommandBarSet(String),
+    CommandBarTake,
+    ConsolePush(String),
     Error(String),
     SetMode(AppMode),
 }

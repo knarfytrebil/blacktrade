@@ -25,3 +25,15 @@ pub fn push() -> Box<ReducerFn> {
         }
     })
 }
+
+pub fn take() -> Box<ReducerFn> {
+    Box::new(|mut state: AppState, action: &AppAction| -> Result<AppState, String> {
+        match action {
+            AppAction::CommandBarTake => {
+                state.cmd_issued.push(state.command.split_off(1));
+                Ok(state)
+            }
+            _ => { Ok(state) }
+        }
+    })
+}

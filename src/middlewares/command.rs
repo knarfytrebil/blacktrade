@@ -1,6 +1,5 @@
 use redux::{DispatchFunc, Middleware, Store};
 use store::action::AppAction;
-use store::action::command::Phase;
 use store::app::AppState;
 
 // use std::sync::mpsc;
@@ -19,19 +18,21 @@ impl Middleware<AppState> for CommandMiddleWare {
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
         match &action {
-            &AppAction::Command(Phase::Validate(ref cmd)) => {
-                match store.get_state().cmd_reg.contains_key(cmd) {
-                    true => {
-                        let _ = store.dispatch(AppAction::Command(Phase::Run(cmd.clone())));
-                    },
-                    false => {
-                        let error = format_output!("red", "Error", "Invalid Command");
-                        let _ = store.dispatch(AppAction::Error(error));
-                    }
-                }
+            &AppAction::CommandBarTake => {
+                let _ = store.dispatch(AppAction::CommandValidate);
             }
             _ => {}
         }
         return next(store, action);
     }
 }
+
+//                 match cmd_reg.contains_key(&cmd) {
+//                     true => {
+//                         // let _ = store.dispatch();
+//                     },
+//                     false => {
+//                         let error = format_output!("red", "Error", "Invalid Command");
+//                         let _ = store.dispatch(AppAction::Error(error));
+//                     }
+//                 }

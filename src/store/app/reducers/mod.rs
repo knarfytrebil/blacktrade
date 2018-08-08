@@ -1,9 +1,7 @@
-mod commands;
-mod keyboard;
-mod error;
-mod mode;
-mod size;
-mod command_bar;
+mod commands; mod keyboard;
+mod error; mod mode;
+mod size; mod command_bar;
+mod console;
 
 use redux::Reducer;
 use store::action::AppAction;
@@ -22,7 +20,8 @@ impl Reducer for AppState {
             &AppAction::SetMode(_) => { vec![mode::set()] }
             &AppAction::CommandBarPush(_) => { vec![command_bar::push()] }
             &AppAction::CommandBarSet(_) => { vec![command_bar::set()] }
-            // AppAction::ConsoleWrite(line) => { self.console_txt.push_str(&line); }
+            &AppAction::CommandBarTake => { vec![command_bar::take()] }
+            &AppAction::ConsolePush(_) => { vec![console::push()] }
             // AppAction::Keyboard(key_evt) => {
             //     Self::key_event_handler(self, key_evt);
             // }
@@ -32,7 +31,7 @@ impl Reducer for AppState {
             // AppAction::Error(error) => {
             //     Self::error_handler(self, error);
             // }
-            _ => { Vec::new() }
+            _ => { vec![] }
         };
         Ok(combined_reducer(reducers)(self.clone(), &action).unwrap())
     }

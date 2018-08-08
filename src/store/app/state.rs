@@ -12,8 +12,11 @@ pub struct AppState {
     pub tabs: TopTabs,
     pub command: String,
     pub console_txt: String,
-    pub exiting: bool,
     pub cmd_reg: HashMap<String, CmdCallback>,
+    pub cmd_issued: Vec<String>,
+    pub cmd_running: Vec<String>,
+    pub cmd_ended: Vec<String>,
+    pub exiting: bool,
 }
 
 impl AppState {
@@ -29,6 +32,9 @@ impl AppState {
             console_txt: String::from(""),
             exiting: false,
             cmd_reg: HashMap::new(),
+            cmd_issued: Vec::new(),
+            cmd_running: Vec::new(),
+            cmd_ended: Vec::new(),
         }
     }
 }
