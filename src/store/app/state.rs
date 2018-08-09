@@ -13,9 +13,9 @@ pub struct AppState {
     pub command: String,
     pub console_txt: String,
     pub cmd_reg: HashMap<String, CmdCallback>,
-    pub cmd_issued: HashMap<String, Command>,
-    pub cmd_running: HashMap<String, Command>,
-    pub cmd_ended: HashMap<String, Command>,
+    pub cmd_str_queue: HashMap<String, String>,
+    pub cmd_running: Vec<Command>,
+    pub cmd_ended: Vec<Command>,
     pub exiting: bool,
 }
 
@@ -32,9 +32,9 @@ impl AppState {
             console_txt: String::from(""),
             exiting: false,
             cmd_reg: HashMap::new(),
-            cmd_issued: HashMap::new(),
-            cmd_running: HashMap::new(),
-            cmd_ended: HashMap::new(),
+            cmd_str_queue: HashMap::new(),
+            cmd_running: Vec::new(),
+            cmd_ended: Vec::new(),
         }
     }
 }

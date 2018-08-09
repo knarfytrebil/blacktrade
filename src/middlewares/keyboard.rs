@@ -1,7 +1,8 @@
+use uuid::Uuid;
+use termion::event::Key;
 use redux::{DispatchFunc, Middleware, Store};
 use store::action::AppAction;
 use store::app::{AppState, AppMode, ModeCategory};
-use termion::event::Key;
 
 // use std::sync::mpsc;
 // use store::events::Event;
@@ -53,7 +54,7 @@ fn normal_key (_key: Key, _state: AppState) -> Result<AppAction, String> {
 fn command_key (_key: Key, mut _state: AppState) -> Result<AppAction, String> {
     match _key {
         Key::Esc => Ok(AppAction::SetMode(AppMode::get_mode("normal"))),
-        Key::Char('\n') => { Ok(AppAction::CommandBarTake) }
+        Key::Char('\n') => { Ok(AppAction::CommandBarEnqueueCmd(Uuid::new_v4().simple().to_string())) }
         Key::Char(_char) => Ok(AppAction::CommandBarPush(_char)),
         _  => Err(String::from("Key not Implemented")) 
     }

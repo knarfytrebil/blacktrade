@@ -12,7 +12,6 @@ impl Middleware<AppState> for CommandBarMiddleWare {
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
         match &action {
-            // AppMode::get_mode("normal")
             &AppAction::SetMode(ref mode) => {
                 let _action = match mode.category {
                     ModeCategory::Normal => AppAction::CommandBarSet(String::from("")),

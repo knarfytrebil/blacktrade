@@ -20,8 +20,9 @@ impl Reducer for AppState {
             &AppAction::SetMode(_) => { vec![mode::set()] }
             &AppAction::CommandBarPush(_) => { vec![command_bar::push()] }
             &AppAction::CommandBarSet(_) => { vec![command_bar::set()] }
-            &AppAction::CommandBarTake => { vec![command_bar::take()] }
+            &AppAction::CommandBarEnqueueCmd(_) => { vec![command_bar::enqueue_cmd()] }
             &AppAction::ConsolePush(_) => { vec![console::push()] }
+            &AppAction::CommandCreate(_) => { vec![commands::create()] }
             // AppAction::Keyboard(key_evt) => {
             //     Self::key_event_handler(self, key_evt);
             // }
