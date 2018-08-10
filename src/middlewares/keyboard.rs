@@ -19,16 +19,11 @@ impl Middleware<AppState> for KeyboardMiddleWare {
         action: AppAction,
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
-        debug!("[ACT-KBD]: {:?}", &action);
         match &action {
             &AppAction::Keyboard(key) => {
                 let _state = store.get_state();
                 match get_key_action(key, _state) {
-                    Ok(_action) => { 
-                        debug!("[PreDispatch]: {:?}", &_action);
-                        let result = store.dispatch(_action); 
-                        debug!("[Dispatch Result]: {:?}", result);
-                    }
+                    Ok(_action) => { let _ = store.dispatch(_action); }
                     Err(err) => { debug!("[ERR] {:?}", err) }
                 }
             }
