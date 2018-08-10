@@ -15,6 +15,7 @@ impl Reducer for AppState {
     type Error = String;
 
     fn reduce(&mut self, action: Self::Action) -> Result<Self, Self::Error> {
+        debug!("[PreReduce]: {:?}", &action);
         let reducers: ReducerArray = match &action {
             &AppAction::ResizeApp(_) => { vec![size::set()] }
             &AppAction::SetMode(_) => { vec![mode::set()] }
@@ -22,7 +23,8 @@ impl Reducer for AppState {
             &AppAction::CommandBarSet(_) => { vec![command_bar::set()] }
             &AppAction::CommandBarEnqueueCmd(_) => { vec![command_bar::enqueue_cmd()] }
             &AppAction::ConsolePush(_) => { vec![console::push()] }
-            &AppAction::CommandCreate(_) => { vec![commands::create()] }
+            &AppAction::CommandCreate(_) => { vec![commands::create(false)] }
+            &AppAction::CommandInvalid(_) => { vec![commands::create(true)] }
             // AppAction::Keyboard(key_evt) => {
             //     Self::key_event_handler(self, key_evt);
             // }
@@ -34,13 +36,16 @@ impl Reducer for AppState {
             // }
             _ => { vec![] }
         };
-        Ok(combined_reducer(reducers)(self.clone(), &action).unwrap())
+        let _state = combined_reducer(reducers)(self.clone(), &action).unwrap();
+        Ok(_state)
     }
 }
 
 fn combined_reducer(reducers: Vec<Box<ReducerFn>>) -> Box<ReducerFn> {
     Box::new(move |mut state, action| {
-        for reducer in &reducers { state = reducer(state, &action).unwrap() }
+        for reducer in &reducers { 
+            state = reducer(state, &action).unwrap() 
+        }
         Ok(state)
     })
 }

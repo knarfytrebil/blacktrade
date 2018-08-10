@@ -30,8 +30,7 @@ pub fn enqueue_cmd() -> Box<ReducerFn> {
     Box::new(|mut state: AppState, action: &AppAction| -> Result<AppState, String> {
         match action {
             AppAction::CommandBarEnqueueCmd(uuid) => {
-                let cmd_str = state.command.split_off(1);
-                state.cmd_str_queue.insert(uuid.clone(), cmd_str);
+                state.cmd_str_queue.insert(uuid.clone(), state.command.split_off(1));
                 Ok(state)
             }
             _ => { Ok(state) }

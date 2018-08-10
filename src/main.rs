@@ -27,7 +27,7 @@ use tui::backend::MouseBackend;
 use tui::Terminal;
 use redux::Store;
 
-use middlewares::{KeyboardMiddleWare, CommandMiddleWare, CommandBarMiddleWare};
+use middlewares::*;
 use store::action::AppAction;
 use store::app::AppState;
 use store::events::Event;
@@ -62,12 +62,16 @@ fn main() {
     let keyboard_mw = Box::new(KeyboardMiddleWare { });
     let command_bar_mw = Box::new(CommandBarMiddleWare { });
     let command_mw = Box::new(CommandMiddleWare { });
+    let console_mw = Box::new(ConsoleMiddleWare { });
+    let debug_mw = Box::new(DebugMiddleWare { });
 
     // App & State
     let store: Store<AppState> = Store::new(vec![
+        debug_mw,
         keyboard_mw,
         command_bar_mw,
         command_mw,
+        console_mw
     ]);
 
     // Create Subscription from store to render

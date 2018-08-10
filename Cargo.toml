@@ -4,7 +4,8 @@ version = "0.0.1"
 authors = ["Frank Yao <frank.yao@cyanide.io>"]
 
 [dependencies]
-redux = { git = "https://github.com/knarfytrebil/redux-rs.git", branch = "dev" }
+# redux = { git = "https://github.com/knarfytrebil/redux-rs.git", branch = "dev" }
+redux = { path = "../redux-rs" }
 log = { version = "^0.4.1", features = ["max_level_debug"] }
 uuid = { version = "0.6", features = ["v4"] }
 simplelog = "^0.5.0"

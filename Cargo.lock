@@ -300,7 +300,7 @@ dependencies = [
  "cpython 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "json 0.11.10 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "redux 0.0.1 (git+https://github.com/knarfytrebil/redux-rs.git?branch=dev)",
+ "redux 0.0.1",
  "simplelog 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "termion 1.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "tui 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -352,7 +352,6 @@ dependencies = [
 [[package]]
 name = "redux"
 version = "0.0.1"
-source = "git+https://github.com/knarfytrebil/redux-rs.git?branch=dev#04bcb82e8b855f1d82f0ed94ba92c399249bcdc6"
 
 [[package]]
 name = "regex"
@@ -603,7 +602,6 @@ dependencies = [
 "checksum rand 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)" = "eba5f8cb59cc50ed56be8880a5c7b496bfd9bd26394e176bc67884094145c2c5"
 "checksum redox_syscall 0.1.31 (registry+https://github.com/rust-lang/crates.io-index)" = "8dde11f18c108289bef24469638a04dce49da56084f2d50618b226e47eb04509"
 "checksum redox_termios 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "7e891cfe48e9100a70a3b6eb652fef28920c117d366339687bd5576160db0f76"
-"checksum redux 0.0.1 (git+https://github.com/knarfytrebil/redux-rs.git?branch=dev)" = "<none>"
 "checksum regex 0.1.80 (registry+https://github.com/rust-lang/crates.io-index)" = "4fd4ace6a8cf7860714a2c2280d6c1f7e6a413486c13298bbc86fd3da019402f"
 "checksum regex-syntax 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)" = "f9ec002c35e86791825ed294b50008eea9ddfc8def4420124fbc6b08db834957"
 "checksum sha1 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "cc30b1e1e8c40c121ca33b86c23308a090d19974ef001b4bf6e61fd1a0fb095c"

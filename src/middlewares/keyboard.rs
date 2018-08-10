@@ -19,12 +19,16 @@ impl Middleware<AppState> for KeyboardMiddleWare {
         action: AppAction,
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
-        debug!("[ACT]: {:?}", action);
+        debug!("[ACT-KBD]: {:?}", &action);
         match &action {
             &AppAction::Keyboard(key) => {
                 let _state = store.get_state();
                 match get_key_action(key, _state) {
-                    Ok(_action) => { let _ = store.dispatch(_action); }
+                    Ok(_action) => { 
+                        debug!("[PreDispatch]: {:?}", &_action);
+                        let result = store.dispatch(_action); 
+                        debug!("[Dispatch Result]: {:?}", result);
+                    }
                     Err(err) => { debug!("[ERR] {:?}", err) }
                 }
             }
@@ -55,7 +59,7 @@ fn command_key (_key: Key, mut _state: AppState) -> Result<AppAction, String> {
     match _key {
         Key::Esc => Ok(AppAction::SetMode(AppMode::get_mode("normal"))),
         Key::Char('\n') => { Ok(AppAction::CommandBarEnqueueCmd(Uuid::new_v4().simple().to_string())) }
-        Key::Char(_char) => Ok(AppAction::CommandBarPush(_char)),
-        _  => Err(String::from("Key not Implemented")) 
+        Key::Char(_char) => { Ok(AppAction::CommandBarPush(_char)) }
+        _  => { Err(String::from("Key not Implemented")) }
     }
 }
