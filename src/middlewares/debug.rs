@@ -11,6 +11,7 @@ impl Middleware<AppState> for DebugMiddleWare {
         action: AppAction,
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
+        debug!("1 {:?}", &action);
         let state = store.get_state();
         debug!("[ACT]: {:?}", &action);
         debug!("[cmd_str_queue]: {:?}", &state.cmd_str_queue);

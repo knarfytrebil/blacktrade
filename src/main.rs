@@ -48,7 +48,7 @@ fn main() {
     // Channels
     let (tx, rx) = mpsc::channel();
 
-    let (input_tx, render_tx) = (tx.clone(), tx.clone());
+    let (input_tx, subscribe_tx) = (tx.clone(), tx.clone());
 
     // Input
     thread::spawn(move || {
@@ -61,22 +61,22 @@ fn main() {
     // Middlewares
     let keyboard_mw = Box::new(KeyboardMiddleWare { });
     let command_bar_mw = Box::new(CommandBarMiddleWare { });
-    let command_mw = Box::new(CommandMiddleWare { });
+    let command_mw = Box::new(CommandMiddleWare { tx: tx.clone() });
     let console_mw = Box::new(ConsoleMiddleWare { });
     let debug_mw = Box::new(DebugMiddleWare { });
 
     // App & State
     let store: Store<AppState> = Store::new(vec![
-        debug_mw,
-        keyboard_mw,
-        command_bar_mw,
         command_mw,
-        console_mw
+        console_mw,
+        command_bar_mw,
+        keyboard_mw,
+        debug_mw,
     ]);
 
     // Create Subscription from store to render
     store.subscribe(Box::new(move |store, _| {
-        render_tx.send(Event::Render(store.get_state())).unwrap();
+        subscribe_tx.send(Event::Render(store.get_state())).unwrap();
     }));
 
     // First draw call
@@ -96,6 +96,9 @@ fn main() {
         }
 
         match rx.recv().unwrap() {
+            Event::CommandQueued(uuid_str) => {
+                let _ = store.dispatch(AppAction::CommandConsume(uuid_str));
+            }
             Event::Input(input) => {
                 let _ = store.dispatch(AppAction::Keyboard(input));
             }

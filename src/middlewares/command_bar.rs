@@ -11,7 +11,7 @@ impl Middleware<AppState> for CommandBarMiddleWare {
         action: AppAction,
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
-        debug!("[ACT]: {:?}", &action);
+        debug!("3 {:?}", &action);
         match &action {
             &AppAction::SetMode(ref mode) => {
                 let _action = match mode.category {

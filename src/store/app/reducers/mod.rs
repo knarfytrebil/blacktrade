@@ -19,10 +19,10 @@ impl Reducer for AppState {
         let reducers: ReducerArray = match &action {
             &AppAction::ResizeApp(_) => { vec![size::set()] }
             &AppAction::SetMode(_) => { vec![mode::set()] }
+            &AppAction::ConsolePush(_) => { vec![console::push()] }
             &AppAction::CommandBarPush(_) => { vec![command_bar::push()] }
             &AppAction::CommandBarSet(_) => { vec![command_bar::set()] }
             &AppAction::CommandBarEnqueueCmd(_) => { vec![command_bar::enqueue_cmd()] }
-            &AppAction::ConsolePush(_) => { vec![console::push()] }
             &AppAction::CommandCreate(_) => { vec![commands::create(false)] }
             &AppAction::CommandInvalid(_) => { vec![commands::create(true)] }
             // AppAction::Keyboard(key_evt) => {

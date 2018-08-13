@@ -4,12 +4,6 @@ use redux::{DispatchFunc, Middleware, Store};
 use store::action::AppAction;
 use store::app::{AppState, AppMode, ModeCategory};
 
-// use std::sync::mpsc;
-// use store::events::Event;
-// pub struct TxMiddleware {
-//     pub tx: mpsc::Sender<Event>,
-// }
-
 pub struct KeyboardMiddleWare { }
 
 impl Middleware<AppState> for KeyboardMiddleWare {
@@ -19,6 +13,7 @@ impl Middleware<AppState> for KeyboardMiddleWare {
         action: AppAction,
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
+        debug!("2 {:?}", &action);
         match &action {
             &AppAction::Keyboard(key) => {
                 let _state = store.get_state();
