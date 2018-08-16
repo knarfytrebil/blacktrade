@@ -2,6 +2,7 @@
 **/*.rs.bk
 *.txt
 *.swp
+*.swo
 *.log
 node_modules
 .python-version

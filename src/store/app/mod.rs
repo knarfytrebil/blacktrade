@@ -1,8 +1,9 @@
-mod mode;
-mod state;
 mod utils;
-mod reducer;
-mod event_handlers;
+mod reducers;
+mod state;
+mod structs;
 
 pub use self::state::AppState;
-pub use self::mode::{ModeCategory,AppMode};
+pub use self::structs::AppMode;
+pub use self::structs::ModeCategory;
+pub use self::structs::Command;

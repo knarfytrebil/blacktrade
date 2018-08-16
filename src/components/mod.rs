@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 pub mod app;
 pub mod command_bar;
 pub mod command_output;

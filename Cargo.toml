@@ -4,8 +4,9 @@ version = "0.0.1"
 authors = ["Frank Yao <frank.yao@cyanide.io>"]
 
 [dependencies]
-redux = { git = "https://github.com/knarfytrebil/redux-rs.git", branch = "master" }
+redux = { git = "https://github.com/knarfytrebil/redux-rs.git", branch = "dev" }
 log = { version = "^0.4.1", features = ["max_level_debug"] }
+uuid = { version = "0.6", features = ["v4"] }
 simplelog = "^0.5.0"
 json = "*"
 termion = "*"
@@ -23,4 +24,5 @@ features = ['termion']
 version = "0.2.0"
 default-features = false
 features = ["python27-sys"]
+# Uncomment the line below when python37 support is available
 # features = ["python3-sys"]

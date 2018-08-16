@@ -1,7 +1,10 @@
-use store::app::{AppState};
+use store::app::AppState;
 use termion::event;
 
 pub enum Event {
     Input(event::Key),
     Render(AppState),
+    CommandQueued(String),
+    Exit, 
 }
+

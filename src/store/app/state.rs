@@ -1,15 +1,21 @@
+use std::fmt;
+use std::collections::HashMap;
 use tui::layout::Rect;
 use store::ui::TopTabs;
-use store::app::mode::{AppMode};
+use store::app::AppMode;
+use store::app::structs::{CmdCallback, Command};
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct AppState {
     pub mode: AppMode,
     pub size: Rect,
     pub tabs: TopTabs,
     pub command: String,
     pub console_txt: String,
-    pub exiting: bool,
+    pub cmd_reg: HashMap<String, CmdCallback>,
+    pub cmd_str_queue: HashMap<String, String>,
+    pub cmd_running: Vec<Command>,
+    pub cmd_ended: Vec<Command>,
 }
 
 impl AppState {
@@ -23,13 +29,28 @@ impl AppState {
             },
             command: String::from(""),
             console_txt: String::from(""),
-            exiting: false,
+            cmd_reg: HashMap::new(),
+            cmd_str_queue: HashMap::new(),
+            cmd_running: Vec::new(),
+            cmd_ended: Vec::new(),
         }
     }
 }
 
 impl Default for AppState {
     fn default() -> Self {
-        AppState::new()
+        let state = AppState::new();
+        // state.cmd_reg.insert("exit".to_string(), Self::exit);
+        state
+    }
+}
+
+impl fmt::Debug for AppState {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        fmt.debug_struct("AppState")
+            .field("mode", &self.mode)
+            .field("size", &self.size)
+            .field("tabs", &self.tabs)
+            .finish()
     }
 }
