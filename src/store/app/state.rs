@@ -16,7 +16,6 @@ pub struct AppState {
     pub cmd_str_queue: HashMap<String, String>,
     pub cmd_running: Vec<Command>,
     pub cmd_ended: Vec<Command>,
-    pub exiting: bool,
 }
 
 impl AppState {
@@ -30,7 +29,6 @@ impl AppState {
             },
             command: String::from(""),
             console_txt: String::from(""),
-            exiting: false,
             cmd_reg: HashMap::new(),
             cmd_str_queue: HashMap::new(),
             cmd_running: Vec::new(),
@@ -41,8 +39,8 @@ impl AppState {
 
 impl Default for AppState {
     fn default() -> Self {
-        let mut state = AppState::new();
-        state.cmd_reg.insert("test_cb".to_string(), Self::test_cb);
+        let state = AppState::new();
+        // state.cmd_reg.insert("exit".to_string(), Self::exit);
         state
     }
 }

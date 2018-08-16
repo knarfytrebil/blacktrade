@@ -5,4 +5,6 @@ pub enum Event {
     Input(event::Key),
     Render(AppState),
     CommandQueued(String),
+    Exit, 
 }
+

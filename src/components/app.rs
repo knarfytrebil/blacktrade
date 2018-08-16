@@ -1,6 +1,6 @@
 pub mod instance {
     use std::io;
-    use std::io::{Error, ErrorKind};
+    // use std::io::{Error, ErrorKind};
     use store::app::AppState;
     use tui::backend::MouseBackend;
     use tui::layout::{Direction, Group, Size};
@@ -12,10 +12,8 @@ pub mod instance {
     use components::command_output;
     use components::status_bar;
 
+    // return Err(Error::new(ErrorKind::Interrupted, "Exit App"));
     pub fn render(terminal: &mut Terminal<MouseBackend>, app: &AppState) -> Result<(), io::Error> {
-        if app.exiting {
-            return Err(Error::new(ErrorKind::Interrupted, "Exit App"));
-        }
         Group::default()
             .direction(Direction::Vertical)
             .sizes(&[Size::Fixed(1), Size::Min(1), Size::Fixed(1), Size::Fixed(1)])
@@ -36,6 +34,6 @@ pub mod instance {
                 command_bar::instance::render(t, app, &chunks[3]);
             });
         try!(terminal.draw());
-        return Ok(());
+        Ok(())
     }
 }

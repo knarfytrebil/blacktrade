@@ -17,7 +17,6 @@ mod store;
 use simplelog::*;
 use std::boxed::Box;
 use std::fs::File;
-use std::io::ErrorKind;
 use std::sync::mpsc;
 use std::{io, process, thread};
 
@@ -53,8 +52,7 @@ fn main() {
     // Input
     thread::spawn(move || {
         for c in io::stdin().keys() {
-            let evt = c.unwrap();
-            input_tx.send(Event::Input(evt)).unwrap();
+            input_tx.send(Event::Input(c.unwrap())).unwrap();
         }
     });
 
@@ -96,27 +94,14 @@ fn main() {
         }
 
         match rx.recv().unwrap() {
-            Event::CommandQueued(uuid_str) => {
-                let _ = store.dispatch(AppAction::CommandConsume(uuid_str));
-            }
-            Event::Input(input) => {
-                let _ = store.dispatch(AppAction::Keyboard(input));
-            }
-            Event::Render(app_state) => {
-                match app::instance::render(&mut terminal, &app_state) {
-                    Err(e) => match e.kind() {
-                        ErrorKind::Interrupted => { break; }
-                        _ => {
-                            eprintln!("Application Error: {}", e);
-                            process::exit(1);
-                        }
-                    },
-                    Ok(_) => {}
-                };
-            }
+            Event::CommandQueued(uuid_str) => { let _ = store.dispatch(AppAction::CommandConsume(uuid_str)); }
+            Event::Input(input) => { let _ = store.dispatch(AppAction::Keyboard(input)); }
+            Event::Render(app_state) => { app::instance::render(&mut terminal, &app_state).unwrap(); }
+            Event::Exit => { break; }
         }
     }
 
+    // process::exit(1);
     // show cursor on end
     terminal.show_cursor().unwrap();
 }

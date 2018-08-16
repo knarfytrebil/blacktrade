@@ -14,9 +14,9 @@ impl Middleware<AppState> for DebugMiddleWare {
         debug!("1 {:?}", &action);
         let state = store.get_state();
         debug!("[ACT]: {:?}", &action);
-        debug!("[cmd_str_queue]: {:?}", &state.cmd_str_queue);
-        debug!("[cmd_running]: {:?}", &state.cmd_running);
-        debug!("[cmd_ended]: {:?}", &state.cmd_ended);
+        debug!("[cmd_str_queue]: {:?} Items", &state.cmd_str_queue.len());
+        debug!("[cmd_running]: {:?} Items", &state.cmd_running.len());
+        debug!("[cmd_ended]: {:?} Items", &state.cmd_ended.len());
         debug!("[cmd_bar]: {:?}", &state.command);
         return next(store, action);
     }

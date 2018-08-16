@@ -1,12 +1,8 @@
 use redux::{DispatchFunc, Middleware, Store};
 use store::action::AppAction;
-use store::app::{AppState, Command};
+use store::app::{AppState};
 
 pub struct ConsoleMiddleWare { }
-
-fn get_index_by_uuid(arr: &Vec<Command>, uuid: &String) -> usize {
-    arr.iter().position(|ref r| &r.id == uuid).unwrap()
-}
 
 impl Middleware<AppState> for ConsoleMiddleWare {
     fn dispatch(
@@ -23,7 +19,7 @@ impl Middleware<AppState> for ConsoleMiddleWare {
                 let _ = store.dispatch(AppAction::ConsolePush(prompt_in));
             }
             &AppAction::CommandCreate(ref uuid) => { 
-                let cmd_str = store.get_state().cmd_str_queue[uuid].clone(); 
+                let cmd_str = store.get_state().cmd_str_queue[uuid].clone();
                 let prompt_in = format_output!("green", "Running", &cmd_str);
                 let _ = store.dispatch(AppAction::ConsolePush(prompt_in));
             }

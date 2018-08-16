@@ -15,7 +15,7 @@ impl Middleware<AppState> for CommandMiddleWare {
         action: AppAction,
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
-        debug!("5 {:?}", &action);
+        // debug!("5 {:?}", &action);
         match &action {
             &AppAction::CommandBarEnqueueCmd(ref uuid) => { self.tx.send(Event::CommandQueued(uuid.to_string())).unwrap(); }
             &AppAction::CommandConsume(ref uuid) => {
