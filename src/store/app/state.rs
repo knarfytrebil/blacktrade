@@ -4,6 +4,25 @@ use tui::layout::Rect;
 use store::ui::TopTabs;
 use store::app::AppMode;
 use store::app::structs::{CmdCallback, Command};
+use store::app::reducers::{CommandGen, commands};
+
+pub struct CommandHandler {
+    pub cmd_reg: HashMap<String, CommandGen>,
+}
+
+impl CommandHandler {
+    pub fn new() -> CommandHandler {
+        CommandHandler {
+            cmd_reg: HashMap::new()
+        }
+    }
+
+    pub fn default() -> Self {
+        let mut handler = CommandHandler::new();
+        handler.cmd_reg.insert("hello".to_string(), commands::helloworld);
+        handler
+    }
+}
 
 #[derive(Clone)]
 pub struct AppState {

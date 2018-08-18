@@ -1,4 +1,5 @@
-mod commands; mod keyboard;
+pub mod commands; 
+mod keyboard;
 mod error; mod mode;
 mod size; mod command_bar;
 mod console;
@@ -8,6 +9,7 @@ use store::action::AppAction;
 use store::app::AppState;
 
 pub type ReducerFn = Fn(AppState, &AppAction) -> Result<AppState, String>;
+pub type CommandGen = fn() -> Box<ReducerFn>;
 type ReducerArray = Vec<Box<ReducerFn>>;
 
 impl Reducer for AppState {
@@ -22,8 +24,9 @@ impl Reducer for AppState {
             &AppAction::CommandBarPush(_) => { vec![command_bar::push()] }
             &AppAction::CommandBarSet(_) => { vec![command_bar::set()] }
             &AppAction::CommandBarEnqueueCmd(_) => { vec![command_bar::enqueue_cmd()] }
-            &AppAction::CommandCreate(_) => { vec![commands::create(false), commands::run_command()] }
+            &AppAction::CommandCreate(_) => { vec![commands::create(false)] }
             &AppAction::CommandInvalid(_) => { vec![commands::create(true)] }
+            &AppAction::CommandRun{ func, ref uuid } => { vec![func(), commands::end(uuid.to_string())] }
             // AppAction::Keyboard(key_evt) => {
             //     Self::key_event_handler(self, key_evt);
             // }

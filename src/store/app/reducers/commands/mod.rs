@@ -41,3 +41,26 @@ pub fn create(failed: bool) -> Box<ReducerFn> {
         }
     })
 }
+
+pub fn end(uuid: String) -> Box<ReducerFn> {
+    Box::new(move |mut state: AppState, action: &AppAction| -> Result<AppState, String> {
+        match action {
+            AppAction::CommandRun{ func, uuid } => {
+                let cmd_str_index = get_index_by_uuid(&state.cmd_running, uuid);
+                let cmd = state.cmd_running.remove(cmd_str_index);
+                let prompt_in = format_output!("green", "Ended", &cmd.name.clone());
+                state.cmd_ended.push(cmd);
+                state.console_txt.push_str(&prompt_in);
+                Ok(state)
+            }
+            _ => { Ok(state) }
+        }
+    })
+}
+
+pub fn helloworld() -> Box<ReducerFn> {
+    Box::new(move |mut state: AppState, action: &AppAction| -> Result<AppState, String> {
+        state.console_txt.push_str(&"hello world\n".to_string());
+        Ok(state)
+    })
+}

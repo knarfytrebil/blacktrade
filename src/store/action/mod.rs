@@ -2,6 +2,7 @@ pub mod command;
 use termion::event;
 use tui::layout::Rect;
 use store::app::{AppMode};
+use store::app::reducers::{CommandGen};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum AppAction {
@@ -9,6 +10,10 @@ pub enum AppAction {
     Keyboard(event::Key),
     CommandInvalid(String),
     CommandCreate(String),
+    CommandRun {
+        func: CommandGen,
+        uuid: String
+    },
     CommandFail(String),
     CommandBarPush(char),
     CommandBarSet(String),
