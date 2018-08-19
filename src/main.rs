@@ -56,7 +56,7 @@ fn main() {
         }
     });
 
-    let cmd_handler =  CommandHandler::default();
+    let cmd_handler = CommandHandler::default();
 
     // Middlewares
     let keyboard_mw = Box::new(KeyboardMiddleWare { });
