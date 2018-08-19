@@ -5,7 +5,7 @@ use store::action::AppAction;
 use store::app::{AppState, CommandHandler};
 
 // Experimental
-use std::process::{Command, Stdio, Child};
+use std::process::{Command, Stdio};
 use std::io::{BufReader, BufRead};
 use std::thread;
 
@@ -25,7 +25,6 @@ impl CommandHandler {
 		.stderr(Stdio::piped())
 		.spawn()
 		.expect("Failed to Start");
-
 	    let mut child_out = BufReader::new(child.stdout.as_mut().unwrap());
 	    let mut line = String::new();
             loop {
@@ -58,7 +57,7 @@ impl Middleware<AppState> for CommandMiddleWare {
                                     func: cmd_fn,
                                     uuid: uuid.to_string()
                                 }).unwrap();
-                                let mut child = self.handler.spawn(self.tx.clone());
+                                self.handler.spawn(self.tx.clone());
                                 AppAction::CommandCreate(uuid.to_string()) 
                             },
                         };

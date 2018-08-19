@@ -5,7 +5,6 @@ use store::ui::TopTabs;
 use store::app::AppMode;
 use store::app::structs::{CmdCallback, Command};
 use store::app::reducers::{CommandGen, commands};
-use std::process::{Child};
 
 pub struct CommandHandler {
     pub cmd_reg: HashMap<String, CommandGen>
