@@ -97,6 +97,7 @@ fn main() {
 
         match rx.recv().unwrap() {
             Event::CommandQueued(uuid_str) => { let _ = store.dispatch(AppAction::CommandConsume(uuid_str)); }
+            Event::ConsolePush(push_str) => { let _ = store.dispatch(AppAction::ConsolePush(push_str)); }
             Event::CommandRun { func, uuid } => { let _ = store.dispatch(AppAction::CommandRun{ func: func, uuid: uuid }); }
             Event::Input(input) => { let _ = store.dispatch(AppAction::Keyboard(input)); }
             Event::Render(app_state) => { app::instance::render(&mut terminal, &app_state).unwrap(); }

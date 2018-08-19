@@ -10,6 +10,7 @@ pub enum Event {
         func: CommandGen,
         uuid: String
     },
+    ConsolePush(String),
     Exit, 
 }
 

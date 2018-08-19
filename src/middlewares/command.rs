@@ -4,9 +4,36 @@ use redux::{DispatchFunc, Middleware, Store};
 use store::action::AppAction;
 use store::app::{AppState, CommandHandler};
 
+// Experimental
+use std::process::{Command, Stdio, Child};
+use std::io::{BufReader, BufRead};
+use std::thread;
+
 pub struct CommandMiddleWare {
     pub tx: mpsc::Sender<Event>,
     pub handler: CommandHandler
+}
+
+impl CommandHandler {
+    fn spawn(&self, tx: mpsc::Sender<Event>)  {
+        thread::spawn(move || {
+	    let command = "/bin/bash";
+	    let mut child = Command::new(command)
+		.arg("/Users/knarfytrebil/Programs/rust/bash_cmds/spot.sh")
+		.stdin(Stdio::piped())
+		.stdout(Stdio::piped())
+		.stderr(Stdio::piped())
+		.spawn()
+		.expect("Failed to Start");
+
+	    let mut child_out = BufReader::new(child.stdout.as_mut().unwrap());
+	    let mut line = String::new();
+            loop {
+                child_out.read_line(&mut line).unwrap();
+                let _ = tx.send(Event::ConsolePush(line.clone()));
+            }
+        });
+    }
 }
 
 impl Middleware<AppState> for CommandMiddleWare {
@@ -31,6 +58,7 @@ impl Middleware<AppState> for CommandMiddleWare {
                                     func: cmd_fn,
                                     uuid: uuid.to_string()
                                 }).unwrap();
+                                let mut child = self.handler.spawn(self.tx.clone());
                                 AppAction::CommandCreate(uuid.to_string()) 
                             },
                         };
