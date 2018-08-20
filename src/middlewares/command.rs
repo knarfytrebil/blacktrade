@@ -25,15 +25,24 @@ impl CommandHandler {
                 .stderr(Stdio::piped())
                 .spawn()
                 .expect("Failed to Start");
-            let mut child_out = BufReader::new(child.stdout.as_mut().unwrap());
-            let mut line = String::new();
+
+            let reader = child.stdout.take()
+                .expect("Couldn't get pipe stream");
+
+            let mut child_out = BufReader::new(reader);
+
             loop {
-                child_out.read_line(&mut line).unwrap();
-                if line != "".to_string() {
-                    let _ = tx.send(Event::ConsolePush(line.clone()));
-                }
-                line.clear();
+                let mut buffer = String::new();
+                let read_bytes = child_out.read_line(&mut buffer)
+                    .expect("Unable to read bytes");
+                if read_bytes != 0 {
+                    let _ = tx.send(Event::ConsolePush(buffer));
+                } 
+                else { break; }
             }
+
+            let _  = tx.send(Event::ConsolePush("BreakLoop".to_string()));
+            
         });
     }
 }
@@ -55,18 +64,13 @@ impl Middleware<AppState> for CommandMiddleWare {
                         let _action = match self.handler.cmd_reg.contains_key(command.clone()) {
                             false => { AppAction::CommandInvalid(uuid.to_string()) }
                             true => { 
-                                let cmd_fn = self.handler.cmd_reg[command.clone()];
-                                self.tx.send(Event::CommandRun { 
-                                    func: cmd_fn,
-                                    uuid: uuid.to_string()
-                                }).unwrap();
                                 self.handler.spawn(self.tx.clone());
                                 AppAction::CommandCreate(uuid.to_string()) 
                             },
                         };
                         let _ = store.dispatch(_action);
                     }
-                    None => { debug!("Already Consumed {:?}", uuid); }
+                    None => { debug!("No Command in Queue{:?}", uuid); }
                 }
             }
             _ => {}
@@ -74,3 +78,9 @@ impl Middleware<AppState> for CommandMiddleWare {
         next(store, action)
     }
 }
+
+// self.tx.send(Event::CommandRun { 
+//     func: self.handler.cmd_reg[command.clone()],
+//     uuid: uuid.to_string()
+// }).unwrap();
+
