@@ -17,19 +17,22 @@ pub struct CommandMiddleWare {
 impl CommandHandler {
     fn spawn(&self, tx: mpsc::Sender<Event>)  {
         thread::spawn(move || {
-	    let command = "/bin/bash";
-	    let mut child = Command::new(command)
-		.arg("/Users/knarfytrebil/Programs/rust/bash_cmds/spot.sh")
-		.stdin(Stdio::piped())
-		.stdout(Stdio::piped())
-		.stderr(Stdio::piped())
-		.spawn()
-		.expect("Failed to Start");
-	    let mut child_out = BufReader::new(child.stdout.as_mut().unwrap());
-	    let mut line = String::new();
+            let command = "/bin/bash";
+            let mut child = Command::new(command)
+                .arg("./src/scripts/spot.sh")
+                .stdin(Stdio::piped())
+                .stdout(Stdio::piped())
+                .stderr(Stdio::piped())
+                .spawn()
+                .expect("Failed to Start");
+            let mut child_out = BufReader::new(child.stdout.as_mut().unwrap());
+            let mut line = String::new();
             loop {
                 child_out.read_line(&mut line).unwrap();
-                let _ = tx.send(Event::ConsolePush(line.clone()));
+                if line != "".to_string() {
+                    let _ = tx.send(Event::ConsolePush(line.clone()));
+                }
+                line.clear();
             }
         });
     }
