@@ -1,6 +1,6 @@
 use store::app::{AppState};
-use store::action::AppAction;
-use store::app::reducers::ReducerFn;
+use reducers::ReducerFn;
+use actions::AppAction;
 
 pub fn set() -> Box<ReducerFn> {
     Box::new(|mut state: AppState, action: &AppAction| -> Result<AppState, String> {

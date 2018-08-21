@@ -5,7 +5,7 @@ mod size; mod command_bar;
 mod console;
 
 use redux::Reducer;
-use store::action::AppAction;
+use actions::AppAction;
 use store::app::AppState;
 
 pub type ReducerFn = Fn(AppState, &AppAction) -> Result<AppState, String>;

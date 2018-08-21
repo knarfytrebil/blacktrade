@@ -1,7 +1,7 @@
 use std::sync::mpsc;
 use store::events::Event;
 use redux::{DispatchFunc, Middleware, Store};
-use store::action::AppAction;
+use actions::AppAction;
 use store::app::{AppState, CommandHandler};
 
 // Experimental
@@ -25,12 +25,9 @@ impl CommandHandler {
                 .stderr(Stdio::piped())
                 .spawn()
                 .expect("Failed to Start");
-
             let reader = child.stdout.take()
                 .expect("Couldn't get pipe stream");
-
             let mut child_out = BufReader::new(reader);
-
             loop {
                 let mut buffer = String::new();
                 let read_bytes = child_out.read_line(&mut buffer)
@@ -40,9 +37,7 @@ impl CommandHandler {
                 } 
                 else { break; }
             }
-
             let _  = tx.send(Event::ConsolePush("BreakLoop".to_string()));
-            
         });
     }
 }
@@ -54,7 +49,6 @@ impl Middleware<AppState> for CommandMiddleWare {
         action: AppAction,
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
-        // debug!("5 {:?}", &action);
         match &action {
             &AppAction::CommandBarEnqueueCmd(ref uuid) => { self.tx.send(Event::CommandQueued(uuid.to_string())).unwrap(); }
             &AppAction::CommandConsume(ref uuid) => {

@@ -1,5 +1,5 @@
 use redux::{DispatchFunc, Middleware, Store};
-use store::action::AppAction;
+use actions::AppAction;
 use store::app::{AppState, ModeCategory};
 
 pub struct CommandBarMiddleWare { }

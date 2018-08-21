@@ -2,7 +2,7 @@ pub mod command;
 use termion::event;
 use tui::layout::Rect;
 use store::app::{AppMode};
-use store::app::reducers::{CommandGen};
+use reducers::{CommandGen};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum AppAction {

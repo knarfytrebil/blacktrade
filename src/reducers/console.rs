@@ -1,12 +1,12 @@
 use store::app::{AppState};
-use store::action::AppAction;
-use store::app::reducers::ReducerFn;
+use reducers::ReducerFn;
+use actions::AppAction;
 
-pub fn set() -> Box<ReducerFn> {
+pub fn push() -> Box<ReducerFn> {
     Box::new(|mut state: AppState, action: &AppAction| -> Result<AppState, String> {
         match action {
-            AppAction::ResizeApp(size) => {
-                state.size = size.clone(); 
+            AppAction::ConsolePush(line) => {
+                state.console_txt.push_str(line);
                 Ok(state)
             }
             _ => { Ok(state) }

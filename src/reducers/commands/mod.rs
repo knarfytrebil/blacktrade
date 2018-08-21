@@ -1,6 +1,6 @@
 use store::app::{AppState, Command};
-use store::action::AppAction;
-use store::app::reducers::ReducerFn;
+use reducers::ReducerFn;
+use actions::AppAction;
 
 fn get_index_by_uuid(arr: &Vec<Command>, uuid: &String) -> usize {
     arr.iter().position(|ref r| &r.id == uuid).unwrap()

@@ -1,6 +1,6 @@
 use store::app::AppState;
 use termion::event;
-use store::app::reducers::{CommandGen};
+use reducers::{CommandGen};
 
 pub enum Event {
     Input(event::Key),

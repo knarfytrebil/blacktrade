@@ -12,7 +12,9 @@ extern crate tui;
 mod utils;
 mod components;
 mod middlewares;
-mod store;
+mod structs;
+mod actions;
+mod reducers;
 
 use simplelog::*;
 use std::boxed::Box;
@@ -27,7 +29,7 @@ use tui::Terminal;
 use redux::Store;
 
 use middlewares::*;
-use store::action::AppAction;
+use actions::AppAction;
 use store::app::{AppState, CommandHandler};
 use store::events::Event;
 use components::app;

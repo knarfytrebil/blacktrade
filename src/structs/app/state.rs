@@ -4,7 +4,7 @@ use tui::layout::Rect;
 use store::ui::TopTabs;
 use store::app::AppMode;
 use store::app::structs::{CmdCallback, Command};
-use store::app::reducers::{CommandGen, commands};
+use reducers::{CommandGen, commands};
 
 pub struct CommandHandler {
     pub cmd_reg: HashMap<String, CommandGen>
@@ -19,7 +19,7 @@ impl CommandHandler {
 
     pub fn default() -> Self {
         let mut handler = CommandHandler::new();
-        handler.cmd_reg.insert("hello".to_string(), commands::helloworld);
+        handler.cmd_reg.insert("exec".to_string(), commands::helloworld);
         handler
     }
 }
