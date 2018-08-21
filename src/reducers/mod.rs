@@ -6,7 +6,7 @@ mod console;
 
 use redux::Reducer;
 use actions::AppAction;
-use store::app::AppState;
+use structs::app::AppState;
 
 pub type ReducerFn = Fn(AppState, &AppAction) -> Result<AppState, String>;
 pub type CommandGen = fn() -> Box<ReducerFn>;

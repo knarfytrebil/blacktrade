@@ -1,6 +1,6 @@
 use redux::{DispatchFunc, Middleware, Store};
 use actions::AppAction;
-use store::app::{AppState};
+use structs::app::{AppState};
 
 pub struct DebugMiddleWare { }
 

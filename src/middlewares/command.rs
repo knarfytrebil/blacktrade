@@ -1,8 +1,7 @@
 use std::sync::mpsc;
-use store::events::Event;
 use redux::{DispatchFunc, Middleware, Store};
 use actions::AppAction;
-use store::app::{AppState, CommandHandler};
+use structs::app::{AppState, CommandHandler, Event};
 
 // Experimental
 use std::process::{Command, Stdio};

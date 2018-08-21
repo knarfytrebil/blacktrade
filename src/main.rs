@@ -30,8 +30,7 @@ use redux::Store;
 
 use middlewares::*;
 use actions::AppAction;
-use store::app::{AppState, CommandHandler};
-use store::events::Event;
+use structs::app::{AppState, CommandHandler, Event};
 use components::app;
 
 fn main() {

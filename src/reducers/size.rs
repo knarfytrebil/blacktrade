@@ -1,4 +1,4 @@
-use store::app::{AppState};
+use structs::app::{AppState};
 use reducers::ReducerFn;
 use actions::AppAction;
 

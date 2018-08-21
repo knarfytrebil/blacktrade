@@ -1,6 +1,10 @@
 mod state;
-pub use self::state::AppState;
-pub use self::structs::AppMode;
-pub use self::structs::ModeCategory;
-pub use self::structs::Command;
-pub use self::state::CommandHandler;
+mod mode;
+mod command;
+mod events;
+
+pub use self::state::{AppState, CommandHandler};
+pub use self::mode::AppMode;
+pub use self::mode::ModeCategory;
+pub use self::command::{Command, CmdCallback};
+pub use self::events::Event;

@@ -1,4 +1,4 @@
-use store::app::AppState;
+use structs::app::AppState;
 use termion::event;
 
 impl AppState {

@@ -2,7 +2,7 @@ use uuid::Uuid;
 use termion::event::Key;
 use redux::{DispatchFunc, Middleware, Store};
 use actions::AppAction;
-use store::app::{AppState, AppMode, ModeCategory};
+use structs::app::{AppState, AppMode, ModeCategory};
 
 pub struct KeyboardMiddleWare { }
 

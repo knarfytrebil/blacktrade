@@ -1,7 +1,7 @@
 pub mod command;
 use termion::event;
 use tui::layout::Rect;
-use store::app::{AppMode};
+use structs::app::{AppMode};
 use reducers::{CommandGen};
 
 #[derive(Clone, Debug, PartialEq)]

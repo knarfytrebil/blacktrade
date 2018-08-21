@@ -1,9 +1,8 @@
 use std::fmt;
 use std::collections::HashMap;
 use tui::layout::Rect;
-use store::ui::TopTabs;
-use store::app::AppMode;
-use store::app::structs::{CmdCallback, Command};
+use structs::ui::TopTabs;
+use structs::app::{AppMode, CmdCallback, Command};
 use reducers::{CommandGen, commands};
 
 pub struct CommandHandler {
