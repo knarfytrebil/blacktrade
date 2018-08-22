@@ -7,6 +7,7 @@ extern crate redux;
 extern crate simplelog;
 extern crate termion;
 extern crate tui;
+extern crate regex;
 
 #[macro_use]
 mod utils;

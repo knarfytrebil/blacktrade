@@ -14,11 +14,12 @@ pub struct CommandMiddleWare {
 }
 
 impl CommandHandler {
-    fn spawn(&self, tx: mpsc::Sender<Event>)  {
+    fn spawn(&self, tx: mpsc::Sender<Event>, cmd_str: String) {
         thread::spawn(move || {
-            let command = "/bin/bash";
+            let mut cmd_with_args: Vec<&str> = cmd_str.split(" ").collect();
+            let command = cmd_with_args.remove(0);
             let mut child = Command::new(command)
-                .arg("./src/scripts/spot.sh")
+                .args(cmd_with_args)
                 .stdin(Stdio::piped())
                 .stdout(Stdio::piped())
                 .stderr(Stdio::piped())
@@ -52,13 +53,15 @@ impl Middleware<AppState> for CommandMiddleWare {
             &AppAction::CommandBarEnqueueCmd(ref uuid) => { self.tx.send(Event::CommandQueued(uuid.to_string())).unwrap(); }
             &AppAction::CommandConsume(ref uuid) => {
                 let state = store.get_state();
-                match &state.cmd_str_queue.get(uuid) {
+                match state.cmd_str_queue.get(uuid) {
                     Some(command) => {
-                        let _action = match self.handler.cmd_reg.contains_key(command.clone()) {
+                        let mut cmd_with_args: Vec<&str> = command.split(" ").collect();
+                        let cmd_str = cmd_with_args.remove(0);
+                        let _action = match self.handler.cmd_reg.contains_key(cmd_str) {
                             false => { AppAction::CommandInvalid(uuid.to_string()) }
                             true => { 
-                                self.handler.spawn(self.tx.clone());
-                                AppAction::CommandCreate(uuid.to_string()) 
+                                self.handler.spawn(self.tx.clone(), cmd_with_args.join(" "));
+                                AppAction::CommandCreate(uuid.to_string())
                             },
                         };
                         let _ = store.dispatch(_action);
