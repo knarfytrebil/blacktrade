@@ -15,12 +15,10 @@ pub enum AppAction {
         uuid: String
     },
     CommandFail(String),
+    CommandConsume(String),
     CommandBarPush(char),
     CommandBarSet(String),
     CommandBarEnqueueCmd(String),
-    CommandConsume(String),
-    TestB(String),
     ConsolePush(String),
-    Error(String),
     SetMode(AppMode),
 }

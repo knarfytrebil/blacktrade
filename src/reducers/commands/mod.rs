@@ -13,7 +13,7 @@ pub fn run_command() -> Box<ReducerFn> {
             AppAction::CommandCreate(uuid) => {
                 let cmd_str_index = get_index_by_uuid(&state.cmd_running, uuid);
                 let cmd_str = &state.cmd_running[cmd_str_index].name.clone();
-                &state.cmd_reg[cmd_str](&mut state, "test".to_string());
+//                &state.cmd_reg[cmd_str](&mut state, "test".to_string());
             }
             _ => {}
         }

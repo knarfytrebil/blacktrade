@@ -107,7 +107,7 @@ fn main() {
         }
     }
 
-    // process::exit(1);
     // show cursor on end
     terminal.show_cursor().unwrap();
+    process::exit(1);
 }
