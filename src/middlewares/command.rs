@@ -51,14 +51,8 @@ impl CommandHandler {
                 }
             };
         }) {
-            Ok(result)=>{
-                debug!("DONE !!!!!!!!{:?}", result);
-                let _ = thread_tx.send(Event::ConsolePush("Thread Successfully Spawned\n".to_string()));
-            }
-            Err(error)=>{
-                debug!("ERROR !!!!!!!!{:?}", error);
-                let _ = thread_tx.send(Event::ConsolePush("Command Failed\n".to_string()));
-            }
+            Ok(_result)=>{ let _ = thread_tx.send(Event::ConsolePush("Thread Successfully Spawned\n".to_string())); }
+            Err(_)=>{ }
         }
     }
 }
