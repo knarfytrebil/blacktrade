@@ -15,7 +15,9 @@ pub struct CommandMiddleWare {
 
 impl CommandHandler {
     fn spawn(&self, tx: mpsc::Sender<Event>, cmd_str: String) {
-        thread::spawn(move || {
+        let thread_tx = tx.clone();
+        match thread::Builder::new()
+            .name("test".to_string()).spawn(move || {
             let mut cmd_with_args: Vec<&str> = cmd_str.split(" ").collect();
             let command = cmd_with_args.remove(0);
             let mut child = Command::new(command)
@@ -37,8 +39,17 @@ impl CommandHandler {
                 } 
                 else { break; }
             }
-            let _  = tx.send(Event::ConsolePush("BreakLoop".to_string()));
-        });
+            let _ = tx.send(Event::ConsolePush("Command Finished\n".to_string()));
+        }) {
+            Ok(result)=>{
+                debug!("DONE !!!!!!!!{:?}", result);
+                let _ = thread_tx.send(Event::ConsolePush("Command Finished\n".to_string()));
+            }
+            Err(error)=>{
+                debug!("ERROR !!!!!!!!{:?}", error);
+                let _ = thread_tx.send(Event::ConsolePush("Command Failed\n".to_string()));
+            }
+        }
     }
 }
 
