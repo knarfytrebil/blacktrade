@@ -1,10 +1,11 @@
 use std::sync::mpsc;
 use actions::AppAction;
 use redux::{DispatchFunc, Middleware, Store};
-use structs::app::{AppState, CommandHandler, Event};
+use structs::app::{AppState, CommandHandler};
+use structs::app::events;
 
 pub struct CommandMiddleWare {
-    pub tx: mpsc::Sender<Event>,
+    pub tx: mpsc::Sender<events::Event>,
     pub handler: CommandHandler
 }
 
@@ -16,7 +17,10 @@ impl Middleware<AppState> for CommandMiddleWare {
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
         match &action {
-            &AppAction::CommandBarEnqueueCmd(ref uuid) => { self.tx.send(Event::CommandQueued(uuid.to_string())).unwrap(); }
+            &AppAction::CommandBarEnqueueCmd(ref uuid) => { 
+                let evt = AppAction::CommandConsume(uuid.to_string()).to_event();
+                self.tx.send(evt).unwrap(); 
+            }
             &AppAction::CommandConsume(ref uuid) => {
                 let state = store.get_state();
                 match state.cmd_str_queue.get(uuid) {
@@ -26,7 +30,7 @@ impl Middleware<AppState> for CommandMiddleWare {
                         let _action = match self.handler.cmd_reg.contains_key(cmd_str) {
                             false => { AppAction::CommandInvalid(uuid.to_string()) }
                             true => { 
-                                self.handler.spawn(self.tx.clone(), cmd_with_args.join(" "));
+                                self.handler.spawn(self.tx.clone(), cmd_with_args.join(" "), uuid.to_string());
                                 AppAction::CommandCreate(uuid.to_string())
                             },
                         };

@@ -31,7 +31,8 @@ use redux::Store;
 
 use middlewares::*;
 use actions::AppAction;
-use structs::app::{AppState, CommandHandler, Event};
+use structs::app::{AppState, CommandHandler};
+use structs::app::events::Event;
 use components::app;
 
 fn main() {
@@ -54,7 +55,9 @@ fn main() {
     // Input
     thread::spawn(move || {
         for c in io::stdin().keys() {
-            input_tx.send(Event::Input(c.unwrap())).unwrap();
+            input_tx.send(
+                AppAction::Keyboard(c.unwrap()).to_event()
+            ).unwrap();
         }
     });
 
@@ -98,10 +101,7 @@ fn main() {
         }
 
         match rx.recv().unwrap() {
-            Event::CommandQueued(uuid_str) => { let _ = store.dispatch(AppAction::CommandConsume(uuid_str)); }
-            Event::ConsolePush(push_str) => { let _ = store.dispatch(AppAction::ConsolePush(push_str)); }
-            Event::CommandRun { func, uuid } => { let _ = store.dispatch(AppAction::CommandRun{ func: func, uuid: uuid }); }
-            Event::Input(input) => { let _ = store.dispatch(AppAction::Keyboard(input)); }
+            Event::Dispatch(action) => { let _ = store.dispatch(action); }
             Event::Render(app_state) => { app::instance::render(&mut terminal, &app_state).unwrap(); }
             Event::Exit => { break; }
         }

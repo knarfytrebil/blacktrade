@@ -1,16 +1,9 @@
-use structs::app::AppState;
-use termion::event;
+use structs::app::{AppState};
+use actions::AppAction;
 use reducers::{CommandGen};
 
 pub enum Event {
-    Input(event::Key),
     Render(AppState),
-    CommandQueued(String),
-    CommandRun {
-        func: CommandGen,
-        uuid: String
-    },
-    ConsolePush(String),
+    Dispatch(AppAction),
     Exit, 
 }
-

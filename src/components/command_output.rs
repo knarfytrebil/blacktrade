@@ -9,10 +9,11 @@ pub mod instance {
     use tui::Terminal;
 
     pub fn render(t: &mut Terminal<MouseBackend>, _app: &AppState, area: &Rect) {
+        let buffer = _app.console_txt.clone();
         Paragraph::default()
             .block(Block::default())
             .wrap(true)
-            .text(&_app.console_txt)
+            .text(&buffer)
             .render(t, area);
     }
 

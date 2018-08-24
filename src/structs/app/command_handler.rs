@@ -1,7 +1,8 @@
 use std::sync::mpsc;
 use std::collections::HashMap;
 use reducers::{CommandGen, commands};
-use structs::app::{Event};
+use structs::app::events;
+use actions::AppAction;
 
 // Experimental
 use std::process::{Command, Stdio};
@@ -28,17 +29,17 @@ impl CommandHandler {
 }
 
 impl CommandHandler {
-    pub fn spawn(&self, tx: mpsc::Sender<Event>, cmd_str: String) {
+    pub fn spawn(&self, tx: mpsc::Sender<events::Event>, cmd_str: String, uuid: String) {
         let thread_tx = tx.clone();
-        match thread::Builder::new()
-            .name("test".to_string()).spawn(move || {
+        let res = match thread::Builder::new()
+            .name(uuid.clone()).spawn(move || {
             // Panic Handler for Thread
             panic::set_hook(Box::new(|panic_info| {
                 error!("A panic occurred: {:?}", &panic_info);
             }));
             let mut cmd_with_args: Vec<&str> = cmd_str.split(" ").collect();
             let command = cmd_with_args.remove(0);
-            match Command::new(command)
+            let res_action = match Command::new(command)
                 .args(cmd_with_args)
                 .stdin(Stdio::piped())
                 .stdout(Stdio::piped())
@@ -53,20 +54,26 @@ impl CommandHandler {
                         let read_bytes = child_out.read_line(&mut buffer)
                             .expect("Unable to read bytes");
                         if read_bytes != 0 {
-                            let _ = tx.send(Event::ConsolePush(buffer));
+                            let evt = AppAction::ConsolePush(buffer).to_event();
+                            let _ = tx.send(evt);
                         } 
-                        else { break; }
+                        else { 
+                            break; 
+                        }
                     }
-                    let _ = tx.send(Event::ConsolePush("Command Finished\n".to_string()));
+                    AppAction::CommandEnd { uuid: uuid.clone(), success: true, reason: String::new() }
                 }
                 Err(error) => {
-                    let err_str = format!("Panic: {:?}\n", error);
-                    let _ = tx.send(Event::ConsolePush(err_str));
+                    let err_str = format!("Child Panic: {:?}", error);
+                    AppAction::CommandEnd { uuid: uuid.clone(), success: false, reason: err_str }
                 }
             };
+            let _ = tx.send(res_action.to_event());
         }) {
-            Ok(_result)=>{ let _ = thread_tx.send(Event::ConsolePush("Thread Successfully Spawned\n".to_string())); }
-            Err(_)=>{ }
-        }
+            Ok(_result)=>{ format_output!("green", "...", "Thread Spawned") }
+            Err(_)=>{ format_output!("red", "!!!", "Thread Failed") }
+        };
+        let evt = AppAction::ConsolePush(res).to_event();
+        let _ = thread_tx.send(evt); 
     }
 }

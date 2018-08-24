@@ -15,17 +15,24 @@ impl Middleware<AppState> for ConsoleMiddleWare {
         match &action {
             &AppAction::CommandConsume(ref uuid) => { 
                 let cmd_str = store.get_state().cmd_str_queue[uuid].clone(); 
-                let prompt_in = format_output!("green", "In", &cmd_str);
+                let prompt_in = format_output!("green", ">>>", &cmd_str);
                 let _ = store.dispatch(AppAction::ConsolePush(prompt_in));
             }
             &AppAction::CommandCreate(ref uuid) => { 
                 let cmd_str = store.get_state().cmd_str_queue[uuid].clone();
-                let prompt_in = format_output!("green", "Running", &cmd_str);
+                let prompt_in = format_output!("green", uuid, &cmd_str);
                 let _ = store.dispatch(AppAction::ConsolePush(prompt_in));
             }
             &AppAction::CommandInvalid(ref uuid) => { 
                 let cmd_str = store.get_state().cmd_str_queue[uuid].clone(); 
-                let prompt_in = format_output!("red", "Invalid", &cmd_str);
+                let prompt_in = format_output!("red", uuid, &cmd_str);
+                let _ = store.dispatch(AppAction::ConsolePush(prompt_in));
+            }
+            &AppAction::CommandEnd{ref uuid, ref success, ref reason} => { 
+                let prompt_in = match success {
+                    true => { format_output!("green", uuid, "Process Terminated") }
+                    false => { format_output!("red", uuid, reason) }
+                };
                 let _ = store.dispatch(AppAction::ConsolePush(prompt_in));
             }
             _ => { }
