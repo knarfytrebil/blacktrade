@@ -42,15 +42,14 @@ pub fn create(failed: bool) -> Box<ReducerFn> {
     })
 }
 
-pub fn end(uuid: String) -> Box<ReducerFn> {
+pub fn end(uuid: String, success: bool) -> Box<ReducerFn> {
     Box::new(move |mut state: AppState, action: &AppAction| -> Result<AppState, String> {
         match action {
-            AppAction::CommandRun{ func, uuid } => {
+            AppAction::CommandEnd{ uuid, success, reason } => {
                 let cmd_str_index = get_index_by_uuid(&state.cmd_running, uuid);
-                let cmd = state.cmd_running.remove(cmd_str_index);
-                let prompt_in = format_output!("green", "Ended", &cmd.name.clone());
+                let mut cmd = state.cmd_running.remove(cmd_str_index);
+                cmd.failed = !success;
                 state.cmd_ended.push(cmd);
-                state.console_txt.push_str(&prompt_in);
                 Ok(state)
             }
             _ => { Ok(state) }

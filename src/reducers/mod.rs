@@ -26,12 +26,13 @@ impl Reducer for AppState {
             &AppAction::CommandBarEnqueueCmd(_) => { vec![command_bar::enqueue_cmd()] }
             &AppAction::CommandCreate(_) => { vec![commands::create(false)] }
             &AppAction::CommandInvalid(_) => { vec![commands::create(true)] }
-            &AppAction::CommandRun{ func, ref uuid } => { vec![func(), commands::end(uuid.to_string())] }
+            &AppAction::CommandEnd{ ref uuid, success, ref reason } => { vec![commands::end(uuid.to_string(), success)] }
             // AppAction::Keyboard(key_evt) => {
             //     Self::key_event_handler(self, key_evt);
             // }
             // AppAction::Error(error) => {
-            //     Self::error_handler(self, error);
+            //     Self::error_handler(self, error); 
+            //     commands::end(uuid.to_string())
             // }
             _ => { vec![] }
         };
