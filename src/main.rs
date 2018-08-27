@@ -20,7 +20,7 @@ mod reducers;
 use simplelog::*;
 use std::boxed::Box;
 use std::fs::File;
-use std::sync::mpsc;
+use std::sync::{mpsc, Arc};
 use std::{io, process, thread};
 
 use termion::input::TermRead;
@@ -69,13 +69,13 @@ fn main() {
     let debug_mw = Box::new(DebugMiddleWare { });
 
     // App & State
-    let store: Store<AppState> = Store::new(vec![
+    let store: Arc<Store<AppState>> = Arc::new(Store::new(vec![
         command_mw,
         console_mw,
         command_bar_mw,
         keyboard_mw,
         debug_mw,
-    ]);
+    ]));
 
     // Create Subscription from store to render
     store.subscribe(Box::new(move |store, _| {
@@ -108,7 +108,6 @@ fn main() {
             terminal.resize(size).unwrap();
             app_size = size;
         }
-
         match rx.recv().unwrap() {
             Event::Render(app_state) => { app::instance::render(&mut terminal, &app_state, app_size).unwrap(); }
             Event::Exit => { break; }
