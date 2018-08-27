@@ -43,14 +43,12 @@ fn main() {
         File::create("debug.log").unwrap(),
     )]).unwrap();
 
-    // Terminal initialization
-    let backend = MouseBackend::new().unwrap();
-    let mut terminal = Terminal::new(backend).unwrap();
 
     // Channels
     let (tx, rx) = mpsc::channel();
+    let (cmd_tx, cmd_rx): (mpsc::Sender<Event>, mpsc::Receiver<Event>) = mpsc::channel();
 
-    let (input_tx, subscribe_tx) = (tx.clone(), tx.clone());
+    let (input_tx, subscribe_tx) = (cmd_tx.clone(), tx.clone());
 
     // Input
     thread::spawn(move || {
@@ -66,7 +64,7 @@ fn main() {
     // Middlewares
     let keyboard_mw = Box::new(KeyboardMiddleWare { });
     let command_bar_mw = Box::new(CommandBarMiddleWare { });
-    let command_mw = Box::new(CommandMiddleWare { tx: tx.clone(), handler: cmd_handler });
+    let command_mw = Box::new(CommandMiddleWare { tx: cmd_tx, handler: cmd_handler });
     let console_mw = Box::new(ConsoleMiddleWare { });
     let debug_mw = Box::new(DebugMiddleWare { });
 
@@ -81,29 +79,40 @@ fn main() {
 
     // Create Subscription from store to render
     store.subscribe(Box::new(move |store, _| {
-        subscribe_tx.send(Event::Render(store.get_state())).unwrap();
+        let state = store.get_state();
+        subscribe_tx.send(Event::Render(state)).unwrap();
     }));
+
+
+    thread::spawn(move || {
+        loop {
+            match cmd_rx.recv().unwrap() {
+                Event::Dispatch(action) => { let _ = store.dispatch(action); },
+                _ => {}
+            }
+        }
+    });
+
+    // Terminal initialization
+    let backend = MouseBackend::new().unwrap();
+    let mut terminal = Terminal::new(backend).unwrap();
 
     // First draw call
     terminal.clear().unwrap();
     terminal.hide_cursor().unwrap();
-
-    let size = terminal.size().unwrap();
-    let _ = store.dispatch(AppAction::ResizeApp(size));
+    let mut app_size = terminal.size().unwrap();
 
     loop {
         let size = terminal.size().unwrap();
-        let app_state = store.get_state();
-
-        if size != app_state.size {
+        if size != app_size {
             terminal.resize(size).unwrap();
-            let _ = store.dispatch(AppAction::ResizeApp(size));
+            app_size = size;
         }
 
         match rx.recv().unwrap() {
-            Event::Dispatch(action) => { let _ = store.dispatch(action); }
-            Event::Render(app_state) => { app::instance::render(&mut terminal, &app_state).unwrap(); }
+            Event::Render(app_state) => { app::instance::render(&mut terminal, &app_state, app_size).unwrap(); }
             Event::Exit => { break; }
+            _ => {}
         }
     }
 
