@@ -1,8 +1,8 @@
-use std::fmt;
 use std::collections::HashMap;
-use tui::layout::Rect;
-use structs::ui::TopTabs;
+use std::fmt;
 use structs::app::{AppMode, Command};
+use structs::ui::TopTabs;
+use tui::layout::Rect;
 // use structs::app::CmdCallback;
 
 #[derive(Clone)]
@@ -39,8 +39,7 @@ impl AppState {
 
 impl Default for AppState {
     fn default() -> Self {
-        let state = AppState::new();
-        state
+        AppState::new()
     }
 }
 

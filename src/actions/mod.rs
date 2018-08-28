@@ -1,9 +1,9 @@
 pub mod command;
+use reducers::CommandGen;
+use structs::app::events;
+use structs::app::AppMode;
 use termion::event;
 use tui::layout::Rect;
-use structs::app::{AppMode};
-use structs::app::events;
-use reducers::{CommandGen};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum AppAction {
@@ -11,8 +11,15 @@ pub enum AppAction {
     Keyboard(event::Key),
     CommandInvalid(String),
     CommandCreate(String),
-    CommandRun { func: CommandGen, uuid: String },
-    CommandEnd { uuid: String, success: bool, reason: String },
+    CommandRun {
+        func: CommandGen,
+        uuid: String,
+    },
+    CommandEnd {
+        uuid: String,
+        success: bool,
+        reason: String,
+    },
     CommandConsume(String),
     CommandBarPush(char),
     CommandBarSet(String),
@@ -22,7 +29,7 @@ pub enum AppAction {
 }
 
 impl AppAction {
-    pub fn to_event(self) ->  events::Event {
+    pub fn into_event(self) -> events::Event {
         events::Event::Dispatch(self)
     }
 }

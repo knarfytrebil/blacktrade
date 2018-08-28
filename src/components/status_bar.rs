@@ -7,8 +7,10 @@ pub mod instance {
     use tui::widgets::Widget;
     use tui::Terminal;
 
-    pub fn render(t: &mut Terminal<MouseBackend>, _app: &AppState, area: &Rect) {
-        Paragraph::default().text(&_app.mode.symbol).render(t, area);
+    pub fn render(t: &mut Terminal<MouseBackend>, _app: &AppState, area: Rect) {
+        Paragraph::default()
+            .text(&_app.mode.symbol)
+            .render(t, &area);
     }
 
 }
