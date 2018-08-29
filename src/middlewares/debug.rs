@@ -1,8 +1,8 @@
-use redux::{DispatchFunc, Middleware, Store};
 use actions::AppAction;
-use structs::app::{AppState};
+use redux::{DispatchFunc, Middleware, Store};
+use structs::app::AppState;
 
-pub struct DebugMiddleWare { }
+pub struct DebugMiddleWare {}
 
 impl Middleware<AppState> for DebugMiddleWare {
     fn dispatch(
@@ -18,6 +18,6 @@ impl Middleware<AppState> for DebugMiddleWare {
         debug!("[cmd_running]: {:?} Items", &state.cmd_running.len());
         debug!("[cmd_ended]: {:?} Items", &state.cmd_ended.len());
         debug!("[cmd_bar]: {:?}", &state.command);
-        return next(store, action);
+        next(store, action)
     }
 }

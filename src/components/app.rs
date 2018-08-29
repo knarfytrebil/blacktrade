@@ -3,7 +3,7 @@ pub mod instance {
     // use std::io::{Error, ErrorKind};
     use structs::app::AppState;
     use tui::backend::MouseBackend;
-    use tui::layout::{Direction, Group, Size, Rect};
+    use tui::layout::{Direction, Group, Rect, Size};
     use tui::style::{Color, Style};
     use tui::widgets::{Tabs, Widget};
     use tui::Terminal;
@@ -13,15 +13,18 @@ pub mod instance {
     use components::status_bar;
 
     // return Err(Error::new(ErrorKind::Interrupted, "Exit App"));
-    pub fn render(
-        terminal: &mut Terminal<MouseBackend>, 
-        app: &AppState,
-        app_size: Rect 
-        ) -> Result<(), io::Error> {
+    pub fn render(terminal: &mut Terminal<MouseBackend>, app: &AppState) -> Result<(), io::Error> {
+        let mut size = terminal.size().unwrap();
+
+        if size != app.size && Rect::default() != app.size {
+            size = app.size;
+            terminal.resize(size).unwrap();
+        }
+
         Group::default()
             .direction(Direction::Vertical)
             .sizes(&[Size::Fixed(1), Size::Min(1), Size::Fixed(1), Size::Fixed(1)])
-            .render(terminal, &app_size, |t, chunks| {
+            .render(terminal, &size, |t, chunks| {
                 Tabs::default()
                     // .block(Block::default().borders(Borders::TOP))
                     .titles(&app.tabs.titles)
@@ -30,12 +33,12 @@ pub mod instance {
                     .select(app.tabs.selection)
                     .render(t, &chunks[0]);
                 match app.tabs.selection {
-                    0 => command_output::instance::render(t, app, &chunks[1]),
+                    0 => command_output::instance::render(t, app, chunks[1]),
                     1 => {}
                     _ => {}
                 }
-                status_bar::instance::render(t, app, &chunks[2]);
-                command_bar::instance::render(t, app, &chunks[3]);
+                status_bar::instance::render(t, app, chunks[2]);
+                command_bar::instance::render(t, app, chunks[3]);
             });
         try!(terminal.draw());
         Ok(())

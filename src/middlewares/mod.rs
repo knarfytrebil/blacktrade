@@ -1,10 +1,10 @@
-pub mod keyboard;
 pub mod command;
 pub mod command_bar;
 pub mod console;
 pub mod debug;
-pub use self::keyboard::KeyboardMiddleWare;
+pub mod keyboard;
 pub use self::command::CommandMiddleWare;
 pub use self::command_bar::CommandBarMiddleWare;
 pub use self::console::ConsoleMiddleWare;
 pub use self::debug::DebugMiddleWare;
+pub use self::keyboard::KeyboardMiddleWare;

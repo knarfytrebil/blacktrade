@@ -1,21 +1,21 @@
 #[macro_use]
 extern crate log;
 
-extern crate uuid;
 extern crate cpython;
 extern crate redux;
+extern crate regex;
 extern crate simplelog;
 extern crate termion;
 extern crate tui;
-extern crate regex;
+extern crate uuid;
 
 #[macro_use]
 mod utils;
+mod actions;
 mod components;
 mod middlewares;
-mod structs;
-mod actions;
 mod reducers;
+mod structs;
 
 use simplelog::*;
 use std::boxed::Box;
@@ -25,15 +25,17 @@ use std::{io, process, thread};
 
 use termion::input::TermRead;
 
+use redux::Store;
 use tui::backend::MouseBackend;
 use tui::Terminal;
-use redux::Store;
 
-use middlewares::*;
 use actions::AppAction;
-use structs::app::{AppState, CommandHandler};
-use structs::app::events::Event;
 use components::app;
+use middlewares::{
+    CommandBarMiddleWare, CommandMiddleWare, ConsoleMiddleWare, DebugMiddleWare, KeyboardMiddleWare,
+};
+use structs::app::events::Event;
+use structs::app::{AppState, CommandHandler};
 
 fn main() {
     // Init Logs
@@ -43,30 +45,35 @@ fn main() {
         File::create("debug.log").unwrap(),
     )]).unwrap();
 
-
     // Channels
     let (tx, rx) = mpsc::channel();
-    let (cmd_tx, cmd_rx): (mpsc::Sender<Event>, mpsc::Receiver<Event>) = mpsc::channel();
+    let (cmd_tx, cmd_rx) = mpsc::channel();
+    // let (exit_tx, exit_rx) = mpsc::channel();
 
     let (input_tx, subscribe_tx) = (cmd_tx.clone(), tx.clone());
 
     // Input
     thread::spawn(move || {
         for c in io::stdin().keys() {
-            input_tx.send(
-                AppAction::Keyboard(c.unwrap()).to_event()
-            ).unwrap();
+            input_tx
+                .send(AppAction::Keyboard(c.unwrap()).into_event())
+                .unwrap();
         }
     });
 
-    let cmd_handler = CommandHandler::default();
-
     // Middlewares
-    let keyboard_mw = Box::new(KeyboardMiddleWare { });
-    let command_bar_mw = Box::new(CommandBarMiddleWare { });
-    let command_mw = Box::new(CommandMiddleWare { tx: cmd_tx, handler: cmd_handler });
-    let console_mw = Box::new(ConsoleMiddleWare { });
-    let debug_mw = Box::new(DebugMiddleWare { });
+    let keyboard_mw = Box::new(KeyboardMiddleWare {});
+    let command_bar_mw = Box::new(CommandBarMiddleWare {});
+    let command_mw = Box::new(CommandMiddleWare {
+        tx: cmd_tx.clone(),
+        handler: CommandHandler::default(),
+    });
+    let console_mw = Box::new(ConsoleMiddleWare {});
+    let debug_mw = Box::new(DebugMiddleWare {});
+    // let exit_mw = Box::new(CommandMiddleWare {
+    //     tx: exit_tx,
+    //     handler: CommandHandler::default(),
+    // });
 
     // App & State
     let store: Arc<Store<AppState>> = Arc::new(Store::new(vec![
@@ -83,16 +90,6 @@ fn main() {
         subscribe_tx.send(Event::Render(state)).unwrap();
     }));
 
-
-    thread::spawn(move || {
-        loop {
-            match cmd_rx.recv().unwrap() {
-                Event::Dispatch(action) => { let _ = store.dispatch(action); },
-                _ => {}
-            }
-        }
-    });
-
     // Terminal initialization
     let backend = MouseBackend::new().unwrap();
     let mut terminal = Terminal::new(backend).unwrap();
@@ -100,22 +97,35 @@ fn main() {
     // First draw call
     terminal.clear().unwrap();
     terminal.hide_cursor().unwrap();
-    let mut app_size = terminal.size().unwrap();
+
+    // init state app size
+    cmd_tx
+        .send(AppAction::ResizeApp(terminal.size().unwrap()).into_event())
+        .unwrap();
+
+    let exit_tx = tx.clone();
+    thread::spawn(move || loop {
+        match cmd_rx.recv().unwrap() {
+            Event::Dispatch(action) => {
+                let _ = store.dispatch(action);
+            }
+            Event::Exit => {
+                let _ = exit_tx.send(Event::Exit);
+                break;
+            }
+            _ => {}
+        }
+    });
 
     loop {
-        let size = terminal.size().unwrap();
-        if size != app_size {
-            terminal.resize(size).unwrap();
-            app_size = size;
-        }
         match rx.recv().unwrap() {
-            Event::Render(app_state) => { app::instance::render(&mut terminal, &app_state, app_size).unwrap(); }
-            Event::Exit => { break; }
+            Event::Render(app_state) => app::instance::render(&mut terminal, &app_state).unwrap(),
+            Event::Exit => {
+                break;
+            }
             _ => {}
         }
     }
-
     // show cursor on end
     terminal.show_cursor().unwrap();
-    process::exit(1);
 }

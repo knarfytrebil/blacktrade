@@ -1,12 +1,12 @@
-use std::sync::mpsc;
 use actions::AppAction;
 use redux::{DispatchFunc, Middleware, Store};
-use structs::app::{AppState, CommandHandler};
+use std::sync::mpsc;
 use structs::app::events;
+use structs::app::{AppState, CommandHandler};
 
 pub struct CommandMiddleWare {
     pub tx: mpsc::Sender<events::Event>,
-    pub handler: CommandHandler
+    pub handler: CommandHandler,
 }
 
 impl Middleware<AppState> for CommandMiddleWare {
@@ -16,37 +16,42 @@ impl Middleware<AppState> for CommandMiddleWare {
         action: AppAction,
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
-        match &action {
-            &AppAction::CommandBarEnqueueCmd(ref uuid) => { 
-                let evt = AppAction::CommandConsume(uuid.to_string()).to_event();
-                self.tx.send(evt).unwrap(); 
+        match action {
+            AppAction::CommandBarEnqueueCmd(ref uuid) => {
+                let evt = AppAction::CommandConsume(uuid.to_string()).into_event();
+                self.tx.send(evt).unwrap();
             }
-            &AppAction::CommandConsume(ref uuid) => {
+            AppAction::CommandConsume(ref uuid) => {
                 let state = store.get_state();
                 match state.cmd_str_queue.get(uuid) {
                     Some(command) => {
-                        let mut cmd_with_args: Vec<&str> = command.split(" ").collect();
+                        let mut cmd_with_args: Vec<&str> = command.split(' ').collect();
                         let cmd_str = cmd_with_args.remove(0);
-                        let _action = match self.handler.cmd_reg.contains_key(cmd_str) {
-                            false => { AppAction::CommandInvalid(uuid.to_string()) }
-                            true => { 
-                                self.handler.spawn(self.tx.clone(), cmd_with_args.join(" "), uuid.to_string());
-                                AppAction::CommandCreate(uuid.to_string())
-                            },
+                        let _action = if self.handler.cmd_reg.contains_key(cmd_str) {
+                            self.handler.spawn(
+                                self.tx.clone(),
+                                cmd_with_args.join(" "),
+                                uuid.to_string(),
+                            );
+                            AppAction::CommandCreate(uuid.to_string())
+                        } else {
+                            AppAction::CommandInvalid(uuid.to_string())
                         };
                         let _ = store.dispatch(_action);
                     }
-                    None => { debug!("No Command in Queue{:?}", uuid); }
+                    None => {
+                        debug!("No Command in Queue{:?}", uuid);
+                    }
                 }
             }
+
             _ => {}
         }
         next(store, action)
     }
 }
 
-// self.tx.send(Event::CommandRun { 
+// self.tx.send(Event::CommandRun {
 //     func: self.handler.cmd_reg[command.clone()],
 //     uuid: uuid.to_string()
 // }).unwrap();
-

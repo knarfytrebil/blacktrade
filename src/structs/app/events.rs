@@ -1,9 +1,9 @@
-use structs::app::{AppState};
 use actions::AppAction;
-use reducers::{CommandGen};
+use reducers::CommandGen;
+use structs::app::AppState;
 
 pub enum Event {
     Render(AppState),
     Dispatch(AppAction),
-    Exit, 
+    Exit,
 }
