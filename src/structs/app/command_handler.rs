@@ -55,9 +55,7 @@ impl CommandHandler {
                             .read_line(&mut buffer)
                             .expect("Unable to read bytes");
                         if read_bytes != 0 {
-                            println!("buffer: {:?}", buffer);
                             if &buffer == "exit\n" {
-                                println!("exiting");
                                 let _ = tx.send(events::Event::Exit);
                             }
                             let evt = AppAction::ConsolePush(buffer).into_event();
