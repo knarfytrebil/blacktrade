@@ -1,6 +1,5 @@
 pub mod instance {
     use std::io;
-    // use std::io::{Error, ErrorKind};
     use structs::app::AppState;
     use tui::backend::MouseBackend;
     use tui::layout::{Direction, Group, Rect, Size};
@@ -12,7 +11,6 @@ pub mod instance {
     use components::command_output;
     use components::status_bar;
 
-    // return Err(Error::new(ErrorKind::Interrupted, "Exit App"));
     pub fn render(terminal: &mut Terminal<MouseBackend>, app: &AppState) -> Result<(), io::Error> {
         let mut size = terminal.size().unwrap();
 
