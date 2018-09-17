@@ -10,8 +10,8 @@ pub mod instance {
 
     fn get_scroll(line_count: u16, area_height: u16) -> u16 {
         match (line_count).checked_sub(area_height) {
-            None | Some(_) => 0 as u16,
             Some(x) if x > 0 as u16 => x,
+            None | Some(_) => 0 as u16,
         }
     }
 

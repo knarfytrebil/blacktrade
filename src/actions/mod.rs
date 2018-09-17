@@ -1,5 +1,5 @@
 pub mod command;
-use reducers::CommandGen;
+// use reducers::CommandGen;
 use structs::app::events;
 use structs::app::AppMode;
 use termion::event;
@@ -11,10 +11,10 @@ pub enum AppAction {
     Keyboard(event::Key),
     CommandInvalid(String),
     CommandCreate(String),
-    CommandRun {
-        func: CommandGen,
-        uuid: String,
-    },
+//    CommandRun {
+//        func: CommandGen,
+//        uuid: String,
+//    },
     CommandEnd {
         uuid: String,
         success: bool,

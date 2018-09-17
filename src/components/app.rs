@@ -38,6 +38,7 @@ pub mod instance {
                 status_bar::instance::render(t, app, chunks[2]);
                 command_bar::instance::render(t, app, chunks[3]);
             });
+
         try!(terminal.draw());
         Ok(())
     }

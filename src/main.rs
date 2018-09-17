@@ -21,7 +21,7 @@ use simplelog::*;
 use std::boxed::Box;
 use std::fs::File;
 use std::sync::{mpsc, Arc};
-use std::{io, process, thread};
+use std::{io, thread};
 
 use termion::input::TermRead;
 
