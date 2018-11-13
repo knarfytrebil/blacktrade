@@ -1,7 +1,8 @@
 pub mod instance {
 
+    use std::io;
     use structs::app::AppState;
-    use tui::backend::MouseBackend;
+    use tui::backend::TermionBackend;
     use tui::layout::Rect;
     use tui::widgets::Block;
     use tui::widgets::Paragraph;
@@ -30,7 +31,7 @@ pub mod instance {
         }
     }
 
-    pub fn render(t: &mut Terminal<MouseBackend>, app: &AppState, area: Rect) {
+    pub fn render(t: &mut Terminal<TermionBackend<io::Write>>, app: &AppState, area: Rect) {
         Paragraph::default()
             .block(Block::default())
             .wrap(true)

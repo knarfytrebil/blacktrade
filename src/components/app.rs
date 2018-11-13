@@ -1,17 +1,16 @@
 pub mod instance {
     use std::io;
     use structs::app::AppState;
-    use tui::backend::MouseBackend;
-    use tui::layout::{Direction, Group, Rect, Size};
+    use tui::backend::{Backend, TermionBackend};
+    use tui::layout::{Direction, Layout, Rect, Constraint};
     use tui::style::{Color, Style};
     use tui::widgets::{Tabs, Widget};
-    use tui::Terminal;
-
+    use tui::Terminal; 
     use components::command_bar;
     use components::command_output;
     use components::status_bar;
 
-    pub fn render(terminal: &mut Terminal<MouseBackend>, app: &AppState) -> Result<(), io::Error> {
+    pub fn render<Backend>(terminal: &mut Terminal<TermionBackend<io::Write>>, app: &AppState) {
         let mut size = terminal.size().unwrap();
 
         if size != app.size && Rect::default() != app.size {
@@ -19,9 +18,12 @@ pub mod instance {
             terminal.resize(size).unwrap();
         }
 
-        Group::default()
+        Layout::default()
             .direction(Direction::Vertical)
-            .sizes(&[Size::Fixed(1), Size::Min(1), Size::Fixed(1), Size::Fixed(1)])
+            .constraints(&[
+                Constraint::Fixed(1), 
+                Constraint::Min(1), 
+                Constraint::Fixed(1), Constraint::Fixed(1)])
             .render(terminal, &size, |t, chunks| {
                 Tabs::default()
                     // .block(Block::default().borders(Borders::TOP))
@@ -40,6 +42,5 @@ pub mod instance {
             });
 
         try!(terminal.draw());
-        Ok(())
     }
 }

@@ -23,10 +23,12 @@ use std::fs::File;
 use std::sync::{mpsc, Arc};
 use std::{io, thread};
 
-use termion::input::TermRead;
+use termion::input::MouseTerminal;
+use termion::screen::AlternateScreen;
 
 use redux::Store;
-use tui::backend::MouseBackend;
+// use tui::backend::MouseBackend;
+use tui::backend::{Backend, TermionBackend};
 use tui::Terminal;
 
 use actions::AppAction;
@@ -91,12 +93,13 @@ fn main() {
     }));
 
     // Terminal initialization
-    let backend = MouseBackend::new().unwrap();
-    let mut terminal = Terminal::new(backend).unwrap();
-
-    // First draw call
+    let stdout = io::stdout().into_raw_mode()?;
+    let stdout = MouseTerminal::from(stdout);
+    let stdout = AlternateScreen::from(stdout);
+    let backend = TermionBackend::new(stdout);
+    let mut terminal = Terminal::new(backend)?;
     terminal.clear().unwrap();
-    terminal.hide_cursor().unwrap();
+    terminal.hide_cursor()?;
 
     // init state app size
     cmd_tx
@@ -119,7 +122,7 @@ fn main() {
 
     loop {
         match rx.recv().unwrap() {
-            Event::Render(app_state) => app::instance::render(&mut terminal, &app_state).unwrap(),
+            Event::Render(app_state) => app::instance::render(&mut terminal, &app_state),
             Event::Exit => {
                 break;
             }
