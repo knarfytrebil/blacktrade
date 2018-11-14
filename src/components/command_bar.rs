@@ -1,15 +1,13 @@
-pub mod instance {
+use tui::Frame; 
+use tui::backend::Backend;
+use tui::layout::Rect;
+use tui::widgets::Paragraph;
+use tui::widgets::Widget;
+use structs::app::AppState;
 
-    use std::io;
-    use structs::app::AppState;
-    use tui::backend::TermionBackend;
-    use tui::layout::Rect;
-    use tui::widgets::Paragraph;
-    use tui::widgets::Widget;
-    use tui::Terminal;
-
-    pub fn render(t: &mut Terminal<TermionBackend<io::Write>>, _app: &AppState, area: Rect) {
-        Paragraph::default().text(&_app.command).render(t, &area);
-    }
-
+pub fn render<B>(frame: &mut Frame<B>, app: &AppState, area: Rect) 
+where 
+    B: Backend
+{
+    Paragraph::default().text(&app.command).render(frame, &area);
 }

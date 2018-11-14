@@ -23,8 +23,9 @@ use std::fs::File;
 use std::sync::{mpsc, Arc};
 use std::{io, thread};
 
-use termion::input::MouseTerminal;
+use termion::input::{MouseTerminal, TermRead};
 use termion::screen::AlternateScreen;
+use termion::raw::IntoRawMode;
 
 use redux::Store;
 // use tui::backend::MouseBackend;
@@ -39,7 +40,7 @@ use middlewares::{
 use structs::app::events::Event;
 use structs::app::{AppState, CommandHandler};
 
-fn main() {
+fn main() -> Result<(), io::Error> {
     // Init Logs
     CombinedLogger::init(vec![WriteLogger::new(
         LevelFilter::Debug,
@@ -122,13 +123,12 @@ fn main() {
 
     loop {
         match rx.recv().unwrap() {
-            Event::Render(app_state) => app::instance::render(&mut terminal, &app_state),
-            Event::Exit => {
-                break;
-            }
-            _ => {}
-        }
+            Event::Render(app_state) => terminal.draw(|mut f| { app::render(&mut f, &app_state) }),
+            Event::Exit => { break; }
+        };
     }
+
     // show cursor on end
-    terminal.show_cursor().unwrap();
+    terminal.show_cursor()?;
+    Ok(())
 }
