@@ -29,7 +29,7 @@ use termion::raw::IntoRawMode;
 
 use redux::Store;
 // use tui::backend::MouseBackend;
-use tui::backend::{Backend, TermionBackend};
+use tui::backend::{TermionBackend};
 use tui::Terminal;
 
 use actions::AppAction;
@@ -102,6 +102,13 @@ fn main() -> Result<(), io::Error> {
     terminal.clear().unwrap();
     terminal.hide_cursor()?;
 
+    let mut size = terminal.size().unwrap();
+ 
+    // if size != app.size && Rect::default() != app.size {
+    //     size = app.size;
+    //     terminal.resize(size).unwrap();
+    // }
+
     // init state app size
     cmd_tx
         .send(AppAction::ResizeApp(terminal.size().unwrap()).into_event())
@@ -124,7 +131,8 @@ fn main() -> Result<(), io::Error> {
     loop {
         match rx.recv().unwrap() {
             Event::Render(app_state) => terminal.draw(|mut f| { app::render(&mut f, &app_state) }),
-            Event::Exit => { break; }
+            Event::Exit => { break; },
+            _ =>  { Ok(()) }
         };
     }
 
