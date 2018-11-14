@@ -51,14 +51,14 @@ pub fn create(failed: bool) -> Box<ReducerFn> {
     )
 }
 
-pub fn end(uuid: String, success: bool) -> Box<ReducerFn> {
+pub fn end(_uuid: String, success: bool) -> Box<ReducerFn> {
     Box::new(
         move |mut state: AppState, action: &AppAction| -> Result<AppState, String> {
             match action {
                 AppAction::CommandEnd {
                     uuid,
-                    success,
-                    reason,
+                    success: _,
+                    reason: _,
                 } => {
                     let cmd_str_index = get_index_by_uuid(&state.cmd_running, uuid);
                     let mut cmd = state.cmd_running.remove(cmd_str_index);

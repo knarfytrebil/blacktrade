@@ -102,7 +102,7 @@ fn main() -> Result<(), io::Error> {
     terminal.clear().unwrap();
     terminal.hide_cursor()?;
 
-    let mut size = terminal.size().unwrap();
+    let size = terminal.size().unwrap();
  
     // if size != app.size && Rect::default() != app.size {
     //     size = app.size;
