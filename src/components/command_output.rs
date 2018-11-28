@@ -7,12 +7,12 @@ use tui::widgets::Widget;
 
 use structs::app::AppState;
 
-fn get_scroll(line_count: u16, area_height: u16) -> u16 {
-    match (line_count).checked_sub(area_height) {
-        Some(x) if x > 0 as u16 => x,
-        None | Some(_) => 0 as u16,
-    }
-}
+// fn get_scroll(line_count: u16, area_height: u16) -> u16 {
+//     match (line_count).checked_sub(area_height) {
+//         Some(x) if x > 0 as u16 => x,
+//         None | Some(_) => 0 as u16,
+//     }
+// }
 
 fn get_buffer(area_height: u16, txt: String) -> String {
     let mut lines: Vec<usize> = txt.lines().map(|line| line.len()).collect();
@@ -37,8 +37,5 @@ where
     Paragraph::new(text.iter())
         .block(Block::default())
         .wrap(true)
-        .scroll(get_scroll(
-            app.console_txt.lines().count() as u16,
-            area.height,
-        )).render(frame, area);
+        .render(frame, area);
 }
