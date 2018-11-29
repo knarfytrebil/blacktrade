@@ -110,9 +110,8 @@ fn main() -> Result<(), io::Error> {
     // }
 
     // init state app size
-    cmd_tx
-        .send(AppAction::ResizeApp(terminal.size().unwrap()).into_event())
-        .unwrap();
+    let resize_action = AppAction::ResizeApp(terminal.size().unwrap()).into_event();
+    cmd_tx.send(resize_action).unwrap();
 
     let exit_tx = tx.clone();
     thread::spawn(move || loop {
