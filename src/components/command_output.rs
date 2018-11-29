@@ -33,6 +33,10 @@ pub fn render<B>(frame: &mut Frame<B>, app: &AppState, area: Rect)
 where 
     B: Backend
 {
+    // let buffer = get_buffer(area.height, app.console_txt.clone());
+    // let text: Vec<Text> = buffer.lines()
+    //     .into_iter()
+    //     .map(|line|Text::raw(format!("{}{}", line, "\n"))).rev().collect();
     let text = [Text::raw(get_buffer(area.height, app.console_txt.clone()))];
     Paragraph::new(text.iter())
         .block(Block::default())
