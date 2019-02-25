@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate log;
 
-extern crate cpython;
+// extern crate cpython;
 extern crate redux;
 extern crate regex;
 extern crate simplelog;
