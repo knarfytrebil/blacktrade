@@ -17,9 +17,7 @@ version = "*"
 features = ["ssl"]
 
 [dependencies.tui]
-version = "^0.3.0"
-default-features = true
-features = ['termion']
+version = "^0.6.0"
 
 [dependencies.cpython]
 version = "0.2.0"
