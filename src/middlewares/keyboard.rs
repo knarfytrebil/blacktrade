@@ -51,7 +51,7 @@ fn command_key(_key: Key, mut _state: AppState) -> Result<AppAction, String> {
     match _key {
         Key::Esc => Ok(AppAction::SetMode(AppMode::get_mode("normal"))),
         Key::Char('\n') => Ok(AppAction::CommandBarEnqueueCmd(
-            Uuid::new_v4().simple().to_string(),
+            Uuid::new_v4().to_string(),
         )),
         Key::Char(_char) => Ok(AppAction::CommandBarPush(_char)),
         _ => Err(String::from("Key not Implemented")),
