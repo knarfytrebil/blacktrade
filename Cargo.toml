@@ -11,6 +11,7 @@ simplelog = "^0.5.3"
 json = "*"
 termion = "*"
 regex="1"
+minidom = "0.10.0"
 
 [dependencies.ws]
 version = "*"
