@@ -12,3 +12,15 @@
         <CommandBar />
     </Constraint>
 </Layout>
+
+<CommandOutPut>
+    { app.console_txt }
+</CommandOutput>
+
+<StatusBar>
+    { app.command }
+</StatusBar>
+
+<CommandBar>
+    { app.mode.symbol }
+</CommandBar>
