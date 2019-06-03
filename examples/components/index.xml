@@ -7,7 +7,9 @@
             select="{{ app.tabs.selection }}" />
     </Constraint>
     <Constraint Min="1">
-        <CommandOutPut />
+        <BufferedTextBox>
+            {{ app.console_txt }} 
+        </BufferedTextBox>
     </Constraint>
     <Constraint Length="1">
         <Paragraph id="CommandBar">
