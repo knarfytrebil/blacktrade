@@ -9,6 +9,7 @@ pub fn render<B>(frame: &mut Frame<B>, app: &AppState, area: Rect)
 where 
     B: Backend
 {
-    let text = [Text::raw(&app.command)];
-    Paragraph::new(text.iter()).render(frame, area);
+    Paragraph::new(
+        [Text::raw(&app.command)].iter()
+    ).render(frame, area);
 }

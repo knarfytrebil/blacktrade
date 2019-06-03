@@ -1,26 +1,22 @@
 <Layout xmlns="articles" type="default" direction="vertical">
     <Constraint Length="1">
-        <Tabs />
+        <Tabs type="default" 
+            titles="{{ app.tabs.titles }}"
+            style="{ fgColor: 'Green' }"
+            highlightStyle="{ fgColor: 'Yellow' }"
+            select="{{ app.tabs.selection }}" />
     </Constraint>
     <Constraint Min="1">
         <CommandOutPut />
     </Constraint>
     <Constraint Length="1">
-        <StatusBar />
+        <Paragraph id="CommandBar">
+            {{ app.mode.symbol }}
+        </Paragraph>
     </Constraint>
     <Constraint Length="1">
-        <CommandBar />
+        <Paragraph id="CommandBar">
+            {{ app.command }}
+        </Paragraph>
     </Constraint>
 </Layout>
-
-<CommandOutPut>
-    { app.console_txt }
-</CommandOutput>
-
-<StatusBar>
-    { app.command }
-</StatusBar>
-
-<CommandBar>
-    { app.mode.symbol }
-</CommandBar>
