@@ -3,7 +3,7 @@ use std::fs;
 use minidom::Element;
 
 fn main() {
-    let dom_data = fs::read_to_string("./examples/components/articles.xml")
+    let dom_data = fs::read_to_string("./examples/components/index.xml")
         .expect("Error reading file");
     let root: Element = dom_data.parse().unwrap();
     extract(&root);
@@ -20,9 +20,8 @@ fn extract(root: &Element) {
 
 // Create Element
 fn createElement(element: &Element) {
-    println!("Create Element");
     // println!("{:#?}", element);
-    println!("{:?}", element.name());
+    println!("Create Element {:?}", element.name());
     println!("Is Original: {:#?}", is_original(element));
 
     for attr in element.attrs() {
