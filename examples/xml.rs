@@ -7,10 +7,13 @@ use std::fs;
 use tui::layout::{Direction, Layout, Constraint};
 
 enum BasicElement {
+    Constraint,
+    i16
 }
 
-type Callback = fn(&Element) -> BasicElement;
+type Callback = fn(&Element) -> Constraint;
 
+#[derive(Clone)]
 struct ElementHandler {
     creator_function: HashMap<String, Callback>,
 }
@@ -27,29 +30,31 @@ impl ElementHandler {
     }
 }
 
-fn get_constrant(element: &Element) -> BasicElement  {
+fn get_constrant(element: &Element) -> Constraint {
+    Constraint::Length(1)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Extraction of XML Tree
 ////////////////////////////////////////////////////////////////////////////////////
 fn extract(root: &Element) {
-    let parser: ElementHandler = ElementHandler::new();    
+    let mut parser: ElementHandler = ElementHandler::new();    
     parser.add(String::from("Constraint"), get_constrant);
-    parseElement(root);
+    parseElement(root, parser);
 }
 
 // Create Element
-fn parseElement(element: &Element) {
+fn parseElement(element: &Element, parser: ElementHandler) {
     match is_basic(element) {
-        true => { createBasicElement(element); }
-        false => { createCustomElement(element); }
+        true => { createBasicElement(element, parser); }
+        false => { createCustomElement(element, parser); }
     }
 }
 
 // Create Basic Element
-fn createBasicElement(element: &Element) {
+fn createBasicElement(element: &Element, parser: ElementHandler) {
     println!("Basic element ({:?})", element.name());
+    parser.creator_function[element.name()](element);
     for attr in element.attrs() {
         println!("======= attribute  =======");
         println!("{:#?}", attr);
@@ -57,13 +62,13 @@ fn createBasicElement(element: &Element) {
     if !is_childless(element) {
         println!("Child ({:?})", element.children().count());
         for child in element.children() {
-            parseElement(child);
+            parseElement(child, parser.clone());
         }
     }
 }
 
 // Create Custom Element
-fn createCustomElement(element: &Element) {
+fn createCustomElement(element: &Element, parser: ElementHandler) {
     println!("======= CUSTOM  =======");
 }
 
