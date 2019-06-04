@@ -7,31 +7,35 @@ use std::fs;
 use tui::layout::{Direction, Layout, Constraint};
 
 enum BasicElement {
-    Constraint,
-    i16
+    ConstraintType(Constraint),
+    LayoutType(Layout),
 }
 
-type Callback = fn(&Element) -> Constraint;
+type Callback = fn(&Element) -> BasicElement;
 
 #[derive(Clone)]
 struct ElementHandler {
-    creator_function: HashMap<String, Callback>,
+    creator_functions: HashMap<String, Callback>,
 }
 
 impl ElementHandler {
     fn new() -> ElementHandler {
         ElementHandler {
-            creator_function: HashMap::new() 
+            creator_functions: HashMap::new() 
         }
     }
 
     fn add(&mut self, elementName: String, func: Callback) {
-        self.creator_function.insert(elementName, func);
+        self.creator_functions.insert(elementName, func);
     }
 }
 
-fn get_constrant(element: &Element) -> Constraint {
-    Constraint::Length(1)
+fn get_constrant(element: &Element) -> BasicElement {
+    BasicElement::ConstraintType(Constraint::Length(1))
+}
+
+fn get_layout(element: &Element) -> BasicElement {
+    BasicElement::LayoutType(Layout::default())
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -40,6 +44,7 @@ fn get_constrant(element: &Element) -> Constraint {
 fn extract(root: &Element) {
     let mut parser: ElementHandler = ElementHandler::new();    
     parser.add(String::from("Constraint"), get_constrant);
+    parser.add(String::from("Layout"), get_layout);
     parseElement(root, parser);
 }
 
@@ -54,7 +59,7 @@ fn parseElement(element: &Element, parser: ElementHandler) {
 // Create Basic Element
 fn createBasicElement(element: &Element, parser: ElementHandler) {
     println!("Basic element ({:?})", element.name());
-    parser.creator_function[element.name()](element);
+    parser.creator_functions[element.name()](element);
     for attr in element.attrs() {
         println!("======= attribute  =======");
         println!("{:#?}", attr);
