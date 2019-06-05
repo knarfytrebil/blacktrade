@@ -35,10 +35,11 @@ impl ElementHandler {
 
 impl FromStr for Direction {
     fn from_str(ele_str: &str) -> Self {
-        match ele_str {
+        let direction = match ele_str {
             "Vertical" => { Direction::Vertical }
             "Horizontal" => { Direction::Horizontal }
-        }
+        };
+        Ok(direction)
     }
 }
 
