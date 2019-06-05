@@ -3,11 +3,13 @@ extern crate tui;
 
 use minidom::Element;
 use std::collections::HashMap;
+use std::str::FromStr;
 use std::fs;
 use tui::layout::{Direction, Layout, Constraint};
 
 enum BasicElement {
     ConstraintType(Constraint),
+    DirectionType(Direction),
     LayoutType(Layout),
 }
 
@@ -17,6 +19,7 @@ type Callback = fn(&Element) -> BasicElement;
 struct ElementHandler {
     creator_functions: HashMap<String, Callback>,
 }
+
 
 impl ElementHandler {
     fn new() -> ElementHandler {
@@ -30,13 +33,40 @@ impl ElementHandler {
     }
 }
 
+impl FromStr for Direction {
+    fn from_str(ele_str: &str) -> Self {
+        match ele_str {
+            "Vertical" => { Direction::Vertical }
+            "Horizontal" => { Direction::Horizontal }
+        }
+    }
+}
+
 fn get_constrant(element: &Element) -> BasicElement {
-    BasicElement::ConstraintType(Constraint::Length(1))
+    let attr = element.attrs().next().unwrap();
+    let value: u16 = attr.1.to_string().parse().unwrap();
+    let constraint = match attr.0 {
+        "Length" => { Constraint::Length(value) } 
+        "Max" => { Constraint::Max(value) }
+        "Min" |  _ => { Constraint::Min(value) }
+    };
+    BasicElement::ConstraintType(constraint)
 }
 
 fn get_layout(element: &Element) -> BasicElement {
-    BasicElement::LayoutType(Layout::default())
+    let layout = match element.attr("type") {
+        None | Some("default") => { Layout::default() }
+        _ => { Layout::default() }
+    };
+    let d = Direction::From("Vertical");
+    for attr in element.attrs() {
+    }
+    BasicElement::LayoutType(layout)
 }
+
+fn tweak_layout(layout: Layout, key: &str, value: &str) {
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Extraction of XML Tree
