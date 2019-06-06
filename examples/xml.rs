@@ -37,19 +37,6 @@ impl ElementHandler {
 
 }
 
-fn attrify(attr_type: &str, attr_name: &str) -> BasicAttribute {
-    match attr_type {
-        "direction" => {
-            let attr = match attr_name {
-                "Vertical" => { Direction::Vertical }
-                &_ |  "Horizontal" => { Direction::Horizontal }
-            };
-            BasicAttribute::DirectionType(attr) 
-        }
-        _ => { BasicAttribute::DirectionType(Direction::Vertical) }
-    }
-}
-
 fn get_constrant(element: &Element) -> BasicElement {
     let attr = element.attrs().next().unwrap();
     let value: u16 = attr.1.to_string().parse().unwrap();
@@ -62,28 +49,14 @@ fn get_constrant(element: &Element) -> BasicElement {
 }
 
 fn get_layout(element: &Element) -> BasicElement {
-    let layout = match element.attr("type") {
-        None | Some("default") => { Layout::default() }
-        _ => { Layout::default() }
+    let layout = Layout::default(); 
+    let layout = match element.attr("direction") {
+        None | Some("Horizontal") => { layout.direction(Direction::Horizontal) }
+        _ => { layout.direction(Direction::Vertical) }
     };
-
-    for attr in element.attrs() {
-        println!("======= attribute  =======");
-        println!("{:#?}", attr);
-        let layout = match attrify(attr.0, attr.1) {
-            BasicAttribute::DirectionType(direction) => {
-                layout.direction(direction)
-            }
-            _ => { layout }
-        };
-        println!("{:#?}", layout);
-    }
+    println!("{:#?}", layout);
     BasicElement::LayoutType(layout)
 }
-
-fn tweak_layout(layout: Layout, key: &str, value: &str) {
-}
-
 
 ////////////////////////////
 // Extraction of XML Tree //

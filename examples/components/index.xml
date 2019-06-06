@@ -1,7 +1,6 @@
-<Layout xmlns="articles" type="default" direction="Vertical">
+<Layout xmlns="articles" direction="Vertical">
     <Constraint Length="1">
-        <Tabs type="default" 
-            titles="{{ app.tabs.titles }}"
+        <Tabs titles="{{ app.tabs.titles }}"
             style="{ fgColor: 'Green' }"
             highlightStyle="{ fgColor: 'Yellow' }"
             select="{{ app.tabs.selection }}" />
