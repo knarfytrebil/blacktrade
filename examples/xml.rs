@@ -9,8 +9,12 @@ use tui::layout::{Direction, Layout, Constraint};
 
 enum BasicElement {
     ConstraintType(Constraint),
-    DirectionType(Direction),
     LayoutType(Layout),
+}
+
+#[derive(Debug)]
+enum BasicAttribute {
+    DirectionType(Direction),
 }
 
 type Callback = fn(&Element) -> BasicElement;
@@ -19,7 +23,6 @@ type Callback = fn(&Element) -> BasicElement;
 struct ElementHandler {
     creator_functions: HashMap<String, Callback>,
 }
-
 
 impl ElementHandler {
     fn new() -> ElementHandler {
@@ -31,15 +34,19 @@ impl ElementHandler {
     fn add(&mut self, elementName: String, func: Callback) {
         self.creator_functions.insert(elementName, func);
     }
+
 }
 
-impl FromStr for Direction {
-    fn from_str(ele_str: &str) -> Self {
-        let direction = match ele_str {
-            "Vertical" => { Direction::Vertical }
-            "Horizontal" => { Direction::Horizontal }
-        };
-        Ok(direction)
+fn attrify(attr_type: &str, attr_name: &str) -> BasicAttribute {
+    match attr_type {
+        "direction" => {
+            let attr = match attr_name {
+                "Vertical" => { Direction::Vertical }
+                &_ |  "Horizontal" => { Direction::Horizontal }
+            };
+            BasicAttribute::DirectionType(attr) 
+        }
+        _ => { BasicAttribute::DirectionType(Direction::Vertical) }
     }
 }
 
@@ -59,8 +66,17 @@ fn get_layout(element: &Element) -> BasicElement {
         None | Some("default") => { Layout::default() }
         _ => { Layout::default() }
     };
-    let d = Direction::From("Vertical");
+
     for attr in element.attrs() {
+        println!("======= attribute  =======");
+        println!("{:#?}", attr);
+        let layout = match attrify(attr.0, attr.1) {
+            BasicAttribute::DirectionType(direction) => {
+                layout.direction(direction)
+            }
+            _ => { layout }
+        };
+        println!("{:#?}", layout);
     }
     BasicElement::LayoutType(layout)
 }
@@ -69,9 +85,9 @@ fn tweak_layout(layout: Layout, key: &str, value: &str) {
 }
 
 
-////////////////////////////////////////////////////////////////////////////////////
-// Extraction of XML Tree
-////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////
+// Extraction of XML Tree //
+////////////////////////////
 fn extract(root: &Element) {
     let mut parser: ElementHandler = ElementHandler::new();    
     parser.add(String::from("Constraint"), get_constrant);
@@ -91,10 +107,6 @@ fn parseElement(element: &Element, parser: ElementHandler) {
 fn createBasicElement(element: &Element, parser: ElementHandler) {
     println!("Basic element ({:?})", element.name());
     parser.creator_functions[element.name()](element);
-    for attr in element.attrs() {
-        println!("======= attribute  =======");
-        println!("{:#?}", attr);
-    }
     if !is_childless(element) {
         println!("Child ({:?})", element.children().count());
         for child in element.children() {
