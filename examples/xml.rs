@@ -3,7 +3,8 @@ extern crate tui;
 
 use minidom::Element;
 use std::collections::HashMap;
-use std::str::FromStr;
+use std::vec::Vec;
+
 use std::fs;
 use tui::layout::{Direction, Layout, Constraint};
 
@@ -13,28 +14,61 @@ enum BasicElement {
 }
 
 #[derive(Debug)]
-enum BasicAttribute {
-    DirectionType(Direction),
+enum BaseAttr {
+    D(Direction),
 }
 
 type Callback = fn(&Element) -> BasicElement;
 
 #[derive(Clone)]
 struct ElementHandler {
-    creator_functions: HashMap<String, Callback>,
+    creator_functions: HashMap<&'static str, Callback>,
 }
 
 impl ElementHandler {
-    fn new() -> ElementHandler {
+    fn new(el_names: Vec<&'static str>) -> ElementHandler {
+        let mut eh = Self::default();
+        eh.assemble_fn(&el_names);
+        eh
+    }
+
+    fn assemble_fn(&mut self, el_names: &[&'static str]) {
+        for el_name in el_names {
+            self.add(el_name);
+        }
+    }
+
+    fn push_el_fn(&mut self, el_name: &'static str, func: Callback) {
+        self.creator_functions.insert(el_name, func);
+    }
+
+    fn add(&mut self, el_name: &'static str) {
+        self.push_el_fn(el_name, Self::el_fn(el_name).unwrap());
+    }
+
+    fn el_fn(el_name: &str) -> Option<Callback> {
+        match el_name {
+            "Constraint" => { Some(get_constrant) }
+            "Layout" => { Some(get_layout) }
+            _ => { None }
+        }
+    }
+
+    fn get_attr(el: &Element, key: &str) -> Option<BaseAttr> {
+        match el.attr(key) {
+            Some("Horizontal") => { Some(BaseAttr::D(Direction::Horizontal)) }
+            Some("Vertical") => { Some(BaseAttr::D(Direction::Vertical)) }
+            _ | None => { None }
+        }
+    }
+}
+
+impl Default for ElementHandler {
+    fn default() -> ElementHandler {
         ElementHandler {
             creator_functions: HashMap::new() 
         }
     }
-
-    fn add(&mut self, elementName: String, func: Callback) {
-        self.creator_functions.insert(elementName, func);
-    }
-
 }
 
 fn get_constrant(element: &Element) -> BasicElement {
@@ -50,10 +84,7 @@ fn get_constrant(element: &Element) -> BasicElement {
 
 fn get_layout(element: &Element) -> BasicElement {
     let layout = Layout::default(); 
-    let layout = match element.attr("direction") {
-        None | Some("Horizontal") => { layout.direction(Direction::Horizontal) }
-        _ => { layout.direction(Direction::Vertical) }
-    };
+    let attr = ElementHandler::get_attr(element, "direction").unwrap();
     println!("{:#?}", layout);
     BasicElement::LayoutType(layout)
 }
@@ -62,34 +93,33 @@ fn get_layout(element: &Element) -> BasicElement {
 // Extraction of XML Tree //
 ////////////////////////////
 fn extract(root: &Element) {
-    let mut parser: ElementHandler = ElementHandler::new();    
-    parser.add(String::from("Constraint"), get_constrant);
-    parser.add(String::from("Layout"), get_layout);
-    parseElement(root, parser);
+    let parser = ElementHandler::new(vec!["Constraint", "Layout"]);    
+    parse_element(root, parser);
 }
 
 // Create Element
-fn parseElement(element: &Element, parser: ElementHandler) {
+fn parse_element(element: &Element, parser: ElementHandler) {
     match is_basic(element) {
-        true => { createBasicElement(element, parser); }
-        false => { createCustomElement(element, parser); }
+        true => { create_basic_element(element, parser); }
+        false => { create_custom_element(element, parser); }
     }
 }
 
 // Create Basic Element
-fn createBasicElement(element: &Element, parser: ElementHandler) {
+fn create_basic_element(element: &Element, parser: ElementHandler) {
     println!("Basic element ({:?})", element.name());
     parser.creator_functions[element.name()](element);
+
     if !is_childless(element) {
         println!("Child ({:?})", element.children().count());
         for child in element.children() {
-            parseElement(child, parser.clone());
+            parse_element(child, parser.clone());
         }
     }
 }
 
 // Create Custom Element
-fn createCustomElement(element: &Element, parser: ElementHandler) {
+fn create_custom_element(element: &Element, parser: ElementHandler) {
     println!("======= CUSTOM  =======");
 }
 
