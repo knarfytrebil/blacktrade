@@ -38,7 +38,10 @@ trait ElementHandler {
         self.push_el_fn(el_name, Self::el_fn(el_name).unwrap());
     }
 
+    // Instance method Sig
     fn push_el_fn(&mut self, el_name: &'static str, func: Callback); 
+
+    // Static method Sig
     fn el_fn(el_name: &str) -> Option<Callback>; 
     fn get_attr(el: &Element, key: &str) -> Option<BaseAttr>; 
 }
@@ -94,6 +97,7 @@ fn get_layout(element: &Element) -> BasicElement {
     let layout = Layout::default(); 
     let attr = TuiParser::get_attr(element, "direction").unwrap();
     println!("{:#?}", layout);
+    println!("{:#?}", attr);
     BasicElement::LayoutType(layout)
 }
 
