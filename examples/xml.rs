@@ -94,10 +94,10 @@ fn get_constrant(element: &Element) -> BasicElement {
 }
 
 fn get_layout(element: &Element) -> BasicElement {
-    let layout = Layout::default(); 
-    let attr = TuiParser::get_attr(element, "direction").unwrap();
+    let mut layout = Layout::default(); 
+    let BaseAttr::D(dir) = TuiParser::get_attr(element, "direction").unwrap();
+    layout = layout.direction(dir);
     println!("{:#?}", layout);
-    println!("{:#?}", attr);
     BasicElement::LayoutType(layout)
 }
 
@@ -136,7 +136,6 @@ fn create_custom_element(element: &Element, parser: TuiParser) {
 }
 
 // Utility Functions
-
 // Element has not attribute and not Child element
 // AND DOES NOT belong to standard widget list
 fn is_basic(element: &Element) -> bool {

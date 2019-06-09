@@ -1,4 +1,4 @@
-<Layout xmlns="articles" direction="Vertical">
+<Layout xmlns="articles" direction="Vertical" color="red">
     <Constraint Length="1">
         <Tabs titles="{{ app.tabs.titles }}"
             style="{ fgColor: 'Green' }"
