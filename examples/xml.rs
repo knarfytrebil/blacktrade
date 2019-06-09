@@ -13,9 +13,13 @@ enum BasicElement {
     LayoutType(Layout),
 }
 
+// Basic Attributes
+// - D: Direction
+// - M: Margin
 #[derive(Debug)]
 enum BaseAttr {
     D(Direction),
+    M(u16),
 }
 
 type Callback = fn(&Element) -> BasicElement;
