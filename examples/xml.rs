@@ -1,17 +1,22 @@
 extern crate minidom; 
 extern crate tui;
 
-use minidom::Element;
 use std::collections::HashMap;
 use std::vec::Vec;
 
 use std::fs;
 use tui::layout::{Direction, Layout, Constraint};
+use tui::widgets::{Tabs, Widget};
+use minidom::Element;
 
 enum BasicElement {
     ConstraintType(Constraint),
     LayoutType(Layout),
 }
+
+// enum WidgetFn {
+//     
+// }
 
 // Basic Attributes
 // - D: Direction
@@ -78,12 +83,25 @@ impl ElementHandler for TuiParser {
     }
 
     fn get_attr(el: &Element, key: &str) -> Option<BaseAttr> {
-        match el.attr(key) {
-            Some("Horizontal") => { Some(BaseAttr::D(Direction::Horizontal)) }
-            Some("Vertical") => { Some(BaseAttr::D(Direction::Vertical)) }
-            _ | None => { None }
+        match key {
+            "direction" => {
+                match el.attr(key) {
+                    Some("Horizontal") => { Some(BaseAttr::D(Direction::Horizontal)) }
+                    Some("Vertical") => { Some(BaseAttr::D(Direction::Vertical)) }
+                    _ | None => { None }
+                }
+            }
+            "margin" => {
+                match el.attr(key) {
+                    Some(mgn) => { Some(BaseAttr::M(mgn.to_string().parse::<u16>().unwrap())) }
+                    _ | None => { None }
+                }
+            }
+            _ => { None }
         }
     }
+
+    
 }
 
 fn get_constrant(element: &Element) -> BasicElement {
@@ -97,10 +115,23 @@ fn get_constrant(element: &Element) -> BasicElement {
     BasicElement::ConstraintType(constraint)
 }
 
-fn get_layout(element: &Element) -> BasicElement {
+fn get_layout(el: &Element) -> BasicElement {
     let mut layout = Layout::default(); 
-    let BaseAttr::D(dir) = TuiParser::get_attr(element, "direction").unwrap();
-    layout = layout.direction(dir);
+    for attr in el.attrs() {
+        layout = match TuiParser::get_attr(el, attr.0) {
+            Some(parsed_attr) => { 
+                match parsed_attr {
+                    BaseAttr::D(dir) => { layout.direction(dir) }
+                    BaseAttr::M(mgn) => { layout.margin(mgn) }
+                    _ => { layout.direction(Direction::Horizontal) } 
+                }
+            }
+            None => { 
+                println!("Non Native Attribute Found {:#?}", attr.0);
+                layout 
+            }
+        };
+    }
     println!("{:#?}", layout);
     BasicElement::LayoutType(layout)
 }
@@ -122,13 +153,12 @@ fn parse_element(element: &Element, parser: TuiParser) {
 }
 
 // Create Basic Element
-fn create_basic_element(element: &Element, parser: TuiParser) {
-    println!("Basic element ({:?})", element.name());
-    parser.creator_functions[element.name()](element);
-
-    if !is_childless(element) {
-        println!("Child ({:?})", element.children().count());
-        for child in element.children() {
+fn create_basic_element(el: &Element, parser: TuiParser) {
+    println!("Basic element ({:?})", el.name());
+    let base_el = parser.creator_functions[el.name()](el);
+    if !is_childless(el) {
+        println!("Child ({:?})", el.children().count());
+        for child in el.children() {
             parse_element(child, parser.clone());
         }
     }
