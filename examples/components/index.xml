@@ -11,7 +11,7 @@
         </BufferedTextBox>
     </Constraint>
     <Constraint Length="1">
-        <Paragraph id="CommandBar">
+        <Paragraph id="StatusBar">
             {{ app.mode.symbol }}
         </Paragraph>
     </Constraint>

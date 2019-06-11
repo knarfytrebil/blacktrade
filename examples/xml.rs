@@ -6,17 +6,19 @@ use std::vec::Vec;
 
 use std::fs;
 use tui::layout::{Direction, Layout, Constraint};
-use tui::widgets::{Tabs, Widget};
+use tui::widgets::{Tabs, Widget, Paragraph, Text};
 use minidom::Element;
+
+type Callback = fn(&Element) -> BasicElement;
+type TextRefIter = Iterator<Item = &'static Text<'static>>;
 
 enum BasicElement {
     ConstraintType(Constraint),
     LayoutType(Layout),
+    // Widget: Tabs, Paragraph
+    TabsType(Tabs<'static, &'static str>),
+    ParagraphType(Paragraph<'static, 'static, TextRefIter>)
 }
-
-// enum WidgetFn {
-//     
-// }
 
 // Basic Attributes
 // - D: Direction
@@ -26,8 +28,6 @@ enum BaseAttr {
     D(Direction),
     M(u16),
 }
-
-type Callback = fn(&Element) -> BasicElement;
 
 #[derive(Clone)]
 struct TuiParser {
@@ -78,6 +78,7 @@ impl ElementHandler for TuiParser {
         match el_name {
             "Constraint" => { Some(get_constrant) }
             "Layout" => { Some(get_layout) }
+            "Tabs" => { Some(get_tabs) }
             _ => { None }
         }
     }
@@ -104,6 +105,9 @@ impl ElementHandler for TuiParser {
     
 }
 
+//////////////////////////////
+// Basic Element Generation //
+//////////////////////////////
 fn get_constrant(element: &Element) -> BasicElement {
     let attr = element.attrs().next().unwrap();
     let value: u16 = attr.1.to_string().parse().unwrap();
@@ -136,11 +140,20 @@ fn get_layout(el: &Element) -> BasicElement {
     BasicElement::LayoutType(layout)
 }
 
+fn get_tabs(el: &Element) -> BasicElement {
+    let mut tabs = Tabs::default();
+    BasicElement::TabsType(tabs)
+}
+
+// fn get_paragrah(el: &Element) -> BasicElement {
+// 
+// }
+
 ////////////////////////////
 // Extraction of XML Tree //
 ////////////////////////////
 fn extract(root: &Element) {
-    let parser = TuiParser::new(vec!["Constraint", "Layout"]);    
+    let parser = TuiParser::new(vec!["Constraint", "Layout", "Tabs"]);
     parse_element(root, parser);
 }
 
@@ -191,5 +204,7 @@ fn main() {
     let dom_data = fs::read_to_string("./examples/components/index.xml")
         .expect("Error reading file");
     let root: Element = dom_data.parse().unwrap();
+    let a = Paragraph::new([].iter());
+    // println!("{:?}", a);
     extract(&root);
 }
