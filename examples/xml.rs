@@ -3,21 +3,21 @@ extern crate tui;
 
 use std::collections::HashMap;
 use std::vec::Vec;
-
 use std::fs;
+
 use tui::layout::{Direction, Layout, Constraint};
 use tui::widgets::{Tabs, Widget, Paragraph, Text};
 use minidom::Element;
 
 type Callback = fn(&Element) -> BasicElement;
-type TextRefIter = Iterator<Item = &'static Text<'static>>;
+type BxTextRefIter = Box<Iterator<Item = &'static Text<'static>>>;
 
 enum BasicElement {
     ConstraintType(Constraint),
     LayoutType(Layout),
     // Widget: Tabs, Paragraph
     TabsType(Tabs<'static, &'static str>),
-    ParagraphType(Paragraph<'static, 'static, TextRefIter>)
+    ParagraphType(Paragraph<'static, 'static, BxTextRefIter>)
 }
 
 // Basic Attributes
@@ -145,9 +145,14 @@ fn get_tabs(el: &Element) -> BasicElement {
     BasicElement::TabsType(tabs)
 }
 
-// fn get_paragrah(el: &Element) -> BasicElement {
-// 
-// }
+fn get_paragrah(el: &Element) -> BasicElement {
+    let mut paragraph = Paragraph::new(
+        Box::new(
+            [Text::raw("wtf")].iter()
+        )
+    );
+    BasicElement::ParagraphType(paragraph)
+}
 
 ////////////////////////////
 // Extraction of XML Tree //
