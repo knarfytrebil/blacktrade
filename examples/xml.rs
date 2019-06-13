@@ -2,18 +2,19 @@ extern crate minidom;
 extern crate tui;
 
 use std::collections::HashMap;
+use std::io::Write;
 use std::vec::Vec;
 use std::fs;
 
 use tui::layout::{Direction, Layout, Constraint, Rect};
 use tui::widgets::{Tabs, Widget, Paragraph, Text};
-use tui::backend::Backend;
+use tui::backend::{TermionBackend};
 use tui::Frame;
 use minidom::Element;
 
 type Callback = fn(&Element) -> BasicElement;
-type RenderFn<Backend> = Fn(&mut Frame<Backend>,  Rect);
-type RenderGen = fn() -> Box<RenderFn<Backend>>;
+type RenderFn<TermionBackend> = Fn(&mut Frame<TermionBackend>,  Rect);
+type RenderGen = fn() -> Box<RenderFn<TermionBackend<Write>>>;
 type BxTextRefIter = Box<Iterator<Item=&'static Text<'static>> + 'static>;
 
 enum BasicElement {
