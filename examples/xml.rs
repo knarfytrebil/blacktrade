@@ -5,19 +5,23 @@ use std::collections::HashMap;
 use std::vec::Vec;
 use std::fs;
 
-use tui::layout::{Direction, Layout, Constraint};
+use tui::layout::{Direction, Layout, Constraint, Rect};
 use tui::widgets::{Tabs, Widget, Paragraph, Text};
+use tui::backend::Backend;
+use tui::Frame;
 use minidom::Element;
 
 type Callback = fn(&Element) -> BasicElement;
-type BxTextRefIter = Box<Iterator<Item = &'static Text<'static>>>;
+type RenderFn<Backend> = Fn(&mut Frame<Backend>,  Rect);
+type RenderGen = fn() -> Box<RenderFn<Backend>>;
+type BxTextRefIter = Box<Iterator<Item=&'static Text<'static>> + 'static>;
 
 enum BasicElement {
     ConstraintType(Constraint),
     LayoutType(Layout),
     // Widget: Tabs, Paragraph
     TabsType(Tabs<'static, &'static str>),
-    ParagraphType(Paragraph<'static, 'static, BxTextRefIter>)
+    ParagraphType(RenderGen)
 }
 
 // Basic Attributes
@@ -146,12 +150,11 @@ fn get_tabs(el: &Element) -> BasicElement {
 }
 
 fn get_paragrah(el: &Element) -> BasicElement {
-    let mut paragraph = Paragraph::new(
-        Box::new(
-            [Text::raw("wtf")].iter()
-        )
-    );
-    BasicElement::ParagraphType(paragraph)
+    let b = Box::new([Text::raw("wtf")].iter());
+    let mut paragraph = Paragraph::new(b);
+    let mut tabs = Tabs::default();
+    BasicElement::TabsType(tabs)
+    // BasicElement::ParagraphType(paragraph)
 }
 
 ////////////////////////////
@@ -209,7 +212,5 @@ fn main() {
     let dom_data = fs::read_to_string("./examples/components/index.xml")
         .expect("Error reading file");
     let root: Element = dom_data.parse().unwrap();
-    let a = Paragraph::new([].iter());
-    // println!("{:?}", a);
     extract(&root);
 }
