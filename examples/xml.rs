@@ -2,32 +2,47 @@ extern crate minidom;
 extern crate tui;
 
 use std::collections::HashMap;
-use std::io::Write;
 use std::vec::Vec;
 use std::fs;
+use std::io::Write;
 
 use tui::layout::{Direction, Layout, Constraint, Rect};
 use tui::widgets::{Tabs, Widget, Paragraph, Text};
-use tui::backend::{TermionBackend};
+use tui::backend::{Backend};
 use tui::Frame;
 use minidom::Element;
 
 type Callback = fn(&Element) -> BasicElement;
-type RenderFn<TermionBackend> = Fn(&mut Frame<TermionBackend>,  Rect);
-type RenderGen = fn() -> Box<RenderFn<TermionBackend<Write>>>;
-type BxTextRefIter = Box<Iterator<Item=&'static Text<'static>> + 'static>;
+type RenderFn<Backend> = Fn(&mut Frame<Backend>,  Rect);
+// type BxTextRefIter = Box<Iterator<Item=&'static Text<'static>> + 'static>;
 
+/* -----------------------------------  
+ * List of Widgets:
+ * ----------------------------------- 
+ * BarChart 
+ * Map, Line, Points, Rectangle, World 
+ * Block
+ * Chart
+ * Gauge
+ * List
+ * Reflow                    [No Size]
+ * Paragraph                 [No Size]
+ * Sparkline
+ * Table
+ * Tabs
+ * ---------------------------------- */ 
 enum BasicElement {
     ConstraintType(Constraint),
     LayoutType(Layout),
-    // Widget: Tabs, Paragraph
     TabsType(Tabs<'static, &'static str>),
-    ParagraphType(RenderGen)
 }
 
-// Basic Attributes
-// - D: Direction
-// - M: Margin
+/* ------------------ 
+ * Basic Attributes
+ * ------------------ 
+ * D: Direction
+ * M: Margin
+ * ------------------ */ 
 #[derive(Debug)]
 enum BaseAttr {
     D(Direction),
@@ -151,16 +166,16 @@ fn get_tabs(el: &Element) -> BasicElement {
 }
 
 fn get_paragrah(el: &Element) -> BasicElement {
-    let b = Box::new([Text::raw("wtf")].iter());
-    let mut paragraph = Paragraph::new(b);
+    // let b = Box::new([Text::raw("wtf")].iter());
+    // let mut paragraph = Paragraph::new(b);
     let mut tabs = Tabs::default();
     BasicElement::TabsType(tabs)
     // BasicElement::ParagraphType(paragraph)
 }
 
-////////////////////////////
-// Extraction of XML Tree //
-////////////////////////////
+/*************************
+ * Extraction of XML Tree
+ *************************/
 fn extract(root: &Element) {
     let parser = TuiParser::new(vec!["Constraint", "Layout", "Tabs"]);
     parse_element(root, parser);
