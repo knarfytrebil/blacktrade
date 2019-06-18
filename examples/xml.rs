@@ -4,7 +4,6 @@ extern crate tui;
 use std::collections::HashMap;
 use std::vec::Vec;
 use std::fs;
-use std::io::Write;
 
 use tui::layout::{Direction, Layout, Constraint, Rect};
 use tui::widgets::{Tabs, Widget, Paragraph, Text};
@@ -12,13 +11,15 @@ use tui::backend::{Backend};
 use tui::Frame;
 use minidom::Element;
 
-type Callback = fn(&Element) -> BasicElement;
-type RenderFn<Backend> = Fn(&mut Frame<Backend>,  Rect);
-// type BxTextRefIter = Box<Iterator<Item=&'static Text<'static>> + 'static>;
+type CallbackFn = fn(&Element) -> BasicElement;
 
-/* -----------------------------------  
+enum Props {
+    StringRef(&'static str)
+}
+
+/* ------------------------------------ 
  * List of Widgets:
- * ----------------------------------- 
+ * ------------------------------------
  * BarChart 
  * Map, Line, Points, Rectangle, World 
  * Block
@@ -32,9 +33,10 @@ type RenderFn<Backend> = Fn(&mut Frame<Backend>,  Rect);
  * Tabs
  * ---------------------------------- */ 
 enum BasicElement {
-    ConstraintType(Constraint),
-    LayoutType(Layout),
-    TabsType(Tabs<'static, &'static str>),
+    ConstraintT(Constraint),
+    LayoutT(Layout),
+    TabsT(Tabs<'static, &'static str>),
+    ParagraphT(Paragraph<'static, 'static, Box<Iterator<Item=&'static Text<'static>>>>)
 }
 
 /* ------------------ 
@@ -51,7 +53,7 @@ enum BaseAttr {
 
 #[derive(Clone)]
 struct TuiParser {
-    creator_functions: HashMap<&'static str, Callback>,
+    creator_functions: HashMap<&'static str, CallbackFn>,
 }
 
 trait ElementHandler {
@@ -68,10 +70,10 @@ trait ElementHandler {
     }
 
     // Instance method Sig
-    fn push_el_fn(&mut self, el_name: &'static str, func: Callback); 
+    fn push_el_fn(&mut self, el_name: &'static str, func: CallbackFn); 
 
     // Static method Sig
-    fn el_fn(el_name: &str) -> Option<Callback>; 
+    fn el_fn(el_name: &str) -> Option<CallbackFn>; 
     fn get_attr(el: &Element, key: &str) -> Option<BaseAttr>; 
 }
 
@@ -90,11 +92,11 @@ impl ElementHandler for TuiParser {
         eh
     }
 
-    fn push_el_fn(&mut self, el_name: &'static str, func: Callback) {
+    fn push_el_fn(&mut self, el_name: &'static str, func: CallbackFn) {
         self.creator_functions.insert(el_name, func);
     }
 
-    fn el_fn(el_name: &str) -> Option<Callback> {
+    fn el_fn(el_name: &str) -> Option<CallbackFn> {
         match el_name {
             "Constraint" => { Some(get_constrant) }
             "Layout" => { Some(get_layout) }
@@ -136,7 +138,7 @@ fn get_constrant(element: &Element) -> BasicElement {
         "Max" => { Constraint::Max(value) }
         "Min" |  _ => { Constraint::Min(value) }
     };
-    BasicElement::ConstraintType(constraint)
+    BasicElement::ConstraintT(constraint)
 }
 
 fn get_layout(el: &Element) -> BasicElement {
@@ -157,20 +159,18 @@ fn get_layout(el: &Element) -> BasicElement {
         };
     }
     println!("{:#?}", layout);
-    BasicElement::LayoutType(layout)
+    BasicElement::LayoutT(layout)
 }
 
 fn get_tabs(el: &Element) -> BasicElement {
     let mut tabs = Tabs::default();
-    BasicElement::TabsType(tabs)
+    BasicElement::TabsT(tabs)
 }
 
 fn get_paragrah(el: &Element) -> BasicElement {
-    // let b = Box::new([Text::raw("wtf")].iter());
-    // let mut paragraph = Paragraph::new(b);
-    let mut tabs = Tabs::default();
-    BasicElement::TabsType(tabs)
-    // BasicElement::ParagraphType(paragraph)
+    let b = Box::new([Text::raw("wtf")].iter());
+    let mut p = Paragraph::new(b);
+    BasicElement::ParagraphT(p)
 }
 
 /*************************
