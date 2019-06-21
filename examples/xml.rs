@@ -36,7 +36,7 @@ enum BasicElement {
     ConstraintT(Constraint),
     LayoutT(Layout),
     TabsT(Tabs<'static, &'static str>),
-    ParagraphT(Paragraph<'static, 'static, Box<Iterator<Item=&'static Text<'static>>>>)
+    ParagraphT(Vec<Text<'static>>)
 }
 
 /* ------------------ 
@@ -101,6 +101,7 @@ impl ElementHandler for TuiParser {
             "Constraint" => { Some(get_constrant) }
             "Layout" => { Some(get_layout) }
             "Tabs" => { Some(get_tabs) }
+            "Paragraph" => { Some(get_paragraph) }
             _ => { None }
         }
     }
@@ -167,17 +168,16 @@ fn get_tabs(el: &Element) -> BasicElement {
     BasicElement::TabsT(tabs)
 }
 
-fn get_paragrah(el: &Element) -> BasicElement {
-    let b = Box::new([Text::raw("wtf")].iter());
-    let mut p = Paragraph::new(b);
-    BasicElement::ParagraphT(p)
+fn get_paragraph(el: &Element) -> BasicElement {
+    let v = vec![Text::raw("wtf")];
+    BasicElement::ParagraphT(v)
 }
 
 /*************************
  * Extraction of XML Tree
  *************************/
 fn extract(root: &Element) {
-    let parser = TuiParser::new(vec!["Constraint", "Layout", "Tabs"]);
+    let parser = TuiParser::new(vec!["Constraint", "Layout", "Tabs", "Paragraph"]);
     parse_element(root, parser);
 }
 
@@ -203,7 +203,7 @@ fn create_basic_element(el: &Element, parser: TuiParser) {
 
 // Create Custom Element
 fn create_custom_element(element: &Element, parser: TuiParser) {
-    println!("======= CUSTOM  =======");
+    println!("Custom Element ({:#?})", element.name());
 }
 
 // Utility Functions
