@@ -203,7 +203,9 @@ fn create_basic_element(el: &Element, parser: TuiParser) {
 
 // Create Custom Element
 fn create_custom_element(element: &Element, parser: TuiParser) {
+    println!("<====== Custom");
     println!("Custom Element ({:#?})", element.name());
+    println!("Custom ======>");
 }
 
 // Utility Functions
