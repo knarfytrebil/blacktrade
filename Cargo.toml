@@ -12,6 +12,7 @@ json = "*"
 termion = "*"
 regex="1"
 minidom = "0.10.0"
+vec-tree = "0.1"
 
 [dependencies.ws]
 version = "*"
