@@ -24,12 +24,12 @@ use std::sync::{mpsc, Arc};
 use std::{io, thread};
 
 use termion::input::{MouseTerminal, TermRead};
-use termion::screen::AlternateScreen;
 use termion::raw::IntoRawMode;
+use termion::screen::AlternateScreen;
 
 use redux::Store;
 // use tui::backend::MouseBackend;
-use tui::backend::{TermionBackend};
+use tui::backend::TermionBackend;
 use tui::Terminal;
 
 use actions::AppAction;
@@ -46,7 +46,8 @@ fn main() -> Result<(), io::Error> {
         LevelFilter::Debug,
         Config::default(),
         File::create("debug.log").unwrap(),
-    )]).unwrap();
+    )])
+    .unwrap();
 
     // Channels
     let (tx, rx) = mpsc::channel();
@@ -103,7 +104,7 @@ fn main() -> Result<(), io::Error> {
     terminal.hide_cursor()?;
 
     let size = terminal.size().unwrap();
- 
+
     // if size != app.size && Rect::default() != app.size {
     //     size = app.size;
     //     terminal.resize(size).unwrap();
@@ -129,9 +130,11 @@ fn main() -> Result<(), io::Error> {
 
     loop {
         match rx.recv().unwrap() {
-            Event::Render(app_state) => terminal.draw(|mut f| { app::render(&mut f, &app_state) }),
-            Event::Exit => { break; },
-            _ =>  { Ok(()) }
+            Event::Render(app_state) => terminal.draw(|mut f| app::render(&mut f, &app_state)),
+            Event::Exit => {
+                break;
+            }
+            _ => Ok(()),
         };
     }
 
