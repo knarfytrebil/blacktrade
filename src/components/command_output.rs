@@ -1,9 +1,9 @@
-use tui::Frame; 
 use tui::backend::Backend;
 use tui::layout::Rect;
 use tui::widgets::Block;
+
 use tui::widgets::{Paragraph, Text};
-use tui::widgets::Widget;
+use tui::Frame;
 
 use structs::app::AppState;
 
@@ -22,13 +22,13 @@ fn get_buffer(area_height: u16, txt: String) -> String {
     }
 }
 
-pub fn render<B>(frame: &mut Frame<B>, app: &AppState, area: Rect) 
-where 
-    B: Backend
+pub fn render<B>(frame: &mut Frame<B>, app: &AppState, area: Rect)
+where
+    B: Backend,
 {
     let text = [Text::raw(get_buffer(area.height, app.console_txt.clone()))];
-    Paragraph::new(text.iter())
+    let paragraph = Paragraph::new(text.iter())
         .block(Block::default())
-        .wrap(true)
-        .render(frame, area);
+        .wrap(true);
+    frame.render_widget(paragraph, area);
 }

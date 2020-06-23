@@ -5,7 +5,7 @@ use structs::app::AppState;
 use tui::backend::Backend;
 use tui::layout::{Constraint, Direction, Layout};
 use tui::style::{Color, Style};
-use tui::widgets::{Tabs, Widget};
+use tui::widgets::Tabs;
 use tui::Frame;
 
 pub fn render<B>(frame: &mut Frame<B>, app: &AppState)
@@ -25,13 +25,14 @@ where
         )
         .split(app.size);
 
-    Tabs::default()
+    let tabs = Tabs::default()
         // .block(Block::default().borders(Borders::TOP))
         .titles(&app.tabs.titles)
         .style(Style::default().fg(Color::Green))
         .highlight_style(Style::default().fg(Color::Yellow))
-        .select(app.tabs.selection)
-        .render(frame, chunks[0]);
+        .select(app.tabs.selection);
+
+    frame.render_widget(tabs, chunks[0]);
 
     match app.tabs.selection {
         0 => command_output::render(frame, app, chunks[1]),
