@@ -10,7 +10,7 @@ use actions::AppAction;
 use redux::Reducer;
 use structs::app::AppState;
 
-pub type ReducerFn = Fn(AppState, &AppAction) -> Result<AppState, String>;
+pub type ReducerFn = dyn Fn(AppState, &AppAction) -> Result<AppState, String>;
 pub type CommandGen = fn() -> Box<ReducerFn>;
 type ReducerArray = Vec<Box<ReducerFn>>;
 
@@ -31,7 +31,7 @@ impl Reducer for AppState {
             AppAction::CommandEnd {
                 ref uuid,
                 success,
-                ref reason,
+                reason: _,
             } => vec![commands::end(uuid.to_string(), success)],
 
             // AppAction::Keyboard(key_evt) => {
