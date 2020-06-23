@@ -5,6 +5,7 @@ extern crate log;
 extern crate redux;
 extern crate regex;
 extern crate simplelog;
+
 extern crate termion;
 extern crate tui;
 extern crate uuid;
@@ -28,6 +29,7 @@ use termion::raw::IntoRawMode;
 use termion::screen::AlternateScreen;
 
 use redux::Store;
+// use tui::backend::MouseBackend;
 use tui::backend::TermionBackend;
 use tui::Terminal;
 
@@ -51,8 +53,6 @@ fn main() -> Result<(), io::Error> {
     // Channels
     let (tx, rx) = mpsc::channel();
     let (cmd_tx, cmd_rx) = mpsc::channel();
-    // let (exit_tx, exit_rx) = mpsc::channel();
-
     let (input_tx, subscribe_tx) = (cmd_tx.clone(), tx.clone());
 
     // Input
@@ -73,10 +73,6 @@ fn main() -> Result<(), io::Error> {
     });
     let console_mw = Box::new(ConsoleMiddleWare {});
     let debug_mw = Box::new(DebugMiddleWare {});
-    // let exit_mw = Box::new(CommandMiddleWare {
-    //     tx: exit_tx,
-    //     handler: CommandHandler::default(),
-    // });
 
     // App & State
     let store: Arc<Store<AppState>> = Arc::new(Store::new(vec![

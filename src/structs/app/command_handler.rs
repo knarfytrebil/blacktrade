@@ -39,6 +39,7 @@ impl CommandHandler {
             }));
             let mut cmd_with_args: Vec<&str> = cmd_str.split(' ').collect();
             let command = cmd_with_args.remove(0);
+            debug!("1!!!!!!");
             let res_action = match Command::new(command)
                 .args(cmd_with_args)
                 .stdin(Stdio::piped())
@@ -49,13 +50,14 @@ impl CommandHandler {
                 Ok(mut child) => {
                     let reader = child.stdout.take().expect("Couldn't get pipe stream");
                     let mut child_out = BufReader::new(reader);
+                    debug!("2!!!!!!");
                     loop {
                         let mut buffer = String::new();
                         let read_bytes = child_out
                             .read_line(&mut buffer)
                             .expect("Unable to read bytes");
                         if read_bytes != 0 {
-                            if &buffer == "exit\n" {
+                            if &buffer != "1" {
                                 let _ = tx.send(events::Event::Exit);
                             }
                             let evt = AppAction::ConsolePush(buffer).into_event();
