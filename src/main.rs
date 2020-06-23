@@ -103,7 +103,7 @@ fn main() -> Result<(), io::Error> {
     terminal.clear().unwrap();
     terminal.hide_cursor()?;
 
-    let size = terminal.size().unwrap();
+    let _size = terminal.size().unwrap();
 
     // if size != app.size && Rect::default() != app.size {
     //     size = app.size;
@@ -129,7 +129,7 @@ fn main() -> Result<(), io::Error> {
     });
 
     loop {
-        match rx.recv().unwrap() {
+        let _ = match rx.recv().unwrap() {
             Event::Render(app_state) => terminal.draw(|mut f| app::render(&mut f, &app_state)),
             Event::Exit => {
                 break;
