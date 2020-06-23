@@ -5,7 +5,6 @@ extern crate log;
 extern crate redux;
 extern crate regex;
 extern crate simplelog;
-
 extern crate termion;
 extern crate tui;
 extern crate uuid;
@@ -54,6 +53,7 @@ fn main() -> Result<(), io::Error> {
     let (tx, rx) = mpsc::channel();
     let (cmd_tx, cmd_rx) = mpsc::channel();
     let (input_tx, subscribe_tx) = (cmd_tx.clone(), tx.clone());
+    let (exit_tx, _exit_rx) = mpsc::channel();
 
     // Input
     thread::spawn(move || {
@@ -62,6 +62,11 @@ fn main() -> Result<(), io::Error> {
                 .send(AppAction::Keyboard(c.unwrap()).into_event())
                 .unwrap();
         }
+    });
+
+    let exit_mw = Box::new(CommandMiddleWare {
+        tx: exit_tx,
+        handler: CommandHandler::default(),
     });
 
     // Middlewares
@@ -81,6 +86,7 @@ fn main() -> Result<(), io::Error> {
         command_bar_mw,
         keyboard_mw,
         debug_mw,
+        exit_mw,
     ]));
 
     // Create Subscription from store to render
