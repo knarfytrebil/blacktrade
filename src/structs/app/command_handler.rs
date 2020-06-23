@@ -31,6 +31,10 @@ impl CommandHandler {
 
 impl CommandHandler {
     pub fn spawn(&self, tx: mpsc::Sender<events::Event>, cmd_str: String, uuid: String) {
+        debug!(
+            "======================== CMD STR {:?} ================================",
+            &cmd_str
+        );
         let thread_tx = tx.clone();
         let res = match thread::Builder::new().name(uuid.clone()).spawn(move || {
             // Panic Handler for Thread
@@ -39,7 +43,6 @@ impl CommandHandler {
             }));
             let mut cmd_with_args: Vec<&str> = cmd_str.split(' ').collect();
             let command = cmd_with_args.remove(0);
-            debug!("1!!!!!!");
             let res_action = match Command::new(command)
                 .args(cmd_with_args)
                 .stdin(Stdio::piped())
@@ -50,7 +53,6 @@ impl CommandHandler {
                 Ok(mut child) => {
                     let reader = child.stdout.take().expect("Couldn't get pipe stream");
                     let mut child_out = BufReader::new(reader);
-                    debug!("2!!!!!!");
                     loop {
                         let mut buffer = String::new();
                         let read_bytes = child_out
