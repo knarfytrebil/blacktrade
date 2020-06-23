@@ -5,23 +5,23 @@ authors = ["Frank Yao <frank.yao@cyanide.io>"]
 
 [dependencies]
 redux = { git = "https://github.com/knarfytrebil/redux-rs.git", branch = "dev" }
-log = { version = "^0.4.6", features = ["max_level_debug"] }
-uuid = { version = "0.7.4", features = ["v4"] }
-simplelog = "^0.5.3"
+log = { version = "^0.4.8", features = ["max_level_debug"] }
+uuid = { version = "0.8.1", features = ["v4"] }
+simplelog = "^0.8.0"
 json = "*"
 termion = "*"
 regex="1"
-minidom = "0.10.0"
-vec-tree = "0.1"
+minidom = "0.12.0"
+vec-tree = "0.1.2"
 
 [dependencies.ws]
 version = "*"
 features = ["ssl"]
 
 [dependencies.tui]
-version = "^0.6.0"
+version = "^0.9.5"
 
 [dependencies.cpython]
-version = "0.2.0"
+version = "0.5.0"
 default-features = false
 features = ["python3-sys"]
