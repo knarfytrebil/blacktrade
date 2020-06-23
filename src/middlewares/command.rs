@@ -25,6 +25,7 @@ impl Middleware<AppState> for CommandMiddleWare {
                 let state = store.get_state();
                 match state.cmd_str_queue.get(uuid) {
                     Some(command) => {
+                        debug!("COMMAND: ========== {:?}", &command);
                         let mut cmd_with_args: Vec<&str> = command.split(' ').collect();
                         let cmd_str = cmd_with_args.remove(0);
                         let _action = if self.handler.cmd_reg.contains_key(cmd_str) {
