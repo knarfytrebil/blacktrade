@@ -11,7 +11,7 @@ impl Middleware<AppState> for ConsoleMiddleWare {
         action: AppAction,
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
-        debug!("4 {:?}", &action);
+        // debug!("4 {:?}", &action);
         match &action {
             &AppAction::CommandConsume(ref uuid) => {
                 let cmd_str = store.get_state().cmd_str_queue[uuid].clone();
