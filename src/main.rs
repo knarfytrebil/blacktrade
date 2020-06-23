@@ -81,11 +81,11 @@ fn main() -> Result<(), io::Error> {
 
     // App & State
     let store: Arc<Store<AppState>> = Arc::new(Store::new(vec![
-        command_mw,
         console_mw,
         command_bar_mw,
         keyboard_mw,
         debug_mw,
+        command_mw,
         exit_mw,
     ]));
 
