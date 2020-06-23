@@ -28,7 +28,6 @@ use termion::raw::IntoRawMode;
 use termion::screen::AlternateScreen;
 
 use redux::Store;
-// use tui::backend::MouseBackend;
 use tui::backend::TermionBackend;
 use tui::Terminal;
 

@@ -1,23 +1,28 @@
-use structs::app::AppState;
-use tui::backend::Backend;
-use tui::layout::{Direction, Layout, Constraint};
-use tui::style::{Color, Style};
-use tui::widgets::{Tabs, Widget};
-use tui::Frame; 
 use components::command_bar;
 use components::command_output;
 use components::status_bar;
+use structs::app::AppState;
+use tui::backend::Backend;
+use tui::layout::{Constraint, Direction, Layout};
+use tui::style::{Color, Style};
+use tui::widgets::{Tabs, Widget};
+use tui::Frame;
 
-pub fn render<B>(frame: &mut Frame<B>, app: &AppState) 
-where 
-    B: Backend
+pub fn render<B>(frame: &mut Frame<B>, app: &AppState)
+where
+    B: Backend,
 {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Length(1), 
-            Constraint::Min(1), 
-            Constraint::Length(1), Constraint::Length(1)].as_ref())
+        .constraints(
+            [
+                Constraint::Length(1),
+                Constraint::Min(1),
+                Constraint::Length(1),
+                Constraint::Length(1),
+            ]
+            .as_ref(),
+        )
         .split(app.size);
 
     Tabs::default()
