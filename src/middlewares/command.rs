@@ -1,41 +1,12 @@
-use std::sync::mpsc;
-use store::events::Event;
+use actions::AppAction;
 use redux::{DispatchFunc, Middleware, Store};
-use store::action::AppAction;
-use store::app::{AppState, CommandHandler};
-
-// Experimental
-use std::process::{Command, Stdio};
-use std::io::{BufReader, BufRead};
-use std::thread;
+use std::sync::mpsc;
+use structs::app::events;
+use structs::app::{AppState, CommandHandler};
 
 pub struct CommandMiddleWare {
-    pub tx: mpsc::Sender<Event>,
-    pub handler: CommandHandler
-}
-
-impl CommandHandler {
-    fn spawn(&self, tx: mpsc::Sender<Event>)  {
-        thread::spawn(move || {
-            let command = "/bin/bash";
-            let mut child = Command::new(command)
-                .arg("./src/scripts/spot.sh")
-                .stdin(Stdio::piped())
-                .stdout(Stdio::piped())
-                .stderr(Stdio::piped())
-                .spawn()
-                .expect("Failed to Start");
-            let mut child_out = BufReader::new(child.stdout.as_mut().unwrap());
-            let mut line = String::new();
-            loop {
-                child_out.read_line(&mut line).unwrap();
-                if line != "".to_string() {
-                    let _ = tx.send(Event::ConsolePush(line.clone()));
-                }
-                line.clear();
-            }
-        });
-    }
+    pub tx: mpsc::Sender<events::Event>,
+    pub handler: CommandHandler,
 }
 
 impl Middleware<AppState> for CommandMiddleWare {
@@ -45,32 +16,43 @@ impl Middleware<AppState> for CommandMiddleWare {
         action: AppAction,
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
-        // debug!("5 {:?}", &action);
-        match &action {
-            &AppAction::CommandBarEnqueueCmd(ref uuid) => { self.tx.send(Event::CommandQueued(uuid.to_string())).unwrap(); }
-            &AppAction::CommandConsume(ref uuid) => {
+        match action {
+            AppAction::CommandBarEnqueueCmd(ref uuid) => {
+                let evt = AppAction::CommandConsume(uuid.to_string()).into_event();
+                self.tx.send(evt).unwrap();
+            }
+            AppAction::CommandConsume(ref uuid) => {
                 let state = store.get_state();
-                match &state.cmd_str_queue.get(uuid) {
+                match state.cmd_str_queue.get(uuid) {
                     Some(command) => {
-                        let _action = match self.handler.cmd_reg.contains_key(command.clone()) {
-                            false => { AppAction::CommandInvalid(uuid.to_string()) }
-                            true => { 
-                                let cmd_fn = self.handler.cmd_reg[command.clone()];
-                                self.tx.send(Event::CommandRun { 
-                                    func: cmd_fn,
-                                    uuid: uuid.to_string()
-                                }).unwrap();
-                                self.handler.spawn(self.tx.clone());
-                                AppAction::CommandCreate(uuid.to_string()) 
-                            },
+                        debug!("COMMAND: ========== {:?}", &command);
+                        let mut cmd_with_args: Vec<&str> = command.split(' ').collect();
+                        let cmd_str = cmd_with_args.remove(0);
+                        let _action = if self.handler.cmd_reg.contains_key(cmd_str) {
+                            self.handler.spawn(
+                                self.tx.clone(),
+                                cmd_with_args.join(" "),
+                                uuid.to_string(),
+                            );
+                            AppAction::CommandCreate(uuid.to_string())
+                        } else {
+                            AppAction::CommandInvalid(uuid.to_string())
                         };
                         let _ = store.dispatch(_action);
                     }
-                    None => { debug!("Already Consumed {:?}", uuid); }
+                    None => {
+                        debug!("No Command in Queue{:?}", uuid);
+                    }
                 }
             }
+
             _ => {}
         }
         next(store, action)
     }
 }
+
+// self.tx.send(Event::CommandRun {
+//     func: self.handler.cmd_reg[command.clone()],
+//     uuid: uuid.to_string()
+// }).unwrap();

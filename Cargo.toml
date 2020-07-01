@@ -5,24 +5,21 @@ authors = ["Frank Yao <frank.yao@cyanide.io>"]
 
 [dependencies]
 redux = { git = "https://github.com/knarfytrebil/redux-rs.git", branch = "dev" }
-log = { version = "^0.4.1", features = ["max_level_debug"] }
-uuid = { version = "0.6", features = ["v4"] }
-simplelog = "^0.5.0"
+log = { version = "^0.4.8", features = ["max_level_debug"] }
+uuid = { version = "0.8.1", features = ["v4"] }
+simplelog = "^0.8.0"
 json = "*"
-termion = "*"
+termion = "1.5.5"
+regex="1"
+minidom = "0.12.0"
+vec-tree = "0.1.2"
+tui = "0.9.5"
 
 [dependencies.ws]
 version = "*"
 features = ["ssl"]
 
-[dependencies.tui]
-version = "0.2.1"
-default-features = true
-features = ['termion']
-
 [dependencies.cpython]
-version = "0.2.0"
+version = "0.5.0"
 default-features = false
-features = ["python27-sys"]
-# Uncomment the line below when python37 support is available
-# features = ["python3-sys"]
+features = ["python3-sys"]

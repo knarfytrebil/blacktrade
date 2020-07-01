@@ -1,28 +1,9 @@
-use std::fmt;
 use std::collections::HashMap;
+use std::fmt;
+use structs::app::{AppMode, Command};
+use structs::ui::TopTabs;
 use tui::layout::Rect;
-use store::ui::TopTabs;
-use store::app::AppMode;
-use store::app::structs::{CmdCallback, Command};
-use store::app::reducers::{CommandGen, commands};
-
-pub struct CommandHandler {
-    pub cmd_reg: HashMap<String, CommandGen>
-}
-
-impl CommandHandler {
-    pub fn new() -> CommandHandler {
-        CommandHandler {
-            cmd_reg: HashMap::new()
-        }
-    }
-
-    pub fn default() -> Self {
-        let mut handler = CommandHandler::new();
-        handler.cmd_reg.insert("hello".to_string(), commands::helloworld);
-        handler
-    }
-}
+// use structs::app::CmdCallback;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -31,8 +12,8 @@ pub struct AppState {
     pub tabs: TopTabs,
     pub command: String,
     pub console_txt: String,
-    pub cmd_reg: HashMap<String, CmdCallback>,
     pub cmd_str_queue: HashMap<String, String>,
+    pub console_scroll: u16,
     pub cmd_running: Vec<Command>,
     pub cmd_ended: Vec<Command>,
 }
@@ -48,7 +29,7 @@ impl AppState {
             },
             command: String::from(""),
             console_txt: String::from(""),
-            cmd_reg: HashMap::new(),
+            console_scroll: 0 as u16,
             cmd_str_queue: HashMap::new(),
             cmd_running: Vec::new(),
             cmd_ended: Vec::new(),
@@ -58,9 +39,7 @@ impl AppState {
 
 impl Default for AppState {
     fn default() -> Self {
-        let state = AppState::new();
-        // state.cmd_reg.insert("exit".to_string(), Self::exit);
-        state
+        AppState::new()
     }
 }
 

@@ -1,0 +1,23 @@
+<Layout xmlns="articles" direction="Vertical" color="red" margin="1">
+    <Constraint Length="1">
+        <Tabs titles="{{ app.tabs.titles }}"
+            style="{ fgColor: 'Green' }"
+            highlightStyle="{ fgColor: 'Yellow' }"
+            select="{{ app.tabs.selection }}" />
+    </Constraint>
+    <Constraint Min="1">
+        <BufferedTextBox>
+            {{ app.console_txt }} 
+        </BufferedTextBox>
+    </Constraint>
+    <Constraint Length="1">
+        <Paragraph id="StatusBar">
+            {{ app.mode.symbol }}
+        </Paragraph>
+    </Constraint>
+    <Constraint Length="1">
+        <Paragraph id="CommandBar">
+            {{ app.command }}
+        </Paragraph>
+    </Constraint>
+</Layout>

@@ -3,6 +3,7 @@
 *.txt
 *.swp
 *.swo
+*.swn
 *.log
 node_modules
 .python-version

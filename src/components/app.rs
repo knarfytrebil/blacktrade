@@ -1,39 +1,45 @@
-pub mod instance {
-    use std::io;
-    // use std::io::{Error, ErrorKind};
-    use store::app::AppState;
-    use tui::backend::MouseBackend;
-    use tui::layout::{Direction, Group, Size};
-    use tui::style::{Color, Style};
-    use tui::widgets::{Tabs, Widget};
-    use tui::Terminal;
+use components::command_bar;
+use components::command_output;
+use components::status_bar;
+use structs::app::AppState;
+use tui::backend::Backend;
+use tui::layout::{Constraint, Direction, Layout};
+use tui::style::{Color, Style};
+use tui::widgets::Tabs;
+use tui::Frame;
 
-    use components::command_bar;
-    use components::command_output;
-    use components::status_bar;
+pub fn render<B>(frame: &mut Frame<B>, app: &AppState)
+where
+    B: Backend,
+{
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(
+            [
+                Constraint::Length(1),
+                Constraint::Min(1),
+                Constraint::Length(1),
+                Constraint::Length(1),
+            ]
+            .as_ref(),
+        )
+        .split(app.size);
 
-    // return Err(Error::new(ErrorKind::Interrupted, "Exit App"));
-    pub fn render(terminal: &mut Terminal<MouseBackend>, app: &AppState) -> Result<(), io::Error> {
-        Group::default()
-            .direction(Direction::Vertical)
-            .sizes(&[Size::Fixed(1), Size::Min(1), Size::Fixed(1), Size::Fixed(1)])
-            .render(terminal, &app.size, |t, chunks| {
-                Tabs::default()
-                    // .block(Block::default().borders(Borders::TOP))
-                    .titles(&app.tabs.titles)
-                    .style(Style::default().fg(Color::Green))
-                    .highlight_style(Style::default().fg(Color::Yellow))
-                    .select(app.tabs.selection)
-                    .render(t, &chunks[0]);
-                match app.tabs.selection {
-                    0 => command_output::instance::render(t, app, &chunks[1]),
-                    1 => {}
-                    _ => {}
-                }
-                status_bar::instance::render(t, app, &chunks[2]);
-                command_bar::instance::render(t, app, &chunks[3]);
-            });
-        try!(terminal.draw());
-        Ok(())
+    let tabs = Tabs::default()
+        // .block(Block::default().borders(Borders::TOP))
+        .titles(&app.tabs.titles)
+        .style(Style::default().fg(Color::Green))
+        .highlight_style(Style::default().fg(Color::Yellow))
+        .select(app.tabs.selection);
+
+    frame.render_widget(tabs, chunks[0]);
+
+    match app.tabs.selection {
+        0 => command_output::render(frame, app, chunks[1]),
+        1 => {}
+        _ => {}
     }
+
+    status_bar::render(frame, app, chunks[2]);
+    command_bar::render(frame, app, chunks[3]);
 }

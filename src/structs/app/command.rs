@@ -1,3 +1,6 @@
+use structs::app::AppState;
+
+pub type CmdCallback = fn(&mut AppState, String) -> bool;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Command {
