@@ -16,6 +16,7 @@ impl Middleware<AppState> for CommandMiddleWare {
         action: AppAction,
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
+        debug!("5 {:?}", &action);
         match action {
             AppAction::CommandBarEnqueueCmd(ref uuid) => {
                 let evt = AppAction::CommandConsume(uuid.to_string()).into_event();
@@ -25,18 +26,20 @@ impl Middleware<AppState> for CommandMiddleWare {
                 let state = store.get_state();
                 match state.cmd_str_queue.get(uuid) {
                     Some(command) => {
-                        debug!("COMMAND: ========== {:?}", &command);
                         let mut cmd_with_args: Vec<&str> = command.split(' ').collect();
                         let cmd_str = cmd_with_args.remove(0);
-                        let _action = if self.handler.cmd_reg.contains_key(cmd_str) {
-                            self.handler.spawn(
-                                self.tx.clone(),
-                                cmd_with_args.join(" "),
-                                uuid.to_string(),
-                            );
-                            AppAction::CommandCreate(uuid.to_string())
-                        } else {
-                            AppAction::CommandInvalid(uuid.to_string())
+                        let _action = match self.handler.cmd_reg.contains_key(cmd_str) {
+                            true => {
+                                self.handler.spawn(
+                                    self.tx.clone(),
+                                    cmd_with_args.join(" "),
+                                    uuid.to_string(),
+                                );
+                                AppAction::CommandCreate(uuid.to_string())
+                            } 
+                            false => {
+                                AppAction::CommandInvalid(uuid.to_string())
+                            }
                         };
                         let _ = store.dispatch(_action);
                     }
@@ -45,7 +48,6 @@ impl Middleware<AppState> for CommandMiddleWare {
                     }
                 }
             }
-
             _ => {}
         }
         next(store, action)

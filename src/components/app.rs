@@ -26,7 +26,6 @@ where
         .split(app.size);
 
     let tabs = Tabs::default()
-        // .block(Block::default().borders(Borders::TOP))
         .titles(&app.tabs.titles)
         .style(Style::default().fg(Color::Green))
         .highlight_style(Style::default().fg(Color::Yellow))

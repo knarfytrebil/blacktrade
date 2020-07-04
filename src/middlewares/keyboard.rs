@@ -13,7 +13,7 @@ impl Middleware<AppState> for KeyboardMiddleWare {
         action: AppAction,
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
-        // debug!("2 {:?}", &action);
+        debug!("2 {:?}", &action);
         match action {
             AppAction::Keyboard(key) => {
                 let _state = store.get_state();

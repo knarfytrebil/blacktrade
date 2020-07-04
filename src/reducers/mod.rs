@@ -19,6 +19,7 @@ impl Reducer for AppState {
     type Error = String;
 
     fn reduce(&mut self, action: Self::Action) -> Result<Self, Self::Error> {
+        debug!("REDUCED {:?}", &action);
         let reducers: ReducerArray = match action {
             AppAction::ResizeApp(_) => vec![size::set()],
             AppAction::SetMode(_) => vec![mode::set()],
