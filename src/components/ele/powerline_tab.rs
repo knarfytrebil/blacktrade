@@ -1,9 +1,9 @@
 use unicode_width::UnicodeWidthStr;
 
+use components::ele::powerline_symbol as PowerlineSym;
 use tui::buffer::Buffer;
 use tui::layout::Rect;
 use tui::style::Style;
-use tui::symbols::line;
 use tui::widgets::{Block, Widget};
 
 /// A widget to display available tabs in a multiple panels context.
@@ -51,7 +51,7 @@ where
             selected: 0,
             style: Default::default(),
             highlight_style: Default::default(),
-            divider: line::VERTICAL,
+            divider: PowerlineSym::RIGHT_ARROW,
         }
     }
 }
@@ -96,6 +96,7 @@ where
     T: AsRef<str>,
 {
     fn render(mut self, area: Rect, buf: &mut Buffer) {
+        let title_padding: u16 = 2;
         let tabs_area = match self.block {
             Some(ref mut b) => {
                 b.render(area, buf);
@@ -114,19 +115,23 @@ where
         let titles_length = self.titles.len();
         let divider_width = self.divider.width() as u16;
         for (title, style, last_title) in self.titles.iter().enumerate().map(|(i, t)| {
+            /*
+             * lt: last title      (Boolean)
+             * t:  title           (&String)
+             * i:  index           (int)
+             */
             let lt = i + 1 == titles_length;
-            if i == self.selected {
-                (t, self.highlight_style, lt)
-            } else {
-                (t, self.style, lt)
+            match i == self.selected {
+                true => (t, self.highlight_style, lt),
+                false => (t, self.style, lt),
             }
         }) {
             x += 1;
             if x >= tabs_area.right() {
                 break;
             } else {
-                buf.set_string(x, tabs_area.top(), title.as_ref(), style);
-                x += title.as_ref().width() as u16 + 1;
+                buf.set_string(x, tabs_area.top(), &add_padding(title.as_ref()), style);
+                x += title.as_ref().width() as u16 + title_padding;
                 if x >= tabs_area.right() || last_title {
                     break;
                 } else {
@@ -136,4 +141,8 @@ where
             }
         }
     }
+}
+
+fn add_padding(txt: &str) -> String {
+    format!(" {} ", txt)
 }

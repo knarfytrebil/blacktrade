@@ -28,7 +28,7 @@ where
     let tabs = Tabs::default()
         .titles(&app.tabs.titles)
         .style(Style::default().fg(Color::Gray).bg(Color::Black))
-        .highlight_style(Style::default().fg(Color::Yellow))
+        .highlight_style(Style::default().fg(Color::Black).bg(Color::White))
         .select(app.tabs.selection);
 
     frame.render_widget(tabs, chunks[0]);
