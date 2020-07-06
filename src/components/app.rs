@@ -1,11 +1,11 @@
 use components::command_bar;
 use components::command_output;
+use components::ele::powerline_tab::Tabs;
 use components::status_bar;
 use structs::app::AppState;
 use tui::backend::Backend;
 use tui::layout::{Constraint, Direction, Layout};
 use tui::style::{Color, Style};
-use tui::widgets::Tabs;
 use tui::Frame;
 
 pub fn render<B>(frame: &mut Frame<B>, app: &AppState)

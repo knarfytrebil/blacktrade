@@ -7,6 +7,7 @@ extern crate regex;
 extern crate simplelog;
 extern crate termion;
 extern crate tui;
+extern crate unicode_width;
 extern crate uuid;
 
 #[macro_use]
