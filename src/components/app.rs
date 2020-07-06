@@ -5,7 +5,7 @@ use structs::app::AppState;
 use tui::backend::Backend;
 use tui::layout::{Constraint, Direction, Layout};
 use tui::style::{Color, Style};
-use tui::widgets::{Tabs};
+use tui::widgets::Tabs;
 use tui::Frame;
 
 pub fn render<B>(frame: &mut Frame<B>, app: &AppState)
@@ -27,7 +27,7 @@ where
 
     let tabs = Tabs::default()
         .titles(&app.tabs.titles)
-        .style(Style::default().fg(Color::Green).bg(Color::Yellow))
+        .style(Style::default().fg(Color::Gray).bg(Color::Black))
         .highlight_style(Style::default().fg(Color::Yellow))
         .select(app.tabs.selection);
 

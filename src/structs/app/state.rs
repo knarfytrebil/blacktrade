@@ -24,7 +24,11 @@ impl AppState {
             mode: AppMode::get_mode("normal"),
             size: Rect::default(),
             tabs: TopTabs {
-                titles: vec![String::from("\u{E0B0} Console \u{E0B2}")],
+                titles: vec![
+                    String::from("Console"),
+                    String::from("tab - 2"),
+                    String::from("tab - 3"),
+                ],
                 selection: 0,
             },
             command: String::from(""),
