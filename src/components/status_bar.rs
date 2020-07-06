@@ -19,7 +19,7 @@ where
             Style::default().fg(Color::Black).bg(Color::White),
         ),
         Text::styled(
-            "Runing Tasks",
+            "Runing Tasks [0]",
             Style::default().fg(Color::Black).bg(Color::White),
         ),
         Text::styled(" ", Style::default().fg(Color::Black).bg(Color::White)),
