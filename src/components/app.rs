@@ -29,6 +29,7 @@ where
         .titles(&app.tabs.titles)
         .style(Style::default().fg(Color::Gray).bg(Color::Black))
         .highlight_style(Style::default().fg(Color::Black).bg(Color::White))
+        .divider_style(Style::default().fg(Color::White).bg(Color::Black))
         .select(app.tabs.selection);
 
     frame.render_widget(tabs, chunks[0]);

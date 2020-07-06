@@ -38,6 +38,10 @@ where
     highlight_style: Style,
     /// Tab divider
     divider: &'a str,
+    /// Tab inactive divider
+    divider_inactive: &'a str,
+    /// divider style
+    divider_style: Style,
 }
 
 impl<'a, T> Default for Tabs<'a, T>
@@ -52,6 +56,8 @@ where
             style: Default::default(),
             highlight_style: Default::default(),
             divider: PowerlineSym::RIGHT_ARROW,
+            divider_inactive: PowerlineSym::RIGHT_ARROW_LINE,
+            divider_style: Default::default(),
         }
     }
 }
@@ -89,6 +95,11 @@ where
         self.divider = divider;
         self
     }
+
+    pub fn divider_style(mut self, style: Style) -> Tabs<'a, T> {
+        self.divider_style = style;
+        self
+    }
 }
 
 impl<'a, T> Widget for Tabs<'a, T>
@@ -114,31 +125,37 @@ where
         let mut x = tabs_area.left();
         let titles_length = self.titles.len();
         let divider_width = self.divider.width() as u16;
-        for (title, style, last_title) in self.titles.iter().enumerate().map(|(i, t)| {
-            /*
-             * lt: last title      (Boolean)
-             * t:  title           (&String)
-             * i:  index           (int)
-             */
-            let lt = i + 1 == titles_length;
-            match i == self.selected {
-                true => (t, self.highlight_style, lt),
-                false => (t, self.style, lt),
-            }
-        }) {
-            x += 1;
+        for (title, style, _last_title, is_selected) in
+            self.titles.iter().enumerate().map(|(i, t)| {
+                /*
+                 * lt: last title      (Boolean)
+                 * t:  title           (&String)
+                 * i:  index           (int)
+                 */
+                let lt = i + 1 == titles_length;
+                match i == self.selected {
+                    true => (t, self.highlight_style, lt, true),
+                    false => (t, self.style, lt, false),
+                }
+            })
+        {
             if x >= tabs_area.right() {
                 break;
             } else {
                 buf.set_string(x, tabs_area.top(), &add_padding(title.as_ref()), style);
                 x += title.as_ref().width() as u16 + title_padding;
-                if x >= tabs_area.right() || last_title {
+                let (divider, divider_style) = match is_selected {
+                    true => (self.divider, self.style),
+                    false => (self.divider_inactive, self.divider_style),
+                };
+                if x >= tabs_area.right() {
                     break;
                 } else {
-                    buf.set_string(x, tabs_area.top(), self.divider, self.style);
+                    buf.set_string(x, tabs_area.top(), divider, divider_style);
                     x += divider_width;
                 }
             }
+            x += 1;
         }
     }
 }
