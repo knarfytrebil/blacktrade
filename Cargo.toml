@@ -14,6 +14,7 @@ regex="1"
 minidom = "0.12.0"
 vec-tree = "0.1.2"
 tui = "0.9.5"
+unicode-width = "0.1"
 
 [dependencies.ws]
 version = "*"

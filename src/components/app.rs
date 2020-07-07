@@ -1,11 +1,11 @@
 use components::command_bar;
 use components::command_output;
+use components::ele::powerline_tab::Tabs;
 use components::status_bar;
 use structs::app::AppState;
 use tui::backend::Backend;
 use tui::layout::{Constraint, Direction, Layout};
 use tui::style::{Color, Style};
-use tui::widgets::Tabs;
 use tui::Frame;
 
 pub fn render<B>(frame: &mut Frame<B>, app: &AppState)
@@ -26,10 +26,10 @@ where
         .split(app.size);
 
     let tabs = Tabs::default()
-        // .block(Block::default().borders(Borders::TOP))
         .titles(&app.tabs.titles)
-        .style(Style::default().fg(Color::Green))
-        .highlight_style(Style::default().fg(Color::Yellow))
+        .style(Style::default().fg(Color::Gray).bg(Color::Black))
+        .highlight_style(Style::default().fg(Color::Black).bg(Color::White))
+        .divider_style(Style::default().fg(Color::White).bg(Color::Black))
         .select(app.tabs.selection);
 
     frame.render_widget(tabs, chunks[0]);

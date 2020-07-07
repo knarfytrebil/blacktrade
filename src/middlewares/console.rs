@@ -11,12 +11,17 @@ impl Middleware<AppState> for ConsoleMiddleWare {
         action: AppAction,
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
-        // debug!("4 {:?}", &action);
+        debug!("4 {:?}", &action);
         match &action {
             &AppAction::CommandConsume(ref uuid) => {
-                let cmd_str = store.get_state().cmd_str_queue[uuid].clone();
-                let prompt_in = format_output!("green", ">>>", &cmd_str);
-                let _ = store.dispatch(AppAction::ConsolePush(prompt_in));
+                match get_action_in_queue(uuid.to_string(), store) {
+                    Ok(action) => {
+                        let _ = store.dispatch(action);
+                    } 
+                    Err(err_msg) => {
+                        debug!("ERROR {:?}", &err_msg);
+                    }
+                }
             }
             &AppAction::CommandCreate(ref uuid) => {
                 let cmd_str = store.get_state().cmd_str_queue[uuid].clone();
@@ -42,5 +47,19 @@ impl Middleware<AppState> for ConsoleMiddleWare {
             _ => {}
         }
         next(store, action)
+    }
+}
+
+
+fn get_action_in_queue(uuid: String, _store: &Store<AppState>) -> Result<AppAction, String> {
+    match _store.get_state().cmd_str_queue.contains_key(&uuid) {
+        true => {
+            let cmd_str = _store.get_state().cmd_str_queue[&uuid].clone();
+            let prompt_in = format_output!("green", ">>>", &cmd_str);
+            Ok(AppAction::ConsolePush(prompt_in))
+        } 
+        false => {
+            Err(String::from("Command Not Found"))
+        }
     }
 }

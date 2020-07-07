@@ -391,6 +391,7 @@ dependencies = [
  "simplelog 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "termion 1.5.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "tui 0.9.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "unicode-width 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "uuid 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "vec-tree 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "ws 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)",

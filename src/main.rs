@@ -7,6 +7,7 @@ extern crate regex;
 extern crate simplelog;
 extern crate termion;
 extern crate tui;
+extern crate unicode_width;
 extern crate uuid;
 
 #[macro_use]
@@ -28,7 +29,6 @@ use termion::raw::IntoRawMode;
 use termion::screen::AlternateScreen;
 
 use redux::Store;
-// use tui::backend::MouseBackend;
 use tui::backend::TermionBackend;
 use tui::Terminal;
 
@@ -81,9 +81,9 @@ fn main() -> Result<(), io::Error> {
 
     // App & State
     let store: Arc<Store<AppState>> = Arc::new(Store::new(vec![
-        command_mw,
         console_mw,
         command_bar_mw,
+        command_mw,
         keyboard_mw,
         debug_mw,
         exit_mw,
@@ -106,11 +106,6 @@ fn main() -> Result<(), io::Error> {
 
     let _size = terminal.size().unwrap();
 
-    // if size != app.size && Rect::default() != app.size {
-    //     size = app.size;
-    //     terminal.resize(size).unwrap();
-    // }
-
     // init state app size
     let resize_action = AppAction::ResizeApp(terminal.size().unwrap()).into_event();
     cmd_tx.send(resize_action).unwrap();
@@ -119,6 +114,7 @@ fn main() -> Result<(), io::Error> {
     thread::spawn(move || loop {
         match cmd_rx.recv().unwrap() {
             Event::Dispatch(action) => {
+                debug!("ACTION DISPATCHED {:?}", &action);
                 let _ = store.dispatch(action);
             }
             Event::Exit => {
