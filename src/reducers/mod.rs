@@ -25,6 +25,7 @@ impl Reducer for AppState {
             AppAction::SetMode(_) => vec![mode::set()],
             AppAction::ConsolePush(_) => vec![console::push()],
             AppAction::CommandBarPush(_) => vec![command_bar::push()],
+            AppAction::CommandBarPop(_) => vec![command_bar::pop()],
             AppAction::CommandBarSet(_) => vec![command_bar::set()],
             AppAction::CommandBarEnqueueCmd(_) => vec![command_bar::enqueue_cmd()],
             AppAction::CommandCreate(_) => vec![commands::create(false)],
