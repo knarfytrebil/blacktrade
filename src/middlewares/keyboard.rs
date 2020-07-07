@@ -47,8 +47,8 @@ fn normal_key(_key: Key, _state: AppState) -> Result<AppAction, String> {
 fn command_key(_key: Key, mut _state: AppState) -> Result<AppAction, String> {
     match _key {
         Key::Esc => Ok(AppAction::SetMode(AppMode::get_mode("normal"))),
-        Key::Char('\n') => Ok(AppAction::CommandBarEnqueueCmd(Uuid::new_v4().to_string())),
         Key::Backspace => Ok(AppAction::CommandBarPop(1)),
+        Key::Char('\n') => Ok(AppAction::CommandBarEnqueueCmd(Uuid::new_v4().to_string())),
         Key::Char(_char) => Ok(AppAction::CommandBarPush(_char)),
         _ => Err(String::from("Key not Implemented")),
     }
