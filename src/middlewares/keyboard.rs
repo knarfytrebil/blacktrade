@@ -40,7 +40,7 @@ fn get_key_action(_key: Key, _state: AppState) -> Result<AppAction, String> {
 fn normal_key(_key: Key, _state: AppState) -> Result<AppAction, String> {
     match _key {
         Key::Char(':') => Ok(AppAction::SetMode(AppMode::get_mode("command"))),
-        _ => Err(String::from("Key not Implemented")),
+        _ => Err(String::from("There is no settings for this key yet")),
     }
 }
 
