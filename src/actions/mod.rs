@@ -1,11 +1,12 @@
 pub mod command;
 // use reducers::CommandGen;
+use serde::{Deserialize, Serialize};
 use structs::app::events;
 use structs::app::AppMode;
 use termion::event;
 use tui::layout::Rect;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum AppAction {
     ResizeApp(Rect),
     Keyboard(event::Key),
