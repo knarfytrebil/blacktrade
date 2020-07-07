@@ -30,6 +30,22 @@ pub fn push() -> Box<ReducerFn> {
     )
 }
 
+pub fn pop() -> Box<ReducerFn> {
+    Box::new(
+        |mut state: AppState, action: &AppAction| -> Result<AppState, String> {
+            match action {
+                AppAction::CommandBarPop(_pop_index) => {
+                    if state.command.len() > 1 {
+                        state.command.pop();
+                    }
+                    Ok(state)
+                }
+                _ => Ok(state),
+            }
+        },
+    )
+}
+
 pub fn enqueue_cmd() -> Box<ReducerFn> {
     Box::new(
         |mut state: AppState, action: &AppAction| -> Result<AppState, String> {

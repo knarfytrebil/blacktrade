@@ -11,10 +11,10 @@ pub enum AppAction {
     Keyboard(event::Key),
     CommandInvalid(String),
     CommandCreate(String),
-//    CommandRun {
-//        func: CommandGen,
-//        uuid: String,
-//    },
+    //    CommandRun {
+    //        func: CommandGen,
+    //        uuid: String,
+    //    },
     CommandEnd {
         uuid: String,
         success: bool,
@@ -22,6 +22,7 @@ pub enum AppAction {
     },
     CommandConsume(String),
     CommandBarPush(char),
+    CommandBarPop(u16),
     CommandBarSet(String),
     CommandBarEnqueueCmd(String),
     ConsolePush(String),
