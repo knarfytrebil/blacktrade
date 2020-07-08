@@ -35,73 +35,53 @@
 //         }
 //     }
 // }
+use structs::app::events::Key;
 use termion::event;
 
-pub fn key_event_to_string(event: event::Key) -> String {
-    let re = match event {
-        event::Key::Backspace => "Backspace",
-        event::Key::Left => "Left",
-        event::Key::Right => "Right",
-        event::Key::Up => "Up",
-        event::Key::Down => "Down",
-        event::Key::Home => "Home",
-        event::Key::End => "End",
-        event::Key::PageUp => "PageUp",
-        event::Key::PageDown => "PageDown",
-        event::Key::BackTab => "BackTab",
-        event::Key::Delete => "Delete",
-        event::Key::Insert => "Insert",
-        event::Key::F(_function_key_num) => &format!("F {}", &_function_key_num.to_string()),
-        event::Key::Char(_char) => &format!("CHAR {}", _char),
-        event::Key::Alt(_char) => &format!("ALT {}", _char),
-        event::Key::Ctrl(_char) => &format!("CTRL {}", _char),
-        event::Key::Null => "Null",
-        event::Key::Esc => "Esc",
-    };
-    re.to_string()
+pub fn to_serializable(event: event::Key) -> Key {
+    match event {
+        event::Key::Backspace => Key::Backspace,
+        event::Key::Left => Key::Left,
+        event::Key::Right => Key::Right,
+        event::Key::Up => Key::Up,
+        event::Key::Down => Key::Down,
+        event::Key::Home => Key::Home,
+        event::Key::End => Key::End,
+        event::Key::PageUp => Key::PageUp,
+        event::Key::PageDown => Key::PageDown,
+        event::Key::BackTab => Key::BackTab,
+        event::Key::Delete => Key::Delete,
+        event::Key::Insert => Key::Insert,
+        event::Key::F(_fun_num) => Key::F(_fun_num),
+        event::Key::Char(_char) => Key::Char(_char),
+        event::Key::Alt(_char) => Key::Alt(_char),
+        event::Key::Ctrl(_char) => Key::Ctrl(_char),
+        event::Key::Null => Key::Null,
+        event::Key::Esc => Key::Esc,
+        event::Key::__IsNotComplete => Key::__IsNotComplete,
+    }
 }
 
-fn is_functional(event_string: String) -> bool {
-    event_string.starts_with("CHAR ")
-        || event_string.starts_with("ALT ")
-        || event_string.starts_with("CTRL ")
-        || event_string.starts_with("F ")
-}
-
-pub fn string_to_key_event(event_string: String) -> event::Key {
-    match is_functional(event_string) {
-        true => {
-            if event_string.starts_with("CHAR ") {
-                let extracted: Vec<&str> = event_string.split("CHAR ").collect();
-                event::Key::Char(extracted[1].chars().next().expect("String is Empty"))
-            } else if event_string.starts_with("ALT ") {
-                let extracted: Vec<&str> = event_string.split("ALT ").collect();
-                event::Key::Alt(extracted[1].chars().next().expect("String is Empty"))
-            } else if event_string.starts_with("CTRL ") {
-                let extracted: Vec<&str> = event_string.split("CTRL ").collect();
-                event::Key::Ctrl(extracted[1].chars().next().expect("String is Empty"))
-            } else if event_string.starts_with("F ") {
-                let extracted: Vec<&str> = event_string.split("F ").collect();
-                event::Key::F(extracted[1].parse::<u8>().unwrap())
-            } else {
-                panic!("Data is corrupted !");
-            }
-        }
-        false => match event_string.as_str() {
-            "Backspace" => event::Key::Backspace,
-            "Left" => event::Key::Left,
-            "Right" => event::Key::Right,
-            "Up" => event::Key::Up,
-            "Down" => event::Key::Down,
-            "Home" => event::Key::Home,
-            "End" => event::Key::End,
-            "PageUp" => event::Key::PageUp,
-            "PageDown" => event::Key::PageDown,
-            "BackTab" => event::Key::BackTab,
-            "Delete" => event::Key::Delete,
-            "Insert" => event::Key::Insert,
-            "Null" => event::Key::Null,
-            "Esc" => event::Key::Esc,
-        },
+pub fn to_unserializable(event: Key) -> event::Key {
+    match event {
+        Key::Backspace => event::Key::Backspace,
+        Key::Left => event::Key::Left,
+        Key::Right => event::Key::Right,
+        Key::Up => event::Key::Up,
+        Key::Down => event::Key::Down,
+        Key::Home => event::Key::Home,
+        Key::End => event::Key::End,
+        Key::PageUp => event::Key::PageUp,
+        Key::PageDown => event::Key::PageDown,
+        Key::BackTab => event::Key::BackTab,
+        Key::Delete => event::Key::Delete,
+        Key::Insert => event::Key::Insert,
+        Key::F(_fun_num) => event::Key::F(_fun_num),
+        Key::Char(_char) => event::Key::Char(_char),
+        Key::Alt(_char) => event::Key::Alt(_char),
+        Key::Ctrl(_char) => event::Key::Ctrl(_char),
+        Key::Null => event::Key::Null,
+        Key::Esc => event::Key::Esc,
+        Key::__IsNotComplete => event::Key::__IsNotComplete,
     }
 }

@@ -4,7 +4,6 @@ mod console;
 mod error;
 mod keyboard;
 mod mode;
-mod size;
 
 use actions::AppAction;
 use redux::Reducer;
@@ -21,7 +20,6 @@ impl Reducer for AppState {
     fn reduce(&mut self, action: Self::Action) -> Result<Self, Self::Error> {
         debug!("REDUCED {:?}", &action);
         let reducers: ReducerArray = match action {
-            AppAction::ResizeApp(_) => vec![size::set()],
             AppAction::SetMode(_) => vec![mode::set()],
             AppAction::ConsolePush(_) => vec![console::push()],
             AppAction::CommandBarPush(_) => vec![command_bar::push()],

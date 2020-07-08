@@ -23,7 +23,7 @@ where
             ]
             .as_ref(),
         )
-        .split(app.size);
+        .split(frame.size());
 
     let tabs = Tabs::default()
         .titles(&app.tabs.titles)
