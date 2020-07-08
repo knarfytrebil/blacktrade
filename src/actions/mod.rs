@@ -3,13 +3,12 @@ pub mod command;
 use serde::{Deserialize, Serialize};
 use structs::app::events;
 use structs::app::AppMode;
-use termion::event;
 use tui::layout::Rect;
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum AppAction {
     ResizeApp(Rect),
-    Keyboard(event::Key),
+    Keyboard(String),
     CommandInvalid(String),
     CommandCreate(String),
     //    CommandRun {

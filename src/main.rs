@@ -41,6 +41,7 @@ use middlewares::{
 };
 use structs::app::events::Event;
 use structs::app::{AppState, CommandHandler};
+use utils::app::key_event_to_string;
 
 fn main() -> Result<(), io::Error> {
     // Init Logs
@@ -60,9 +61,9 @@ fn main() -> Result<(), io::Error> {
     // Input
     thread::spawn(move || {
         for c in io::stdin().keys() {
-            input_tx
-                .send(AppAction::Keyboard(c.unwrap()).into_event())
-                .unwrap();
+            let key_string = key_event_to_string(c.unwrap());
+            let key_event = AppAction::Keyboard(key_string).into_event();
+            input_tx.send(key_event).unwrap();
         }
     });
 
