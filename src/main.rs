@@ -41,6 +41,7 @@ use middlewares::{
 };
 use structs::app::events::Event;
 use structs::app::{AppState, CommandHandler};
+use utils::app::to_serializable;
 
 fn main() -> Result<(), io::Error> {
     // Init Logs
@@ -60,9 +61,9 @@ fn main() -> Result<(), io::Error> {
     // Input
     thread::spawn(move || {
         for c in io::stdin().keys() {
-            input_tx
-                .send(AppAction::Keyboard(c.unwrap()).into_event())
-                .unwrap();
+            let serializable = to_serializable(c.unwrap());
+            let key_event = AppAction::Keyboard(serializable).into_event();
+            input_tx.send(key_event).unwrap();
         }
     });
 
@@ -105,12 +106,6 @@ fn main() -> Result<(), io::Error> {
     let mut terminal = Terminal::new(backend)?;
     terminal.clear().unwrap();
     terminal.hide_cursor()?;
-
-    let _size = terminal.size().unwrap();
-
-    // init state app size
-    let resize_action = AppAction::ResizeApp(terminal.size().unwrap()).into_event();
-    cmd_tx.send(resize_action).unwrap();
 
     let exit_tx = tx.clone();
     thread::spawn(move || loop {

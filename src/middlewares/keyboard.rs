@@ -1,7 +1,9 @@
 use actions::AppAction;
 use redux::{DispatchFunc, Middleware, Store};
+use structs::app::events::Key as SerializableKey;
 use structs::app::{AppMode, AppState, ModeCategory};
 use termion::event::Key;
+use utils::app::to_unserializable;
 use uuid::Uuid;
 
 pub struct KeyboardMiddleWare {}
@@ -30,10 +32,11 @@ impl Middleware<AppState> for KeyboardMiddleWare {
     }
 }
 
-fn get_key_action(_key: Key, _state: AppState) -> Result<AppAction, String> {
+fn get_key_action(_key: SerializableKey, _state: AppState) -> Result<AppAction, String> {
+    let key_event = to_unserializable(_key);
     match _state.mode.category {
-        ModeCategory::Normal => normal_key(_key, _state),
-        ModeCategory::Command => command_key(_key, _state),
+        ModeCategory::Normal => normal_key(key_event, _state),
+        ModeCategory::Command => command_key(key_event, _state),
     }
 }
 

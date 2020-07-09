@@ -2,13 +2,12 @@ use std::collections::HashMap;
 use std::fmt;
 use structs::app::{AppMode, Command};
 use structs::ui::TopTabs;
-use tui::layout::Rect;
+
 // use structs::app::CmdCallback;
 
 #[derive(Clone)]
 pub struct AppState {
     pub mode: AppMode,
-    pub size: Rect,
     pub tabs: TopTabs,
     pub command: String,
     pub console_txt: String,
@@ -22,7 +21,6 @@ impl AppState {
     pub fn new() -> AppState {
         AppState {
             mode: AppMode::get_mode("normal"),
-            size: Rect::default(),
             tabs: TopTabs {
                 titles: vec![
                     String::from("Console"),
@@ -51,7 +49,6 @@ impl fmt::Debug for AppState {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         fmt.debug_struct("AppState")
             .field("mode", &self.mode)
-            .field("size", &self.size)
             .field("tabs", &self.tabs)
             .finish()
     }
