@@ -5,7 +5,7 @@ use structs::app::events;
 use structs::app::events::Key;
 use structs::app::AppMode;
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum AppAction {
     Keyboard(Key),
     CommandInvalid(String),
