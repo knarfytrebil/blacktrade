@@ -1,0 +1,11 @@
+{
+    "key": {
+        "Char": ":"
+    },
+    "action": {
+        "SetMode": {
+            "symbol": "CTRL",
+            "category": "Command"
+        }
+    }
+}
