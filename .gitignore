@@ -6,5 +6,6 @@
 *.swn
 *.log
 node_modules
+.idea
 .python-version
 *.DS_Store
