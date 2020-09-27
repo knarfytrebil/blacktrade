@@ -37,7 +37,11 @@ use tui::Terminal;
 use actions::AppAction;
 use components::app;
 use middlewares::{
-    CommandBarMiddleWare, CommandMiddleWare, ConsoleMiddleWare, DebugMiddleWare, KeyboardMiddleWare,
+    CommandBarMiddleWare, 
+    CommandMiddleWare, 
+    ConsoleMiddleWare, 
+    DebugMiddleWare, 
+    KeyboardMiddleWare,
 };
 use structs::app::events::Event;
 use structs::app::{AppState, CommandHandler};

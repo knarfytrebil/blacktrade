@@ -3,3 +3,4 @@
 pub mod format;
 pub mod app;
 pub mod fs;
+pub mod input;
