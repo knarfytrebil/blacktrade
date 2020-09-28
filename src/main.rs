@@ -28,27 +28,21 @@ use std::{io};
 
 use structs::app::events::Event;
 
-use utils::input::init_keyboard_input;
-use utils::middleware::init_store;
-use utils::commands::bind;
-use utils::run::until_break;
-
 fn main() -> Result<(), io::Error> {
     // Init Logs
     CombinedLogger::init(vec![WriteLogger::new(
         LevelFilter::Debug,
         Config::default(),
         File::create("debug.log").unwrap(),
-    )])
-    .unwrap();
+    )]).unwrap();
 
     // Channels
     let (tx, rx) = mpsc::channel();
     let (cmd_tx, cmd_rx) = mpsc::channel();
     let (input_tx, subscribe_tx) = (cmd_tx.clone(), tx.clone());
 
-    init_keyboard_input(input_tx);
-    let store = init_store(&cmd_tx);
+    utils::input::init_keyboard_input(input_tx);
+    let store = utils::middleware::init_store(&cmd_tx);
 
     // Create Subscription from store to render
     store.subscribe(Box::new(move |store, _| {
@@ -56,6 +50,6 @@ fn main() -> Result<(), io::Error> {
         subscribe_tx.send(Event::Render(state)).unwrap();
     }));
 
-    bind(cmd_rx, store);
-    until_break(rx)
+    utils::commands::bind(cmd_rx, store);
+    utils::run::until_break(rx)
 }
