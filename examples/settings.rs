@@ -85,10 +85,6 @@ pub enum AppAction {
     Keyboard(Key),
     CommandInvalid(String),
     CommandCreate(String),
-    //    CommandRun {
-    //        func: CommandGen,
-    //        uuid: String,
-    //    },
     CommandEnd {
         uuid: String,
         success: bool,
@@ -109,13 +105,13 @@ pub struct KeySettingItem {
     action: AppAction,
 }
 
-fn main() -> Result<(), serde_yaml::Error> {
+fn main() -> Result<(), serde_json::Error> {
     let point = KeySettingItem {
         key: Key::Char(':'),
         action: AppAction::SetMode(AppMode::get_mode("command")),
     };
 
-    let s = serde_yaml::to_string(&point)?;
+    let s = serde_json::to_string(&point)?;
     // assert_eq!(s, "---\nx: 1.0\ny: 2.0");
     println!("{}", s);
 
