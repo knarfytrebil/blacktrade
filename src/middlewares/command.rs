@@ -20,7 +20,7 @@ impl Middleware<AppState> for CommandMiddleWare {
         match action {
             AppAction::CommandBarEnqueueCmd(ref uuid) => {
                 let evt = AppAction::CommandConsume(uuid.to_string()).into_event();
-                self.tx.send(evt).unwrap();
+                self.tx.send(evt).expect("Failed to Send");
             }
             AppAction::CommandConsume(ref uuid) => {
                 let state = store.get_state();

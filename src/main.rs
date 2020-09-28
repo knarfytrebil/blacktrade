@@ -23,29 +23,15 @@ mod structs;
 use simplelog::*;
 use std::boxed::Box;
 use std::fs::File;
-use std::sync::{mpsc, Arc};
-use std::{io, thread};
+use std::sync::{mpsc};
+use std::{io};
 
-use termion::input::{MouseTerminal, TermRead};
-use termion::raw::IntoRawMode;
-use termion::screen::AlternateScreen;
-
-use redux::Store;
-use tui::backend::TermionBackend;
-use tui::Terminal;
-
-use actions::AppAction;
-use components::app;
-use middlewares::{
-    CommandBarMiddleWare, 
-    CommandMiddleWare, 
-    ConsoleMiddleWare, 
-    DebugMiddleWare, 
-    KeyboardMiddleWare,
-};
 use structs::app::events::Event;
-use structs::app::{AppState, CommandHandler};
-use utils::app::to_serializable;
+
+use utils::input::init_keyboard_input;
+use utils::middleware::init_store;
+use utils::commands::bind;
+use utils::run::until_break;
 
 fn main() -> Result<(), io::Error> {
     // Init Logs
@@ -60,41 +46,9 @@ fn main() -> Result<(), io::Error> {
     let (tx, rx) = mpsc::channel();
     let (cmd_tx, cmd_rx) = mpsc::channel();
     let (input_tx, subscribe_tx) = (cmd_tx.clone(), tx.clone());
-    let (exit_tx, _exit_rx) = mpsc::channel();
 
-    // Input
-    thread::spawn(move || {
-        for c in io::stdin().keys() {
-            let serializable = to_serializable(c.unwrap());
-            let key_event = AppAction::Keyboard(serializable).into_event();
-            input_tx.send(key_event).unwrap();
-        }
-    });
-
-    let exit_mw = Box::new(CommandMiddleWare {
-        tx: exit_tx,
-        handler: CommandHandler::default(),
-    });
-
-    // Middlewares
-    let keyboard_mw = Box::new(KeyboardMiddleWare {});
-    let command_bar_mw = Box::new(CommandBarMiddleWare {});
-    let command_mw = Box::new(CommandMiddleWare {
-        tx: cmd_tx.clone(),
-        handler: CommandHandler::default(),
-    });
-    let console_mw = Box::new(ConsoleMiddleWare {});
-    let debug_mw = Box::new(DebugMiddleWare {});
-
-    // App & State
-    let store: Arc<Store<AppState>> = Arc::new(Store::new(vec![
-        console_mw,
-        command_bar_mw,
-        command_mw,
-        keyboard_mw,
-        debug_mw,
-        exit_mw,
-    ]));
+    init_keyboard_input(input_tx);
+    let store = init_store(&cmd_tx);
 
     // Create Subscription from store to render
     store.subscribe(Box::new(move |store, _| {
@@ -102,41 +56,6 @@ fn main() -> Result<(), io::Error> {
         subscribe_tx.send(Event::Render(state)).unwrap();
     }));
 
-    // Terminal initialization
-    let stdout = io::stdout().into_raw_mode()?;
-    let stdout = MouseTerminal::from(stdout);
-    let stdout = AlternateScreen::from(stdout);
-    let backend = TermionBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
-    terminal.clear().unwrap();
-    terminal.hide_cursor()?;
-
-    let exit_tx = tx.clone();
-    thread::spawn(move || loop {
-        match cmd_rx.recv().unwrap() {
-            Event::Dispatch(action) => {
-                debug!("ACTION DISPATCHED {:?}", &action);
-                let _ = store.dispatch(action);
-            }
-            Event::Exit => {
-                let _ = exit_tx.send(Event::Exit);
-                break;
-            }
-            _ => {}
-        }
-    });
-
-    loop {
-        let _ = match rx.recv().unwrap() {
-            Event::Render(app_state) => terminal.draw(|mut f| app::render(&mut f, &app_state)),
-            Event::Exit => {
-                break;
-            }
-            _ => Ok(()),
-        };
-    }
-
-    // show cursor on end
-    terminal.show_cursor()?;
-    Ok(())
+    bind(cmd_rx, store);
+    until_break(rx)
 }
