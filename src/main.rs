@@ -23,8 +23,8 @@ mod structs;
 use simplelog::*;
 use std::boxed::Box;
 use std::fs::File;
-use std::sync::{mpsc};
-use std::{io};
+use std::sync::mpsc;
+use std::io;
 
 use structs::app::events::Event;
 
@@ -47,9 +47,10 @@ fn main() -> Result<(), io::Error> {
     // Create Subscription from store to render
     store.subscribe(Box::new(move |store, _| {
         let state = store.get_state();
-        subscribe_tx.send(Event::Render(state)).unwrap();
+        subscribe_tx.send(Event::Render(state))
+            .expect("Send Error");
     }));
 
-    utils::commands::bind(cmd_rx, store);
-    utils::run::until_break(rx)
+    utils::commands::connect(cmd_rx, store);
+    utils::run::keep_alive(rx)
 }

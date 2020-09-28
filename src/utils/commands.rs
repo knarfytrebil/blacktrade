@@ -6,7 +6,7 @@ use redux::Store;
 use structs::app::events::Event;
 
 
-pub fn bind(
+pub fn connect(
     receiver: Receiver<Event>,
     store: Arc<Store<AppState>>
 ) {

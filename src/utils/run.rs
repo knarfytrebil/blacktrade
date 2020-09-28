@@ -10,7 +10,7 @@ use termion::screen::AlternateScreen;
 use tui::backend::TermionBackend;
 use tui::Terminal;
 
-pub fn until_break(
+pub fn keep_alive(
     receiver: Receiver<Event>,
 ) -> Result<(), io::Error> {
 
