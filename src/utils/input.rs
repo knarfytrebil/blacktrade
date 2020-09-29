@@ -5,7 +5,7 @@ use termion::input::{TermRead};
 use structs::app::events::Event;
 use actions::AppAction;
 
-pub fn init_keyboard_input(input_tx: Sender<Event>) {
+pub fn init(input_tx: Sender<Event>) {
     thread::spawn(move || {
         for c in io::stdin().keys() {
             let serializable = to_serializable(c.unwrap());

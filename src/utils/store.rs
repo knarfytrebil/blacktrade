@@ -12,7 +12,7 @@ use middlewares::{
     KeyboardMiddleWare,
 };
 
-pub fn init_store(cmd_tx: &Sender<Event>) -> Arc<Store<AppState>> {
+pub fn init(cmd_tx: &Sender<Event>) -> Arc<Store<AppState>> {
     let keyboard_mw = Box::new(KeyboardMiddleWare {});
     let command_bar_mw = Box::new(CommandBarMiddleWare {});
     let command_mw = Box::new(CommandMiddleWare {

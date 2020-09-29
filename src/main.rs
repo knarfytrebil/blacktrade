@@ -41,8 +41,8 @@ fn main() -> Result<(), io::Error> {
     let (cmd_tx, cmd_rx) = mpsc::channel();
     let (input_tx, subscribe_tx) = (cmd_tx.clone(), tx.clone());
 
-    utils::input::init_keyboard_input(input_tx);
-    let store = utils::middleware::init_store(&cmd_tx);
+    let _ = utils::input::init(input_tx);
+    let store = utils::store::init(&cmd_tx);
 
     // Create Subscription from store to render
     store.subscribe(Box::new(move |store, _| {
