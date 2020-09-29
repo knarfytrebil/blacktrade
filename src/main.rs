@@ -47,7 +47,8 @@ fn main() -> Result<(), io::Error> {
     // Create Subscription from store to render
     store.subscribe(Box::new(move |store, _| {
         let state = store.get_state();
-        subscribe_tx.send(Event::Render(state))
+        subscribe_tx
+            .send(Event::Render(state))
             .expect("Send Error");
     }));
 
