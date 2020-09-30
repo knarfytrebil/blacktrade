@@ -11,6 +11,7 @@ extern crate termion;
 extern crate tui;
 extern crate unicode_width;
 extern crate uuid;
+extern crate treexml;
 
 #[macro_use]
 mod utils;

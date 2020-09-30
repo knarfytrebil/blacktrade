@@ -8,7 +8,7 @@ use tui::layout::{Constraint, Direction, Layout};
 use tui::style::{Color, Style};
 use tui::Frame;
 
-pub fn render<B>(frame: &mut Frame<B>, app: &AppState)
+pub fn render<B>(frame: &mut Frame<B>, store: &AppState)
 where
     B: Backend,
 {
@@ -26,20 +26,20 @@ where
         .split(frame.size());
 
     let tabs = Tabs::default()
-        .titles(&app.tabs.titles)
+        .titles(&store.tabs.titles)
         .style(Style::default().fg(Color::Gray).bg(Color::Black))
         .highlight_style(Style::default().fg(Color::Black).bg(Color::White))
         .divider_style(Style::default().fg(Color::White).bg(Color::Black))
-        .select(app.tabs.selection);
+        .select(store.tabs.selection);
 
     frame.render_widget(tabs, chunks[0]);
 
-    match app.tabs.selection {
-        0 => command_output::render(frame, app, chunks[1]),
+    match store.tabs.selection {
+        0 => command_output::render(frame, store, chunks[1]),
         1 => {}
         _ => {}
     }
 
-    status_bar::render(frame, app, chunks[2]);
-    command_bar::render(frame, app, chunks[3]);
+    status_bar::render(frame, store, chunks[2]);
+    command_bar::render(frame, store, chunks[3]);
 }
