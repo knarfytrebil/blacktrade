@@ -108,10 +108,12 @@ where
 {
     fn render(mut self, area: Rect, buf: &mut Buffer) {
         let title_padding: u16 = 2;
-        let tabs_area = match self.block {
-            Some(ref mut b) => {
+        buf.set_style(area, self.style);
+        let tabs_area = match self.block.take() {
+            Some(b) => {
+                let inner_area = b.inner(area);
                 b.render(area, buf);
-                b.inner(area)
+                inner_area
             }
             None => area,
         };
@@ -119,8 +121,6 @@ where
         if tabs_area.height < 1 {
             return;
         }
-
-        buf.set_background(tabs_area, self.style.bg);
 
         let mut x = tabs_area.left();
         let titles_length = self.titles.len();
