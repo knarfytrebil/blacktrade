@@ -12,18 +12,23 @@ const DATA: &'static str = r#"
     <Spans> {store.command} </Spans>
 </Paragraph>"#;
 
-pub fn render<B>(frame: &mut Frame<B>, store: &AppState, area: Rect)
+pub fn render<B>(
+    frame: &mut Frame<B>, 
+    store: &AppState, 
+    area: Rect
+)
 where
     B: Backend,
 {
-    let paragraph = Paragraph::new(vec![Spans::from(
-        store.command.clone()
-    )]);
+    // let paragraph = Paragraph::new(vec![Spans::from(
+    //     store.command.clone()
+    // )]);
 
-    // let paragraph = match xml::create_element(xml::parse_xml(DATA)) {
-    //     xml::El::Div(p) => p,
-    //     _ => panic!("XML Parse Error !")
-    // };
+    let dom_root = xml::parse_xml(DATA);
+    let paragraph = match xml::create_element(dom_root, store) {
+        xml::El::Div(p) => p,
+        _ => panic!("XML Parse Error !")
+    };
 
     frame.render_widget(paragraph, area);
 }

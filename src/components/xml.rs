@@ -1,5 +1,6 @@
 use treexml::{Document, Element};
 
+use structs::app::AppState;
 use tui::widgets::Paragraph;
 use tui::text::Spans;
 
@@ -14,11 +15,14 @@ pub fn parse_xml(xml: &'static str) -> Element {
     doc.root.unwrap()
 }
 
-pub fn create_element(el: Element) -> El {
+pub fn create_element(
+    el: Element, 
+    store: &AppState, 
+) -> El {
     let children: Vec<El> = match el.children.len() > 0 {
         true =>  { 
             el.children.into_iter().map(|chd_el| {
-                create_element(chd_el)
+                create_element(chd_el, store)
             }).collect()
         },
         false => vec!()
