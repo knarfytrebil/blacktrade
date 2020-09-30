@@ -8,18 +8,13 @@ use tui::Frame;
 
 use structs::app::AppState;
 
-fn get_buffer(area_height: u16, txt: String) -> String {
-    let mut lines: Vec<usize> = txt.lines().map(|line| line.len()).collect();
-    let line_count = lines.len();
-    let drained: Vec<usize> = match (line_count as u16).checked_sub(area_height) {
-        Some(x) if x >= 0 as u16 => lines.drain(x as usize..line_count).collect(),
-        None | Some(_) => lines,
-    };
-    let drained_bytes: usize = drained.iter().sum();
-    match txt.len() {
-        l if l <= drained_bytes => txt,
-        l if l > drained_bytes => txt[l - drained_bytes - drained.len()..l].to_string(),
-        _ => txt,
+fn get_buffer(area_height: u16, lines: Vec<String>) -> Vec<String> {
+    match area_height as usize <= lines.len() {
+        false => (&lines[..]).to_vec(),
+        true => { 
+            let slice = lines.len() - area_height as usize;
+            (&lines[slice..]).to_vec()
+        }
     }
 }
 
@@ -27,11 +22,11 @@ pub fn render<B>(frame: &mut Frame<B>, app: &AppState, area: Rect)
 where
     B: Backend,
 {
-    let text: Vec<Spans> = app.console_output_lines.iter()
+    let buf = get_buffer(area.height, app.console_output_lines.clone());
+    let text: Vec<Spans> = buf.iter()
         .map(|l| { 
             Spans::from(Span::raw(l)) 
-        })
-        .rev().collect();
+        }).collect();
     let paragraph = Paragraph::new(text)
         .block(Block::default())
         .wrap(Wrap { trim: true });
