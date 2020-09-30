@@ -3,22 +3,18 @@ use treexml::{Document, Element};
 use tui::widgets::Paragraph;
 use tui::text::Spans;
 
-enum El {
+pub enum El {
     Div(Paragraph<'static>),
     Text(Spans<'static>)
 }
 
-const DATA: &'static str = r#"
-<Paragraph>
-    <Spans>{store.command}</Spans>
-</Paragraph>"#;
 
-fn parse_xml(xml: &'static str) -> Element {
+pub fn parse_xml(xml: &'static str) -> Element {
     let doc = Document::parse(xml.as_bytes()).unwrap();
     doc.root.unwrap()
 }
 
-fn create_element(el: Element) -> El {
+pub fn create_element(el: Element) -> El {
     let children: Vec<El> = match el.children.len() > 0 {
         true =>  { 
             el.children.into_iter().map(|chd_el| {
@@ -28,15 +24,30 @@ fn create_element(el: Element) -> El {
         false => vec!()
     };
 
-    let parent = match el.name.as_str() {
+    let this = match el.name.as_str() {
         "Paragraph" => {
-            El::Div(Paragraph::new(vec!()))
+            let el_list: Vec<Spans> = match children.len() > 0 {
+                true => { 
+                    children.into_iter().map(|child| {
+                        match child {
+                            El::Text(span) => { span },
+                            _ => { panic!("Not a Text Node!") }
+                        }
+                    }).collect()
+                },
+                false => vec!()
+            };
+            El::Div(Paragraph::new(el_list))
         },
         "Spans" => { 
-            El::Text(Spans::from(""))
+            let text = match el.text {
+                Some(txt) => txt,
+                None => String::from("") 
+            };
+            El::Text(Spans::from(text))
         },
         &_ => { panic!("Unknown DOM Token") }
     };
 
-    parent
+    this
 }
