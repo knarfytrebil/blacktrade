@@ -9,13 +9,11 @@ use tui::Frame;
 use structs::app::AppState;
 
 fn get_buffer(area_height: u16, lines: Vec<String>) -> Vec<String> {
-    match area_height as usize <= lines.len() {
-        false => (&lines[..]).to_vec(),
-        true => { 
-            let slice = lines.len() - area_height as usize;
-            (&lines[slice..]).to_vec()
-        }
-    }
+    let buffer_start = match area_height as usize <= lines.len() {
+        false => 0,
+        true => lines.len() - area_height as usize
+    };
+    (&lines[buffer_start..]).to_vec()
 }
 
 pub fn render<B>(frame: &mut Frame<B>, app: &AppState, area: Rect)
