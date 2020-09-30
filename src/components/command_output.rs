@@ -27,11 +27,11 @@ pub fn render<B>(frame: &mut Frame<B>, app: &AppState, area: Rect)
 where
     B: Backend,
 {
-    let text = Spans::from(
-        Span::raw(
-            get_buffer(area.height, app.console_txt.clone())
-        )
-    );
+    let text: Vec<Spans> = app.console_output_lines.iter()
+        .map(|l| { 
+            Spans::from(Span::raw(l)) 
+        })
+        .rev().collect();
     let paragraph = Paragraph::new(text)
         .block(Block::default())
         .wrap(Wrap { trim: true });
