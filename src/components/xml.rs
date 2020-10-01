@@ -10,7 +10,7 @@ pub enum El {
 }
 
 
-pub fn parse_xml(xml: &'static str) -> Element {
+pub fn parse_xml(xml: String) -> Element {
     let doc = Document::parse(xml.as_bytes()).unwrap();
     doc.root.unwrap()
 }

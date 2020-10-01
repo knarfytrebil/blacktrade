@@ -1,15 +1,14 @@
-use structs::app::AppState;
 use tui::backend::Backend;
 use tui::layout::Rect;
-use tui::widgets::Paragraph;
-use tui::text::Spans;
 use tui::Frame;
 
+use structs::app::AppState;
+use handlebars::Handlebars;
 use components::xml;
 
 const DATA: &'static str = r#"
 <Paragraph>
-    <Spans> {store.command} </Spans>
+    <Spans>{{command}}</Spans>
 </Paragraph>"#;
 
 pub fn render<B>(
@@ -20,11 +19,10 @@ pub fn render<B>(
 where
     B: Backend,
 {
-    // let paragraph = Paragraph::new(vec![Spans::from(
-    //     store.command.clone()
-    // )]);
+    let reg = Handlebars::new();
+    let data = reg.render_template(DATA, &store.json_store).expect("Template Parse Error");
 
-    let dom_root = xml::parse_xml(DATA);
+    let dom_root = xml::parse_xml(data);
     let paragraph = match xml::create_element(dom_root, store) {
         xml::El::Div(p) => p,
         _ => panic!("XML Parse Error !")

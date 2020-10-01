@@ -12,6 +12,7 @@ extern crate tui;
 extern crate unicode_width;
 extern crate uuid;
 extern crate treexml;
+extern crate handlebars;
 
 #[macro_use]
 mod utils;

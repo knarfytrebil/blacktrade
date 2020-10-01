@@ -5,8 +5,6 @@ use structs::ui::TopTabs;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value};
 
-// use structs::app::CmdCallback;
-
 const DATA: &'static str = r#"
 {
     "mode": {
@@ -23,10 +21,9 @@ const DATA: &'static str = r#"
     },
     "command": "",
     "console_output_lines": [],
-    "console_scroll": 0,
     "cmd_str_queue": {},
-    "cmd_running": {},
-    "cmd_ended": {}
+    "cmd_running": [],
+    "cmd_ended":[] 
 }
 "#;
 
@@ -34,10 +31,8 @@ const DATA: &'static str = r#"
 pub struct AppState {
     pub json_store: Value,
     pub tabs: TopTabs,
-    pub command: String,
     pub console_output_lines: Vec<String>,
     pub cmd_str_queue: HashMap<String, String>,
-    pub console_scroll: u16,
     pub cmd_running: Vec<Command>,
     pub cmd_ended: Vec<Command>,
 }
@@ -45,6 +40,7 @@ pub struct AppState {
 impl AppState {
     pub fn new() -> AppState {
         let state: Value = serde_json::from_str(DATA).expect("JSON Error!");
+
         AppState {
             json_store: state,
             tabs: TopTabs {
@@ -55,9 +51,7 @@ impl AppState {
                 ],
                 selection: 0,
             },
-            command: String::from(""),
             console_output_lines: vec![],
-            console_scroll: 0 as u16,
             cmd_str_queue: HashMap::new(),
             cmd_running: Vec::new(),
             cmd_ended: Vec::new(),
