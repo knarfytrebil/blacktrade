@@ -1,15 +1,18 @@
 use std::collections::HashMap;
 use std::fmt;
-use structs::app::{AppMode, Command};
+use structs::app::{Command};
 use structs::ui::TopTabs;
 use serde::{Deserialize, Serialize};
-use serde_json::{Result, Value};
+use serde_json::{Value};
 
 // use structs::app::CmdCallback;
 
-const data: &'static str = r#"
+const DATA: &'static str = r#"
 {
-    "mode": "normal",
+    "mode": {
+        "category": "normal",
+        "symbol": "NORM"
+    },
     "tabs": {
         "titles": [
             "Console", 
@@ -29,7 +32,7 @@ const data: &'static str = r#"
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct AppState {
-    pub mode: AppMode,
+    pub json_store: Value,
     pub tabs: TopTabs,
     pub command: String,
     pub console_output_lines: Vec<String>,
@@ -41,11 +44,10 @@ pub struct AppState {
 
 impl AppState {
     pub fn new() -> AppState {
-
-        let state: Value = serde_json::from_str(data).expect("JSON Error!");
+        let state: Value = serde_json::from_str(DATA).expect("JSON Error!");
 
         AppState {
-            mode: AppMode::get_mode("normal"),
+            json_store: state,
             tabs: TopTabs {
                 titles: vec![
                     String::from("Console"),
@@ -73,7 +75,6 @@ impl Default for AppState {
 impl fmt::Debug for AppState {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         fmt.debug_struct("AppState")
-            .field("mode", &self.mode)
             .field("tabs", &self.tabs)
             .finish()
     }

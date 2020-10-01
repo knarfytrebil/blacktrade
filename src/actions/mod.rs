@@ -1,9 +1,9 @@
 pub mod command;
 // use reducers::CommandGen;
 use serde::{Deserialize, Serialize};
+use serde_json::{Value};
 use structs::app::events;
 use structs::app::events::Key;
-use structs::app::AppMode;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum AppAction {
@@ -25,7 +25,7 @@ pub enum AppAction {
     CommandBarSet(String),
     CommandBarEnqueueCmd(String),
     ConsolePush(String),
-    SetMode(AppMode),
+    SetMode(Value),
 }
 
 impl AppAction {

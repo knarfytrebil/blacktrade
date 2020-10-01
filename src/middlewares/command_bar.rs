@@ -1,6 +1,6 @@
 use actions::AppAction;
 use redux::{DispatchFunc, Middleware, Store};
-use structs::app::{AppState, ModeCategory};
+use structs::app::{AppState};
 
 pub struct CommandBarMiddleWare {}
 
@@ -14,9 +14,10 @@ impl Middleware<AppState> for CommandBarMiddleWare {
         debug!("3 {:?}", &action);
         match action {
             AppAction::SetMode(ref mode) => {
-                let _action = match mode.category {
-                    ModeCategory::Normal => AppAction::CommandBarSet(String::from("")),
-                    ModeCategory::Command => AppAction::CommandBarSet(String::from(":")),
+                let _action = match mode["category"].as_str() {
+                    Some("normal") => AppAction::CommandBarSet(String::from("")),
+                    Some("command") => AppAction::CommandBarSet(String::from(":")),
+                    Some(&_) | None => panic!("Invalid Mode Category")
                 };
                 let _ = store.dispatch(_action);
             }

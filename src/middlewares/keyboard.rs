@@ -1,12 +1,29 @@
 use actions::AppAction;
 use redux::{DispatchFunc, Middleware, Store};
 use structs::app::events::Key as SerializableKey;
-use structs::app::{AppMode, AppState, ModeCategory};
+use structs::app::{AppState};
 use termion::event::Key;
 use utils::app::to_unserializable;
 use uuid::Uuid;
 
 pub struct KeyboardMiddleWare {}
+
+
+const NORMALMODE: &'static str = r#"
+{
+    "category": "normal",
+    "symbol": "NORM"
+}
+"#;
+
+const COMMANDMODE: &'static str = r#"
+{
+    "category": "command",
+    "symbol": "CTRL"
+}
+"#;
+
+
 
 impl Middleware<AppState> for KeyboardMiddleWare {
     fn dispatch(
@@ -34,22 +51,31 @@ impl Middleware<AppState> for KeyboardMiddleWare {
 
 fn get_key_action(_key: SerializableKey, _state: AppState) -> Result<AppAction, String> {
     let key_event = to_unserializable(_key);
-    match _state.mode.category {
-        ModeCategory::Normal => normal_key(key_event, _state),
-        ModeCategory::Command => command_key(key_event, _state),
+    match _state.json_store["mode"]["category"].as_str() {
+        Some("normal") => normal_key(key_event, _state),
+        Some("command") => command_key(key_event, _state),
+        Some(&_) | None => panic!("Unknown Category !")
     }
 }
 
 fn normal_key(_key: Key, _state: AppState) -> Result<AppAction, String> {
     match _key {
-        Key::Char(':') => Ok(AppAction::SetMode(AppMode::get_mode("command"))),
+        Key::Char(':') => { 
+            let data = serde_json::from_str(COMMANDMODE).expect("JSON Error!");
+            let action = AppAction::SetMode(data);
+            Ok(action)
+        },
         _ => Err(String::from("There is no settings for this key yet")),
     }
 }
 
 fn command_key(_key: Key, mut _state: AppState) -> Result<AppAction, String> {
     match _key {
-        Key::Esc => Ok(AppAction::SetMode(AppMode::get_mode("normal"))),
+        Key::Esc => { 
+            let data = serde_json::from_str(NORMALMODE).expect("JSON Error!");
+            let action = AppAction::SetMode(data);
+            Ok(action)
+        },
         Key::Backspace => Ok(AppAction::CommandBarPop(1)),
         Key::Char('\n') => Ok(AppAction::CommandBarEnqueueCmd(Uuid::new_v4().to_string())),
         Key::Char(_char) => Ok(AppAction::CommandBarPush(_char)),

@@ -7,13 +7,14 @@ use tui::widgets::{Paragraph};
 use tui::text::{Spans, Span};
 use tui::Frame;
 
-pub fn render<B>(frame: &mut Frame<B>, app: &AppState, area: Rect)
+pub fn render<B>(frame: &mut Frame<B>, store: &AppState, area: Rect)
 where
     B: Backend,
 {
+    let value = store.json_store["mode"]["symbol"].as_str().expect("JSON Error");
     let text = Spans::from(vec![
         Span::styled(" ", Style::default().fg(Color::White).bg(Color::Black)),
-        Span::styled(app.mode.symbol.clone(), Style::default().bg(Color::Black)),
+        Span::styled(value, Style::default().bg(Color::Black)),
         Span::styled(" ", Style::default().fg(Color::White).bg(Color::Black)),
         Span::styled(
             "\u{E0B0} ",
