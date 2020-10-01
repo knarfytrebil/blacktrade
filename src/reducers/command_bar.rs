@@ -25,6 +25,7 @@ pub fn push() -> Box<ReducerFn> {
 
                     let value = state.json_store["command"].as_str().expect("command is not str");
                     let mut process_value = value.to_string();
+
                     process_value.push(*_char);
 
                     state.json_store["command"] = Value::String(process_value);
@@ -43,6 +44,7 @@ pub fn pop() -> Box<ReducerFn> {
                 AppAction::CommandBarPop(_pop_index) => {
                     let value = state.json_store["command"].as_str().expect("command is not str");
                     let mut process_value = value.to_string();
+
                     if process_value.len() > 1 {
                         process_value.pop();
                         state.json_store["command"] = Value::String(process_value);

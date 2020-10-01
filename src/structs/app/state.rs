@@ -31,7 +31,6 @@ const DATA: &'static str = r#"
 pub struct AppState {
     pub json_store: Value,
     pub tabs: TopTabs,
-    pub console_output_lines: Vec<String>,
     pub cmd_str_queue: HashMap<String, String>,
     pub cmd_running: Vec<Command>,
     pub cmd_ended: Vec<Command>,
@@ -39,7 +38,8 @@ pub struct AppState {
 
 impl AppState {
     pub fn new() -> AppState {
-        let state: Value = serde_json::from_str(DATA).expect("JSON Error!");
+        let state: Value = serde_json::from_str(DATA)
+            .expect("JSON Error!");
 
         AppState {
             json_store: state,
@@ -51,11 +51,11 @@ impl AppState {
                 ],
                 selection: 0,
             },
-            console_output_lines: vec![],
             cmd_str_queue: HashMap::new(),
             cmd_running: Vec::new(),
             cmd_ended: Vec::new(),
         }
+
     }
 }
 

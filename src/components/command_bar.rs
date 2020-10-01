@@ -20,13 +20,18 @@ where
     B: Backend,
 {
     let reg = Handlebars::new();
-    let data = reg.render_template(DATA, &store.json_store).expect("Template Parse Error");
+    let data = reg
+        .render_template(DATA, &store.json_store)
+        .expect("Template Parse Error");
 
     let dom_root = xml::parse_xml(data);
-    let paragraph = match xml::create_element(dom_root, store) {
+    let widget = match xml::create_element(
+        dom_root, 
+        store
+    ) {
         xml::El::Div(p) => p,
         _ => panic!("XML Parse Error !")
     };
 
-    frame.render_widget(paragraph, area);
+    frame.render_widget(widget, area);
 }
