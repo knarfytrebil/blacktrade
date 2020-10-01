@@ -1,8 +1,9 @@
+use serde::{Deserialize, Serialize};
 use structs::app::AppState;
 
 pub type CmdCallback = fn(&mut AppState, String) -> bool;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Command {
     pub name: String,
     pub id: String,

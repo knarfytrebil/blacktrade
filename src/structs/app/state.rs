@@ -2,10 +2,32 @@ use std::collections::HashMap;
 use std::fmt;
 use structs::app::{AppMode, Command};
 use structs::ui::TopTabs;
+use serde::{Deserialize, Serialize};
+use serde_json::{Result, Value};
 
 // use structs::app::CmdCallback;
 
-#[derive(Clone)]
+const data: &'static str = r#"
+{
+    "mode": "normal",
+    "tabs": {
+        "titles": [
+            "Console", 
+            "tab -2", 
+            "tab-3"
+        ],
+        "selection": 0
+    },
+    "command": "",
+    "console_output_lines": [],
+    "console_scroll": 0,
+    "cmd_str_queue": {},
+    "cmd_running": {},
+    "cmd_ended": {}
+}
+"#;
+
+#[derive(Clone, Serialize, Deserialize)]
 pub struct AppState {
     pub mode: AppMode,
     pub tabs: TopTabs,
@@ -19,6 +41,9 @@ pub struct AppState {
 
 impl AppState {
     pub fn new() -> AppState {
+
+        let state: Value = serde_json::from_str(data).expect("JSON Error!");
+
         AppState {
             mode: AppMode::get_mode("normal"),
             tabs: TopTabs {
