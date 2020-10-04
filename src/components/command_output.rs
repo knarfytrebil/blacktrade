@@ -9,6 +9,15 @@ use tui::Frame;
 
 use structs::app::AppState;
 
+const DATA: &'static str = r#"
+<Paragraph styles='{"wrap": {"trim": "true"}, "scroll": "true", "block": "default"}'>
+    {{#each console_output_lines as |line| ~}}
+        <Spans>
+            <Span>{{line}}</Span>
+        </Spans>
+    {{/each}}
+</Paragraph>"#;
+
 fn get_buffer(area_height: u16, lines: Vec<Value>) -> Vec<Value> {
     let buffer_start = match area_height as usize <= lines.len() {
         false => 0,
@@ -22,7 +31,6 @@ where
     B: Backend,
 {
     let array = store.json_store["console_output_lines"].as_array().expect("Data Error");
-
     let buf = get_buffer(
         area.height, 
         array.to_vec()
