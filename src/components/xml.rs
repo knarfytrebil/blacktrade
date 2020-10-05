@@ -5,6 +5,32 @@ use tui::widgets::Paragraph;
 use tui::widgets::Block;
 use tui::text::{Spans, Span};
 
+// match styles {
+//     Some(style) => {
+//         match style {
+//             Value::Object(obj) => {
+//                 for (key, value) in obj.iter() {
+//                     match key.as_str() {
+//                         "block" => {
+//                             match value.as_str().expect("Unexpected format styles value") {
+//                                 "default" => { paragraph_node.block(Block::default()); }
+//                                 &_ => { debug!("Unknown style Value") }
+//                             }
+//                         },
+//                         // "scroll" => {},
+//                         // "wrap" => {},
+//                         &_ => { debug!("Unknown style attr") }
+//                     }
+//                 }
+//             },
+//             _ => { panic!("Unknown Style Format") }
+//         }
+//     }
+//     None => {
+//         El::Paragraph(paragraph_node)
+//     }
+// }
+
 pub enum El {
     Paragraph(Paragraph<'static>),
     Spans(Spans<'static>),
@@ -60,33 +86,7 @@ pub fn create_element(
                 },
                 false => vec!()
             };
-            let paragraph_node = Paragraph::new(el_list);
-            El::Paragraph(paragraph_node)
-            // match styles {
-            //     Some(style) => {
-            //         match style {
-            //             Value::Object(obj) => {
-            //                 for (key, value) in obj.iter() {
-            //                     match key.as_str() {
-            //                         "block" => {
-            //                             match value.as_str().expect("Unexpected format styles value") {
-            //                                 "default" => { paragraph_node.block(Block::default()); }
-            //                                 &_ => { debug!("Unknown style Value") }
-            //                             }
-            //                         },
-            //                         // "scroll" => {},
-            //                         // "wrap" => {},
-            //                         &_ => { debug!("Unknown style attr") }
-            //                     }
-            //                 }
-            //             },
-            //             _ => { panic!("Unknown Style Format") }
-            //         }
-            //     }
-            //     None => {
-            //         El::Paragraph(paragraph_node)
-            //     }
-            // }
+            El::Paragraph(Paragraph::new(el_list))
         },
         "Spans" => { 
             match children.len() > 0 {

@@ -11,7 +11,7 @@ use structs::app::AppState;
 use components::xml;
 
 const DATA: &'static str = r#"
-<Paragraph styles='{"wrap": {"trim": "true"}, "scroll": "true", "block": "default"}'>
+<Paragraph styles='{"wrap": {"trim": "true"}, "block": "default"}' scroll='true'>
     {{#each console_output_lines as |line| ~}}
         <Spans>
             <Span>{{line}}</Span>
@@ -31,12 +31,12 @@ pub fn render<B>(frame: &mut Frame<B>, store: &AppState, area: Rect)
 where
     B: Backend,
 {
-    let array = store.json_store["console_output_lines"].as_array().expect("Data Error");
+    // let array = store.json_store["console_output_lines"].as_array().expect("Data Error");
 
-    let buf = get_buffer(
-        area.height, 
-        array.to_vec()
-    );
+    // let buf = get_buffer(
+    //     area.height, 
+    //     array.to_vec()
+    // );
 
     let dom_root = xml::parse(
         DATA.to_string(), 
