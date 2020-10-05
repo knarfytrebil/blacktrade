@@ -1,6 +1,6 @@
 use treexml::{Document, Element};
-
-use structs::app::AppState;
+use serde_json::{Value};
+use handlebars::Handlebars;
 use tui::widgets::Paragraph;
 use tui::text::Spans;
 
@@ -9,21 +9,28 @@ pub enum El {
     Text(Spans<'static>)
 }
 
-
 pub fn parse_xml(xml: String) -> Element {
     let doc = Document::parse(xml.as_bytes()).unwrap();
     doc.root.unwrap()
 }
 
+pub fn parse(template: String, store: &Value) -> Element {
+    let reg = Handlebars::new();
+    let filled_template = reg
+        .render_template(&template, &store)
+        .expect("Template Parse Error");
+    parse_xml(filled_template)
+}
+
 pub fn create_element(
     el: Element, 
-    store: &AppState, 
 ) -> El {
-    let children: Vec<El> = match el.children.len() > 0 {
+    let children: Vec<El> = match  el.children.len() > 0 {
         true =>  { 
-            el.children.into_iter().map(|chd_el| {
-                create_element(chd_el, store)
-            }).collect()
+            el.children
+                .into_iter()
+                .map(|chd_el| { create_element(chd_el) })
+                .collect()
         },
         false => vec!()
     };
