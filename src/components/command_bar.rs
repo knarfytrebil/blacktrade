@@ -23,7 +23,7 @@ where
         &store.json_store
     );
     let widget = match xml::create_element(dom_root) {
-        xml::El::Div(p) => p,
+        xml::El::Paragraph(p) => p,
         _ => panic!("XML Parse Error !")
     };
     frame.render_widget(widget, area);

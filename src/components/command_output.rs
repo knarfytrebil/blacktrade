@@ -8,6 +8,7 @@ use tui::text::{Spans, Span};
 use tui::Frame;
 
 use structs::app::AppState;
+use components::xml;
 
 const DATA: &'static str = r#"
 <Paragraph styles='{"wrap": {"trim": "true"}, "scroll": "true", "block": "default"}'>
@@ -31,18 +32,30 @@ where
     B: Backend,
 {
     let array = store.json_store["console_output_lines"].as_array().expect("Data Error");
+
     let buf = get_buffer(
         area.height, 
         array.to_vec()
     );
 
-    let text: Vec<Spans> = buf.iter()
-        .map(|l| { 
-            Spans::from(Span::raw(l.as_str().expect("Data Error"))) 
-        }).collect();
-    let paragraph = Paragraph::new(text)
-        .block(Block::default())
-        .wrap(Wrap { trim: true });
+    let dom_root = xml::parse(
+        DATA.to_string(), 
+        &store.json_store
+    );
 
-    frame.render_widget(paragraph, area);
+    let widget = match xml::create_element(dom_root) {
+        xml::El::Paragraph(p) => p,
+        _ => panic!("XML Parse Error !")
+    };
+
+    // let text: Vec<Spans> = buf.iter()
+    //     .map(|l| { 
+    //         Spans::from(Span::raw(l.as_str().expect("Data Error"))) 
+    //     }).collect();
+
+    // let widget = Paragraph::new(text)
+    //     .block(Block::default())
+    //     .wrap(Wrap { trim: true });
+
+    frame.render_widget(widget, area);
 }
