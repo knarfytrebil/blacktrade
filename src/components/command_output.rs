@@ -1,7 +1,8 @@
-use serde_json::{Value};
+use serde_json::{Value, json};
 use tui::backend::Backend;
 use tui::layout::Rect;
 use tui::widgets::Block;
+
 
 use tui::widgets::{Paragraph, Wrap};
 use tui::text::{Spans, Span};
@@ -12,20 +13,12 @@ use components::xml;
 
 const DATA: &'static str = r#"
 <Paragraph styles='{"wrap": {"trim": "true"}, "block": "default"}' scroll='true'>
-    {{#each console_output_lines as |line| ~}}
+    {{#each store.console_output_lines as |line| ~}}
         <Spans>
             <Span>{{line}}</Span>
         </Spans>
     {{/each}}
 </Paragraph>"#;
-
-fn get_buffer(area_height: u16, lines: Vec<Value>) -> Vec<Value> {
-    let buffer_start = match area_height as usize <= lines.len() {
-        false => 0,
-        true => lines.len() - area_height as usize
-    };
-    (&lines[buffer_start..]).to_vec()
-}
 
 pub fn render<B>(frame: &mut Frame<B>, store: &AppState, area: Rect)
 where
@@ -40,7 +33,13 @@ where
 
     let dom_root = xml::parse(
         DATA.to_string(), 
-        &store.json_store
+        &json!({
+            "store": &store.json_store,
+            "metrics": {
+                "height": area.height,
+                "width": area.width
+            }
+        })
     );
 
     let widget = match xml::create_element(dom_root) {
@@ -59,3 +58,31 @@ where
 
     frame.render_widget(widget, area);
 }
+
+// match styles {
+//     Some(style) => {
+//         match style {
+//             Value::Object(obj) => {
+//                 for (key, value) in obj.iter() {
+//                     match key.as_str() {
+//                         "block" => {
+//                             match value.as_str().expect("Unexpected format styles value") {
+//                                 "default" => { paragraph_node.block(Block::default()); }
+//                                 &_ => { debug!("Unknown style Value") }
+//                             }
+//                         },
+//                         // "scroll" => {},
+//                         // "wrap" => {},
+//                         &_ => { debug!("Unknown style attr") }
+//                     }
+//                 }
+//             },
+//             _ => { panic!("Unknown Style Format") }
+//         }
+//     }
+//     None => {
+//         El::Paragraph(paragraph_node)
+//     }
+// }
+//
+

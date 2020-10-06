@@ -1,35 +1,9 @@
 use treexml::{Document, Element};
 use serde_json::{Value};
-use handlebars::Handlebars;
+use handlebars::{Handlebars, handlebars_helper};
 use tui::widgets::Paragraph;
 use tui::widgets::Block;
 use tui::text::{Spans, Span};
-
-// match styles {
-//     Some(style) => {
-//         match style {
-//             Value::Object(obj) => {
-//                 for (key, value) in obj.iter() {
-//                     match key.as_str() {
-//                         "block" => {
-//                             match value.as_str().expect("Unexpected format styles value") {
-//                                 "default" => { paragraph_node.block(Block::default()); }
-//                                 &_ => { debug!("Unknown style Value") }
-//                             }
-//                         },
-//                         // "scroll" => {},
-//                         // "wrap" => {},
-//                         &_ => { debug!("Unknown style attr") }
-//                     }
-//                 }
-//             },
-//             _ => { panic!("Unknown Style Format") }
-//         }
-//     }
-//     None => {
-//         El::Paragraph(paragraph_node)
-//     }
-// }
 
 pub enum El {
     Paragraph(Paragraph<'static>),
@@ -42,13 +16,35 @@ pub fn parse_xml(xml: String) -> Element {
     doc.root.unwrap()
 }
 
-pub fn parse(template: String, store: &Value) -> Element {
+// fn generate_line_buffer(height: u16) -> Box<dyn Fn(Vec<Value>) -> Vec<Value>> {
+//     handlebars_helper!(line_buffer: |v: Vec| {
+//         let buffer_start = match height as usize <= lines.len() {
+//             false => 0,
+//             true => lines.len() - height as usize
+//         };
+//         (&lines[buffer_start..]).to_vec()
+// 
+//     })
+// }
+
+pub fn parse(template: String, v: &Value) -> Element {
     let reg = Handlebars::new();
+    // reg.register_helper("line_buffer", line_buffer(v["metrics"]["height"].as_u16()));
+
     let filled_template = reg
-        .render_template(&template, &store)
+        .render_template(&template, &v)
         .expect("Template Parse Error");
     parse_xml(filled_template)
 }
+
+
+// fn inner_buffer(area_height: u16, lines: Vec<Value>) -> Vec<Value> {
+//     let buffer_start = match area_height as usize <= lines.len() {
+//         false => 0,
+//         true => lines.len() - area_height as usize
+//     };
+//     (&lines[buffer_start..]).to_vec()
+// }
 
 pub fn create_element(
     el: Element, 

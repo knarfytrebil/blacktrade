@@ -1,13 +1,14 @@
 use tui::backend::Backend;
 use tui::layout::Rect;
 use tui::Frame;
+use serde_json::{json};
 
 use structs::app::AppState;
 use components::xml;
 
 const DATA: &'static str = r#"
 <Paragraph>
-    <Spans>{{command}}</Spans>
+    <Spans>{{store.command}}</Spans>
 </Paragraph>"#;
 
 pub fn render<B>(
@@ -20,8 +21,15 @@ where
 {
     let dom_root = xml::parse(
         DATA.to_string(), 
-        &store.json_store
+        &json!({
+            "store": &store.json_store,
+            "metrics": {
+                "height": area.height,
+                "width": area.width
+            }
+        })
     );
+
     let widget = match xml::create_element(dom_root) {
         xml::El::Paragraph(p) => p,
         _ => panic!("XML Parse Error !")
