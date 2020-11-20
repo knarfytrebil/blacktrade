@@ -42,7 +42,7 @@ fn main() -> Result<(), io::Error> {
     // Channels
     let (tx, rx) = mpsc::channel();
     let (cmd_tx, cmd_rx) = mpsc::channel();
-    let (input_tx, subscribe_tx) = (cmd_tx.clone(), tx.clone());
+    let (input_tx, subscribe_tx) = (cmd_tx.clone(), tx);
 
     let _ = utils::input::init(input_tx);
     let store = utils::store::init(&cmd_tx);

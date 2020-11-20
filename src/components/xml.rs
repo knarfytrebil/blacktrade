@@ -46,11 +46,11 @@ pub fn parse(template: String, v: &Value) -> Element {
 // }
 
 pub fn create_element(el: Element) -> El {
-    let children: Vec<El> = match el.children.len() > 0 {
+    let children: Vec<El> = match !el.children.is_empty() {
         true => el
             .children
             .into_iter()
-            .map(|chd_el| create_element(chd_el))
+            .map(create_element)
             .collect(),
         false => vec![],
     };
@@ -64,7 +64,7 @@ pub fn create_element(el: Element) -> El {
 
     let this = match el.name.as_str() {
         "Paragraph" => {
-            let el_list: Vec<Spans> = match children.len() > 0 {
+            let el_list: Vec<Spans> = match !children.is_empty() {
                 true => children
                     .into_iter()
                     .map(|child| match child {
@@ -78,7 +78,7 @@ pub fn create_element(el: Element) -> El {
             };
             El::Paragraph(Paragraph::new(el_list))
         }
-        "Spans" => match children.len() > 0 {
+        "Spans" => match !children.is_empty() {
             true => {
                 let span_list: Vec<Span> = children
                     .into_iter()

@@ -13,9 +13,9 @@ pub struct Command {
 impl Command {
     pub fn new(name: String, id: String, failed: bool) -> Command {
         Command {
-            name: name,
-            id: id,
-            failed: failed,
+            name,
+            id,
+            failed,
         }
     }
 }

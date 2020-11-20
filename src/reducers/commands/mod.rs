@@ -33,7 +33,7 @@ pub fn create(failed: bool) -> Box<ReducerFn> {
                 AppAction::CommandCreate(uuid) | AppAction::CommandInvalid(uuid) => {
                     match state.cmd_str_queue.remove(uuid) {
                         Some(cmd_str) => {
-                            let cmd_obj = Command::new(cmd_str.clone(), uuid.clone(), failed);
+                            let cmd_obj = Command::new(cmd_str, uuid.clone(), failed);
                             match &failed {
                                 true => state.cmd_ended.push(cmd_obj),
                                 false => state.cmd_running.push(cmd_obj),
