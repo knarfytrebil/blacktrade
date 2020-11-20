@@ -30,18 +30,15 @@ impl Middleware<AppState> for KeyboardMiddleWare {
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
         debug!("2 {:?}", &action);
-        match action {
-            AppAction::Keyboard(key) => {
-                let _state = store.get_state();
-                match get_key_action(key, _state) {
-                    Ok(_action) => {
-                        let _ = store.dispatch(_action);
-                    }
-                    Err(err) => debug!("[ERR] {:?}", err),
+        if let AppAction::Keyboard(key) = action {
+            let _state = store.get_state();
+            match get_key_action(key, _state) {
+                Ok(_action) => {
+                    let _ = store.dispatch(_action);
                 }
+                Err(err) => debug!("[ERR] {:?}", err),
             }
-            _ => {}
-        }
+        };
         next(store, action)
     }
 }
