@@ -47,11 +47,7 @@ pub fn parse(template: String, v: &Value) -> Element {
 
 pub fn create_element(el: Element) -> El {
     let children: Vec<El> = match !el.children.is_empty() {
-        true => el
-            .children
-            .into_iter()
-            .map(create_element)
-            .collect(),
+        true => el.children.into_iter().map(create_element).collect(),
         false => vec![],
     };
 
