@@ -3,8 +3,7 @@ use std::io::BufReader;
 use std::process::{Command, Stdio};
 
 fn main() {
-    let mut child =
-        Command::new("/bin/bash")
+    let mut child = Command::new("/bin/bash")
         .arg("/Users/knarfytrebil/Programs/rust/bash_cmds/spot.sh")
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
@@ -29,7 +28,7 @@ fn main() {
 
                     (stdout.len(), stderr.len())
                 }
-                other => panic!("Some better error handling here... {:?}", other)
+                other => panic!("Some better error handling here... {:?}", other),
             };
 
             if stdout_bytes == 0 && stderr_bytes == 0 {

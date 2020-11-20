@@ -1,9 +1,9 @@
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use std::collections::HashMap;
 use std::fmt;
-use structs::app::{Command};
+use structs::app::Command;
 use structs::ui::TopTabs;
-use serde::{Deserialize, Serialize};
-use serde_json::{Value};
 
 const DATA: &'static str = r#"
 {
@@ -38,8 +38,7 @@ pub struct AppState {
 
 impl AppState {
     pub fn new() -> AppState {
-        let state: Value = serde_json::from_str(DATA)
-            .expect("JSON Error!");
+        let state: Value = serde_json::from_str(DATA).expect("JSON Error!");
 
         AppState {
             json_store: state,
@@ -55,7 +54,6 @@ impl AppState {
             cmd_running: Vec::new(),
             cmd_ended: Vec::new(),
         }
-
     }
 }
 

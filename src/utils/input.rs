@@ -1,9 +1,9 @@
-use std::{io, thread};
-use std::sync::mpsc::{Sender};
-use utils::app::to_serializable;
-use termion::input::{TermRead};
-use structs::app::events::Event;
 use actions::AppAction;
+use std::sync::mpsc::Sender;
+use std::{io, thread};
+use structs::app::events::Event;
+use termion::input::TermRead;
+use utils::app::to_serializable;
 
 pub fn init(input_tx: Sender<Event>) {
     thread::spawn(move || {

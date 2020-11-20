@@ -7,11 +7,15 @@ pub type CmdCallback = fn(&mut AppState, String) -> bool;
 pub struct Command {
     pub name: String,
     pub id: String,
-    pub failed: bool
+    pub failed: bool,
 }
 
 impl Command {
     pub fn new(name: String, id: String, failed: bool) -> Command {
-        Command { name: name, id: id, failed: failed }
+        Command {
+            name: name,
+            id: id,
+            failed: failed,
+        }
     }
 }

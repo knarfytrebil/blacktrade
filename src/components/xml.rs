@@ -1,14 +1,14 @@
+use handlebars::{handlebars_helper, Handlebars};
+use serde_json::Value;
 use treexml::{Document, Element};
-use serde_json::{Value};
-use handlebars::{Handlebars, handlebars_helper};
-use tui::widgets::Paragraph;
+use tui::text::{Span, Spans};
 use tui::widgets::Block;
-use tui::text::{Spans, Span};
+use tui::widgets::Paragraph;
 
 pub enum El {
     Paragraph(Paragraph<'static>),
     Spans(Spans<'static>),
-    Span(Span<'static>)
+    Span(Span<'static>),
 }
 
 pub fn parse_xml(xml: String) -> Element {
@@ -23,7 +23,7 @@ pub fn parse_xml(xml: String) -> Element {
 //             true => lines.len() - height as usize
 //         };
 //         (&lines[buffer_start..]).to_vec()
-// 
+//
 //     })
 // }
 
@@ -37,7 +37,6 @@ pub fn parse(template: String, v: &Value) -> Element {
     parse_xml(filled_template)
 }
 
-
 // fn inner_buffer(area_height: u16, lines: Vec<Value>) -> Vec<Value> {
 //     let buffer_start = match area_height as usize <= lines.len() {
 //         false => 0,
@@ -46,25 +45,19 @@ pub fn parse(template: String, v: &Value) -> Element {
 //     (&lines[buffer_start..]).to_vec()
 // }
 
-pub fn create_element(
-    el: Element, 
-) -> El {
+pub fn create_element(el: Element) -> El {
     let children: Vec<El> = match el.children.len() > 0 {
-        true =>  { 
-            el.children
-                .into_iter()
-                .map(|chd_el| { create_element(chd_el) })
-                .collect()
-        },
-        false => vec!()
+        true => el
+            .children
+            .into_iter()
+            .map(|chd_el| create_element(chd_el))
+            .collect(),
+        false => vec![],
     };
 
-    let styles: Option<Value>= match el.attributes.contains_key("styles") {
-        true => Some(
-            serde_json::from_str(&el.attributes["styles"])
-                .expect("JSON Parse Error")
-        ),
-        false => None
+    let styles: Option<Value> = match el.attributes.contains_key("styles") {
+        true => Some(serde_json::from_str(&el.attributes["styles"]).expect("JSON Parse Error")),
+        false => None,
     };
 
     debug!("STYLES: {:?}", styles);
@@ -72,48 +65,51 @@ pub fn create_element(
     let this = match el.name.as_str() {
         "Paragraph" => {
             let el_list: Vec<Spans> = match children.len() > 0 {
-                true => { 
-                    children.into_iter().map(|child| {
-                        match child {
-                            El::Spans(s) => { s },
-                            _ => { panic!("Not a Text Node!") }
+                true => children
+                    .into_iter()
+                    .map(|child| match child {
+                        El::Spans(s) => s,
+                        _ => {
+                            panic!("Not a Text Node!")
                         }
-                    }).collect()
-                },
-                false => vec!()
+                    })
+                    .collect(),
+                false => vec![],
             };
             El::Paragraph(Paragraph::new(el_list))
-        },
-        "Spans" => { 
-            match children.len() > 0 {
-                true => { 
-                    let span_list: Vec<Span> = children.into_iter().map(|child| {
-                        match child {
-                            El::Span(s) => { s },
-                            _ => { panic!("Not a Text Node!") }
+        }
+        "Spans" => match children.len() > 0 {
+            true => {
+                let span_list: Vec<Span> = children
+                    .into_iter()
+                    .map(|child| match child {
+                        El::Span(s) => s,
+                        _ => {
+                            panic!("Not a Text Node!")
                         }
-                    }).collect();
-                    El::Spans(Spans::from(span_list))
-                },
-                false => {
-                    let text = match el.text {
-                        Some(txt) => txt,
-                        None => String::from("") 
-                    };
-                    El::Spans(Spans::from(text))
-                }
+                    })
+                    .collect();
+                El::Spans(Spans::from(span_list))
             }
-         
+            false => {
+                let text = match el.text {
+                    Some(txt) => txt,
+                    None => String::from(""),
+                };
+                El::Spans(Spans::from(text))
+            }
         },
-        "Span" => { 
+        "Span" => {
             let text = match el.text {
                 Some(txt) => txt,
-                None => String::from("") 
+                None => String::from(""),
             };
             El::Span(Span::from(text))
-        },
-        &_ => { panic!("Unknown DOM Token") }
+        }
+        &_ => {
+            panic!("Unknown DOM Token")
+        }
     };
 
-    this 
+    this
 }

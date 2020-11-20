@@ -1,15 +1,11 @@
-use structs::app::{AppState, CommandHandler};
-use std::sync::mpsc::{Sender};
-use structs::app::events::Event;
-use std::sync::{Arc};
 use redux::Store;
+use std::sync::mpsc::Sender;
+use std::sync::Arc;
+use structs::app::events::Event;
+use structs::app::{AppState, CommandHandler};
 
 use middlewares::{
-    CommandBarMiddleWare, 
-    CommandMiddleWare, 
-    ConsoleMiddleWare, 
-    DebugMiddleWare, 
-    KeyboardMiddleWare,
+    CommandBarMiddleWare, CommandMiddleWare, ConsoleMiddleWare, DebugMiddleWare, KeyboardMiddleWare,
 };
 
 pub fn init(cmd_tx: &Sender<Event>) -> Arc<Store<AppState>> {
@@ -37,4 +33,3 @@ pub fn init(cmd_tx: &Sender<Event>) -> Arc<Store<AppState>> {
         // exit_mw,
     ]))
 }
-

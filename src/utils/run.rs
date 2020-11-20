@@ -1,19 +1,16 @@
-use std::sync::mpsc::{Receiver};
-use std::{io};
-use structs::app::events::Event;
 use components::app;
+use std::io;
+use std::sync::mpsc::Receiver;
+use structs::app::events::Event;
 
-use termion::input::{MouseTerminal};
+use termion::input::MouseTerminal;
 use termion::raw::IntoRawMode;
 use termion::screen::AlternateScreen;
 
 use tui::backend::TermionBackend;
 use tui::Terminal;
 
-pub fn keep_alive(
-    receiver: Receiver<Event>,
-) -> Result<(), io::Error> {
-
+pub fn keep_alive(receiver: Receiver<Event>) -> Result<(), io::Error> {
     // Terminal initialization
     let stdout = io::stdout().into_raw_mode()?;
     let stdout = MouseTerminal::from(stdout);

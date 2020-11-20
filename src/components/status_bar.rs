@@ -3,15 +3,17 @@ use tui::backend::Backend;
 use tui::layout::Rect;
 use tui::style::{Color, Style};
 
-use tui::widgets::{Paragraph};
-use tui::text::{Spans, Span};
+use tui::text::{Span, Spans};
+use tui::widgets::Paragraph;
 use tui::Frame;
 
 pub fn render<B>(frame: &mut Frame<B>, store: &AppState, area: Rect)
 where
     B: Backend,
 {
-    let value = store.json_store["mode"]["symbol"].as_str().expect("JSON Error");
+    let value = store.json_store["mode"]["symbol"]
+        .as_str()
+        .expect("JSON Error");
     let text = Spans::from(vec![
         Span::styled(" ", Style::default().fg(Color::White).bg(Color::Black)),
         Span::styled(value, Style::default().bg(Color::Black)),

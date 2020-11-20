@@ -1,7 +1,7 @@
 pub mod command;
 // use reducers::CommandGen;
 use serde::{Deserialize, Serialize};
-use serde_json::{Value};
+use serde_json::Value;
 use structs::app::events;
 use structs::app::events::Key;
 

@@ -1,7 +1,7 @@
 use actions::AppAction;
 use reducers::ReducerFn;
+use serde_json::Value;
 use structs::app::AppState;
-use serde_json::{Value};
 
 pub fn set() -> Box<ReducerFn> {
     Box::new(
@@ -22,8 +22,9 @@ pub fn push() -> Box<ReducerFn> {
         |mut state: AppState, action: &AppAction| -> Result<AppState, String> {
             match action {
                 AppAction::CommandBarPush(_char) => {
-
-                    let value = state.json_store["command"].as_str().expect("command is not str");
+                    let value = state.json_store["command"]
+                        .as_str()
+                        .expect("command is not str");
                     let mut process_value = value.to_string();
 
                     process_value.push(*_char);
@@ -42,7 +43,9 @@ pub fn pop() -> Box<ReducerFn> {
         |mut state: AppState, action: &AppAction| -> Result<AppState, String> {
             match action {
                 AppAction::CommandBarPop(_pop_index) => {
-                    let value = state.json_store["command"].as_str().expect("command is not str");
+                    let value = state.json_store["command"]
+                        .as_str()
+                        .expect("command is not str");
                     let mut process_value = value.to_string();
 
                     if process_value.len() > 1 {
@@ -62,7 +65,9 @@ pub fn enqueue_cmd() -> Box<ReducerFn> {
         |mut state: AppState, action: &AppAction| -> Result<AppState, String> {
             match action {
                 AppAction::CommandBarEnqueueCmd(uuid) => {
-                    let value = state.json_store["command"].as_str().expect("command is not str");
+                    let value = state.json_store["command"]
+                        .as_str()
+                        .expect("command is not str");
                     let mut process_value = value.to_string();
 
                     state

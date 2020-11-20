@@ -1,4 +1,4 @@
-#[macro_use] 
+#[macro_use]
 extern crate log;
 extern crate simplelog;
 extern crate tui;
@@ -20,7 +20,11 @@ fn main() {
     // info!("This only appears in the log file");
     // debug!("This level is currently not enabled for any logger");
     let buffer = String::from("foo\r\nbar\n\nbaz\n");
-    let text: Vec<Text> = buffer.lines().into_iter().map(|line|Text::raw(line)).rev().collect();
+    let text: Vec<Text> = buffer
+        .lines()
+        .into_iter()
+        .map(|line| Text::raw(line))
+        .rev()
+        .collect();
     // println!("{:?}", text);
 }
-

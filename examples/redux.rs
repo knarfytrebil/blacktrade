@@ -1,12 +1,12 @@
 extern crate redux;
 extern crate tui;
 
-use redux::{Store, Reducer};
-use std::default::Default;
+use redux::{Reducer, Store};
 use std::boxed::Box;
+use std::default::Default;
 
-use tui::Terminal;
 use tui::backend::MouseBackend;
+use tui::Terminal;
 
 #[derive(Clone, Debug)]
 struct Todo {
@@ -16,14 +16,12 @@ struct Todo {
 #[derive(Clone, Debug)]
 struct TodoState {
     todos: Vec<Todo>,
-    terminal: Terminal<MouseBackend>
+    terminal: Terminal<MouseBackend>,
 }
 
 impl TodoState {
     fn new() -> TodoState {
-        TodoState {
-            todos: vec![],
-        }
+        TodoState { todos: vec![] }
     }
 
     fn push(&mut self, todo: Todo) {
@@ -49,9 +47,9 @@ impl Reducer for TodoState {
     fn reduce(&mut self, action: Self::Action) -> Result<Self, Self::Error> {
         match action {
             TodoAction::Insert(name) => {
-                let todo = Todo { name: name, };
+                let todo = Todo { name: name };
                 self.push(todo);
-            },
+            }
         }
 
         Ok(self.clone())
@@ -63,14 +61,13 @@ fn log(st: &Store<TodoState>) {
 }
 
 fn main() {
-
     // Terminal initialization
     let backend = MouseBackend::new().unwrap();
     let mut terminal = Terminal::new(backend).unwrap();
 
-    let store : Store<TodoState> = Store::new(vec![]);
-    store.subscribe(Box::new(|store, _| { 
-        log(store); 
+    let store: Store<TodoState> = Store::new(vec![]);
+    store.subscribe(Box::new(|store, _| {
+        log(store);
     }));
 
     let _ = store.dispatch(TodoAction::Insert("Clean the bathroom"));

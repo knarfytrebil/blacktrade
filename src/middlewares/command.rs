@@ -36,10 +36,8 @@ impl Middleware<AppState> for CommandMiddleWare {
                                     uuid.to_string(),
                                 );
                                 AppAction::CommandCreate(uuid.to_string())
-                            } 
-                            false => {
-                                AppAction::CommandInvalid(uuid.to_string())
                             }
+                            false => AppAction::CommandInvalid(uuid.to_string()),
                         };
                         let _ = store.dispatch(_action);
                     }

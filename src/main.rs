@@ -2,17 +2,17 @@
 extern crate log;
 
 // extern crate cpython;
+extern crate handlebars;
 extern crate redux;
 extern crate regex;
 extern crate serde;
 extern crate serde_json;
 extern crate simplelog;
 extern crate termion;
+extern crate treexml;
 extern crate tui;
 extern crate unicode_width;
 extern crate uuid;
-extern crate treexml;
-extern crate handlebars;
 
 #[macro_use]
 mod utils;
@@ -25,8 +25,8 @@ mod structs;
 use simplelog::*;
 use std::boxed::Box;
 use std::fs::File;
-use std::sync::mpsc;
 use std::io;
+use std::sync::mpsc;
 
 use structs::app::events::Event;
 
@@ -36,7 +36,8 @@ fn main() -> Result<(), io::Error> {
         LevelFilter::Debug,
         Config::default(),
         File::create("debug.log").unwrap(),
-    )]).unwrap();
+    )])
+    .unwrap();
 
     // Channels
     let (tx, rx) = mpsc::channel();
@@ -49,9 +50,7 @@ fn main() -> Result<(), io::Error> {
     // Create Subscription from store to render
     store.subscribe(Box::new(move |store, _| {
         let state = store.get_state();
-        subscribe_tx
-            .send(Event::Render(state))
-            .expect("Send Error");
+        subscribe_tx.send(Event::Render(state)).expect("Send Error");
     }));
 
     utils::commands::connect(cmd_rx, store);
