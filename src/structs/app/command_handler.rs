@@ -26,15 +26,15 @@ impl CommandHandler {
             .cmd_reg
             .insert("exec".to_string(), commands::do_nothing);
         handler
+            .cmd_reg
+            .insert("q".to_string(), commands::do_nothing);
+        handler
     }
 }
 
 impl CommandHandler {
     pub fn spawn(&self, tx: mpsc::Sender<events::Event>, cmd_str: String, uuid: String) {
-        debug!(
-            "======================== CMD STR {:?} ================================",
-            &cmd_str
-        );
+        debug!( "CMD STR {:?} ", &cmd_str);
         let thread_tx = tx.clone();
         let res = match thread::Builder::new().name(uuid.clone()).spawn(move || {
             // Panic Handler for Thread
@@ -59,9 +59,9 @@ impl CommandHandler {
                             .read_line(&mut buffer)
                             .expect("Unable to read bytes");
                         if read_bytes != 0 {
-                            if &buffer != "1" {
-                                let _ = tx.send(events::Event::Exit);
-                            }
+                            // if &buffer != "1" {
+                            //     let _ = tx.send(events::Event::Exit);
+                            // }
                             let evt = AppAction::ConsolePush(buffer).into_event();
                             let _ = tx.send(evt);
                         } else {

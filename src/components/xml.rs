@@ -65,9 +65,7 @@ pub fn create_element(el: Element) -> El {
                     .into_iter()
                     .map(|child| match child {
                         El::Spans(s) => s,
-                        _ => {
-                            panic!("Not a Text Node!")
-                        }
+                        _ => panic!("Not a Text Node!"),
                     })
                     .collect(),
                 false => vec![],
@@ -80,9 +78,7 @@ pub fn create_element(el: Element) -> El {
                     .into_iter()
                     .map(|child| match child {
                         El::Span(s) => s,
-                        _ => {
-                            panic!("Not a Text Node!")
-                        }
+                        _ => panic!("Not a Text Node!"),
                     })
                     .collect();
                 El::Spans(Spans::from(span_list))
@@ -102,9 +98,7 @@ pub fn create_element(el: Element) -> El {
             };
             El::Span(Span::from(text))
         }
-        &_ => {
-            panic!("Unknown DOM Token")
-        }
+        &_ => panic!("Unknown DOM Token"),
     };
 
     this

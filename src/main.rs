@@ -42,7 +42,7 @@ fn main() -> Result<(), io::Error> {
     // Channels
     let (tx, rx) = mpsc::channel();
     let (cmd_tx, cmd_rx) = mpsc::channel();
-    let (input_tx, subscribe_tx) = (cmd_tx.clone(), tx);
+    let (input_tx, subscribe_tx) = (cmd_tx.clone(), tx.clone());
 
     let _ = utils::input::init(input_tx);
     let store = utils::store::init(&cmd_tx);
@@ -53,6 +53,6 @@ fn main() -> Result<(), io::Error> {
         subscribe_tx.send(Event::Render(state)).expect("Send Error");
     }));
 
-    utils::commands::connect(cmd_rx, store);
+    utils::commands::connect(cmd_rx, store, tx);
     utils::run::keep_alive(rx)
 }
