@@ -13,9 +13,7 @@ const DATA: &'static str = r#"
     },
     "tabs": {
         "titles": [
-            "Console", 
-            "tab -2", 
-            "tab-3"
+            "Console"
         ],
         "selection": 0
     },
@@ -44,9 +42,7 @@ impl AppState {
             json_store: state,
             tabs: TopTabs {
                 titles: vec![
-                    String::from("Console"),
-                    String::from("tab - 2"),
-                    String::from("tab - 3"),
+                    String::from("Console")
                 ],
                 selection: 0,
             },
