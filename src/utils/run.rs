@@ -23,7 +23,9 @@ pub fn keep_alive(receiver: Receiver<Event>) -> Result<(), io::Error> {
 
     loop {
         let _ = match receiver.recv().unwrap() {
-            Event::Render(app_state) => terminal.draw(|mut f| app::render(&mut f, &app_state)),
+            Event::Render(app_state) => { 
+                terminal.draw(|mut f| app::render(&mut f, &app_state));
+            }
             Event::Exit => {
                 break;
             }
