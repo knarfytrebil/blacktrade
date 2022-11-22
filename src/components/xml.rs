@@ -27,6 +27,14 @@ pub fn parse_xml(xml: String) -> Element {
 //     })
 // }
 
+// fn inner_buffer(area_height: u16, lines: Vec<Value>) -> Vec<Value> {
+//     let buffer_start = match area_height as usize <= lines.len() {
+//         false => 0,
+//         true => lines.len() - area_height as usize
+//     };
+//     (&lines[buffer_start..]).to_vec()
+// }
+
 pub fn parse(template: String, v: &Value) -> Element {
     let reg = Handlebars::new();
     // reg.register_helper("line_buffer", line_buffer(v["metrics"]["height"].as_u16()));
@@ -36,14 +44,6 @@ pub fn parse(template: String, v: &Value) -> Element {
         .expect("Template Parse Error");
     parse_xml(filled_template)
 }
-
-// fn inner_buffer(area_height: u16, lines: Vec<Value>) -> Vec<Value> {
-//     let buffer_start = match area_height as usize <= lines.len() {
-//         false => 0,
-//         true => lines.len() - area_height as usize
-//     };
-//     (&lines[buffer_start..]).to_vec()
-// }
 
 pub fn create_element(el: Element) -> El {
     let children: Vec<El> = match !el.children.is_empty() {
