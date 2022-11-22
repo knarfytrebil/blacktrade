@@ -16,13 +16,14 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 unicode-width = "0.1"
 treexml = "0.7"
-handlebars = { version = "3.5.0", features= ["script_helper"] }
+handlebars = { version = "3.5.0", features = ["script_helper"] }
+openssl = { version = "0.10", features = ["vendored"] }
 
 [dependencies.ws]
 version = "*"
 features = ["ssl"]
 
 [dependencies.cpython]
-version = "0.5.0"
+version = "0.7.1"
 default-features = false
 features = ["python3-sys"]
