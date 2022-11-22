@@ -3,6 +3,7 @@
 ## Prerequisites
 
 1. install Cargo
+2. install Perl (in case `openssl-sys`) doesn not work
 
 ## Installation
 
