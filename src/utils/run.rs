@@ -8,6 +8,7 @@ use termion::raw::IntoRawMode;
 use termion::screen::AlternateScreen;
 
 use tui::backend::TermionBackend;
+use tui::terminal::CompletedFrame;
 use tui::Terminal;
 
 pub fn keep_alive(receiver: Receiver<Event>) -> Result<(), io::Error> {
@@ -26,7 +27,9 @@ pub fn keep_alive(receiver: Receiver<Event>) -> Result<(), io::Error> {
             Event::Exit => {
                 break;
             }
-            _ => Ok(()),
+            _ =>  {
+                break;
+            }
         };
     }
 
