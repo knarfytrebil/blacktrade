@@ -70,6 +70,10 @@ pub fn create_element(el: Element) -> El {
                     .collect(),
                 false => vec![],
             };
+            // match styles {
+            //     Some(style) => El::Paragraph( Paragraph::new(el_list).style(style)),
+            //     None => El::Paragraph( Paragraph::new(el_list))
+            // }
             El::Paragraph(Paragraph::new(el_list))
         }
         "Spans" => match !children.is_empty() {
