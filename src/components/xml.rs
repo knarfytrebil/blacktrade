@@ -1,4 +1,5 @@
 use handlebars::{handlebars_helper, Handlebars};
+use serde::de::value;
 use serde_json::Value;
 use treexml::{Document, Element};
 use tui::text::{Span, Spans};
@@ -45,23 +46,33 @@ pub fn parse(template: String, v: &Value) -> Element {
     parse_xml(filled_template)
 }
 
+pub fn parse_attr(el: Element, attr_name: &'static str) -> Option<Value> {
+    let parse_res = match el.attributes.contains_key(attr_name) {
+        true => Some(serde_json::from_str(&el.attributes[attr_name]).expect("JSON Parse Error")),
+        false => None,
+    };
+    debug!("{}: {:?}", attr_name, parse_res);
+    parse_res
+}
+
 pub fn create_element(el: Element) -> El {
     let children: Vec<El> = match !el.children.is_empty() {
         // recursive till there is no more child elements
-        true => el.children.into_iter().map(create_element).collect(),
+        true => el.children.clone().into_iter().map(create_element).collect(),
         false => vec![],
     };
 
-    // All Elements has Styles, so all styles needed to be parsed here.
-    let styles_json: Option<Value> = match el.attributes.contains_key("styles") {
-        true => Some(serde_json::from_str(&el.attributes["styles"]).expect("JSON Parse Error")),
-        false => None,
-    };
 
-    debug!("STYLES: {:?}", styles_json);
+    // Check Common Attributes
+    // All Elements has Styles, so all styles needed to be parsed here.
+    let styles_json: Option<Value> = parse_attr(el.clone(), "styles");
 
     let this = match el.name.as_str() {
         "Paragraph" => {
+            // Attribute Unqiue to "Paragraph"
+            // Wether to trim the indentations when text in the paragh is wrapped
+            let wrap_json: Option<Value> = parse_attr(el.clone(), "wrap");
+
             let el_list: Vec<Spans> = match !children.is_empty() {
                 true => children
                     .into_iter()
