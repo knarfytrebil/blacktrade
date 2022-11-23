@@ -70,8 +70,9 @@ pub fn create_element(el: Element) -> El {
     let this = match el.name.as_str() {
         "Paragraph" => {
             // Attribute Unqiue to "Paragraph"
-            // Wether to trim the indentations when text in the paragh is wrapped
             let wrap_json: Option<Value> = parse_attr(el.clone(), "wrap");
+            let scroll: Option<Value> = parse_attr(el.clone(), "scroll");
+            let alignment: Option<Value> = parse_attr(el.clone(), "alignment");
 
             let el_list: Vec<Spans> = match !children.is_empty() {
                 true => children
@@ -83,10 +84,12 @@ pub fn create_element(el: Element) -> El {
                     .collect(),
                 false => vec![],
             };
+
             // match styles {
             //     Some(style) => El::Paragraph( Paragraph::new(el_list).style(style)),
             //     None => El::Paragraph( Paragraph::new(el_list))
             // }
+
             El::Paragraph(Paragraph::new(el_list))
         }
         "Spans" => match !children.is_empty() {
