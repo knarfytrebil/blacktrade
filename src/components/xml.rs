@@ -47,16 +47,18 @@ pub fn parse(template: String, v: &Value) -> Element {
 
 pub fn create_element(el: Element) -> El {
     let children: Vec<El> = match !el.children.is_empty() {
+        // recursive till there is no more child elements
         true => el.children.into_iter().map(create_element).collect(),
         false => vec![],
     };
 
-    let styles: Option<Value> = match el.attributes.contains_key("styles") {
+    // All Elements has Styles, so all styles needed to be parsed here.
+    let styles_json: Option<Value> = match el.attributes.contains_key("styles") {
         true => Some(serde_json::from_str(&el.attributes["styles"]).expect("JSON Parse Error")),
         false => None,
     };
 
-    debug!("STYLES: {:?}", styles);
+    debug!("STYLES: {:?}", styles_json);
 
     let this = match el.name.as_str() {
         "Paragraph" => {
