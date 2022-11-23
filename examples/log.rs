@@ -2,7 +2,8 @@
 extern crate log;
 extern crate simplelog;
 extern crate tui;
-use tui::widgets::{Paragraph, Text};
+use tui::widgets::{Paragraph};
+use tui::text::{Text};
 
 use simplelog::*;
 
