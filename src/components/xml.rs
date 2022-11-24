@@ -3,7 +3,7 @@ use serde::de::value;
 use serde_json::Value;
 use treexml::{Document, Element};
 use tui::text::{Span, Spans};
-use tui::widgets::Block;
+use tui::widgets::{Block, Wrap};
 use tui::widgets::Paragraph;
 
 pub enum El {
@@ -103,8 +103,10 @@ pub fn create_element(el: Element) -> El {
 
             let mut paragraph_el = Paragraph::new(el_list);
 
-            if let Some(vjson) = wrap_json {
-                
+            if let Some(vjson) = wrap_json { 
+                if let Some(trim) = vjson["trim"].as_bool()  {
+                    paragraph_el = paragraph_el.wrap(Wrap {trim: trim })
+                }              
             }
 
             El::Paragraph(paragraph_el)

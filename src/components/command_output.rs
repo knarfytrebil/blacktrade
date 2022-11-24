@@ -11,7 +11,7 @@ use components::xml;
 use structs::app::AppState;
 
 const DATA: &'static str = r#"
-<Paragraph styles='{}' scroll='true' wrap='{"trim": "true"}'>
+<Paragraph styles='{}' scroll='true' wrap='{"trim": true}'>
     {{#each store.console_output_lines as |line| ~}}
         <Spans>
             <Span>{{line}}</Span>
