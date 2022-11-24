@@ -55,6 +55,14 @@ pub fn parse_attr(el: Element, attr_name: &'static str) -> Option<Value> {
     parse_res
 }
 
+pub fn extract_text(el: Element) -> String {
+    match el.text {
+        Some(txt) => txt,
+        // allows empty Spans or Span
+        None => String::from(""),
+    }
+}
+
 pub fn create_element(el: Element) -> El {
     let children: Vec<El> = match !el.children.is_empty() {
         // recursive till there is no more child elements
@@ -68,11 +76,14 @@ pub fn create_element(el: Element) -> El {
     let styles_json: Option<Value> = parse_attr(el.clone(), "styles");
 
     let this = match el.name.as_str() {
+        // A widget to display some text.
         "Paragraph" => {
+
             // Attribute Unqiue to "Paragraph"
+            // Attribute will be tralsated into Methods
             let wrap_json: Option<Value> = parse_attr(el.clone(), "wrap");
-            let scroll: Option<Value> = parse_attr(el.clone(), "scroll");
-            let alignment: Option<Value> = parse_attr(el.clone(), "alignment");
+            let scroll_json: Option<Value> = parse_attr(el.clone(), "scroll");
+            let alignment_json: Option<Value> = parse_attr(el.clone(), "alignment");
 
             let el_list: Vec<Spans> = match !children.is_empty() {
                 true => children
@@ -104,19 +115,11 @@ pub fn create_element(el: Element) -> El {
                 El::Spans(Spans::from(span_list))
             }
             false => {
-                let text = match el.text {
-                    Some(txt) => txt,
-                    None => String::from(""),
-                };
-                El::Spans(Spans::from(text))
+                El::Spans(Spans::from(extract_text(el)))
             }
         },
         "Span" => {
-            let text = match el.text {
-                Some(txt) => txt,
-                None => String::from(""),
-            };
-            El::Span(Span::from(text))
+            El::Span(Span::from(extract_text(el)))
         }
         &_ => panic!("Unknown DOM Token"),
     };
