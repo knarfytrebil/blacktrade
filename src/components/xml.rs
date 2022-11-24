@@ -1,10 +1,11 @@
 use handlebars::{handlebars_helper, Handlebars};
 use serde::de::value;
 use serde_json::Value;
+use termion::scroll;
 use treexml::{Document, Element};
 use tui::text::{Span, Spans};
-use tui::widgets::{Block, Wrap};
 use tui::widgets::Paragraph;
+use tui::widgets::{Block, Wrap};
 
 pub enum El {
     Paragraph(Paragraph<'static>),
@@ -66,10 +67,14 @@ pub fn extract_text(el: Element) -> String {
 pub fn create_element(el: Element) -> El {
     let children: Vec<El> = match !el.children.is_empty() {
         // recursive till there is no more child elements
-        true => el.children.clone().into_iter().map(create_element).collect(),
+        true => el
+            .children
+            .clone()
+            .into_iter()
+            .map(create_element)
+            .collect(),
         false => vec![],
     };
-
 
     // Check Common Attributes
     // All Elements has Styles, so all styles needed to be parsed here.
@@ -78,7 +83,6 @@ pub fn create_element(el: Element) -> El {
     let this = match el.name.as_str() {
         // A widget to display some text.
         "Paragraph" => {
-
             // Attribute Unqiue to "Paragraph"
             // Attribute will be tralsated into Methods
             let wrap_json: Option<Value> = parse_attr(el.clone(), "wrap");
@@ -103,15 +107,14 @@ pub fn create_element(el: Element) -> El {
 
             let mut paragraph_el = Paragraph::new(el_list);
 
-            if let Some(vjson) = wrap_json { 
-                if let Some(trim) = vjson["trim"].as_bool()  {
-                    paragraph_el = paragraph_el.wrap(Wrap {trim: trim })
-                }              
+            if let Some(vjson) = wrap_json {
+                if let Some(trim) = vjson["trim"].as_bool() {
+                    paragraph_el = paragraph_el.wrap(Wrap { trim: trim })
+                }
             }
 
+            if let Some(vjson) = alignment_json {}
             El::Paragraph(paragraph_el)
-
-
         }
         "Spans" => match !children.is_empty() {
             true => {
@@ -124,13 +127,9 @@ pub fn create_element(el: Element) -> El {
                     .collect();
                 El::Spans(Spans::from(span_list))
             }
-            false => {
-                El::Spans(Spans::from(extract_text(el)))
-            }
+            false => El::Spans(Spans::from(extract_text(el))),
         },
-        "Span" => {
-            El::Span(Span::from(extract_text(el)))
-        }
+        "Span" => El::Span(Span::from(extract_text(el))),
         &_ => panic!("Unknown DOM Token"),
     };
 
