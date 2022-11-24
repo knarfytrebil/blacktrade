@@ -48,6 +48,7 @@ pub fn parse(template: String, v: &Value) -> Element {
 }
 
 pub fn parse_attr(el: Element, attr_name: &'static str) -> Option<Value> {
+    //FIXME: Error not handled here.
     let parse_res = match el.attributes.contains_key(attr_name) {
         true => Some(serde_json::from_str(&el.attributes[attr_name]).expect("JSON Parse Error")),
         false => None,
@@ -99,21 +100,27 @@ pub fn create_element(el: Element) -> El {
                     .collect(),
                 false => vec![],
             };
+            let mut paragraph_el = Paragraph::new(el_list);
+
+            if let Some(vjson) = wrap_json {
+                if let Some(vtrim) = vjson.get("trim") {
+                    if let Some(trim) = vtrim.as_bool() {
+                        paragraph_el = paragraph_el.wrap(Wrap { trim: trim })
+                    }
+                }
+            }
 
             // match styles {
             //     Some(style) => El::Paragraph( Paragraph::new(el_list).style(style)),
             //     None => El::Paragraph( Paragraph::new(el_list))
             // }
 
-            let mut paragraph_el = Paragraph::new(el_list);
 
-            if let Some(vjson) = wrap_json {
-                if let Some(trim) = vjson["trim"].as_bool() {
-                    paragraph_el = paragraph_el.wrap(Wrap { trim: trim })
-                }
-            }
-
-            if let Some(vjson) = alignment_json {}
+            // if let Some(vjson) = alignment_json {
+            //     if let Some(aligment) = vjson["alignment"].as_str() {
+            //         
+            //     }
+            // }
             El::Paragraph(paragraph_el)
         }
         "Spans" => match !children.is_empty() {
