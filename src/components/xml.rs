@@ -101,7 +101,15 @@ pub fn create_element(el: Element) -> El {
             //     None => El::Paragraph( Paragraph::new(el_list))
             // }
 
-            El::Paragraph(Paragraph::new(el_list))
+            let mut paragraph_el = Paragraph::new(el_list);
+
+            if let Some(vjson) = wrap_json {
+                
+            }
+
+            El::Paragraph(paragraph_el)
+
+
         }
         "Spans" => match !children.is_empty() {
             true => {
