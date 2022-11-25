@@ -1,7 +1,4 @@
-use handlebars::{
-    // handlebars_helper, 
-    Handlebars
-};
+use handlebars::Handlebars;
 // use itertools::Itertools;
 // use serde::de::value;
 use serde_json::Value;
@@ -10,10 +7,7 @@ use treexml::{Document, Element};
 use tui::layout::Alignment;
 use tui::text::{Span, Spans};
 use tui::widgets::Paragraph;
-use tui::widgets::{
-    // Block, 
-    Wrap
-};
+use tui::widgets::Wrap;
 
 pub enum El {
     Paragraph(Paragraph<'static>),
