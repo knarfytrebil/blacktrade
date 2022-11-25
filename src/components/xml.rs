@@ -1,12 +1,19 @@
-use handlebars::{handlebars_helper, Handlebars};
-use serde::de::value;
+use handlebars::{
+    // handlebars_helper, 
+    Handlebars
+};
+// use itertools::Itertools;
+// use serde::de::value;
 use serde_json::Value;
-use termion::scroll;
+// use termion::scroll;
 use treexml::{Document, Element};
 use tui::layout::Alignment;
 use tui::text::{Span, Spans};
 use tui::widgets::Paragraph;
-use tui::widgets::{Block, Wrap};
+use tui::widgets::{
+    // Block, 
+    Wrap
+};
 
 pub enum El {
     Paragraph(Paragraph<'static>),
@@ -105,6 +112,7 @@ pub fn create_element(el: Element) -> El {
             let scroll_json: Option<Value> = parse_attr(el.clone(), "scroll");
             let alignment_json: Option<Value> = parse_attr(el.clone(), "alignment");
 
+            // Children
             let el_list: Vec<Spans> = match !children.is_empty() {
                 true => children
                     .into_iter()
@@ -117,17 +125,34 @@ pub fn create_element(el: Element) -> El {
             };
             let mut paragraph_el = Paragraph::new(el_list);
 
+            // Handle Wrap
             if let Some(v_wrap) = wrap_json {
                 if let Some(trim) = v_wrap.get("trim").and_then(|value| value.as_bool()) {
                     paragraph_el = paragraph_el.wrap(Wrap { trim: trim })
                 }
             }
 
+            // Handle Alignment
             if let Some(v_alignment) = alignment_json {
                 if let Some(alignment_str) =
                     v_alignment.get("position").and_then(|value| value.as_str())
                 {
                     paragraph_el = paragraph_el.alignment(alignment_from_text(alignment_str))
+                }
+            }
+
+            // Handle Scroll
+            if let Some(v_scroll) = scroll_json {
+                if let Some(scroll_vec) = v_scroll.get("offset").and_then(|value| value.as_array())
+                {
+                    let (offset_1, offset_2) = match &scroll_vec[..] {
+                        [first, second, ..] => (first, second),
+                        _ => unreachable!(),
+                    };
+                    paragraph_el = paragraph_el.scroll((
+                        offset_1.as_u64().unwrap() as u16,
+                        offset_2.as_u64().unwrap() as u16,
+                    ));
                 }
             }
 

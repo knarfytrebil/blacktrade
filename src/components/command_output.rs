@@ -12,7 +12,7 @@ use structs::app::AppState;
 
 const DATA: &'static str = r#"
 <Paragraph 
-    styles='{}' scroll='true' wrap='{"trim": true}' alignment='{"position" : "Left"}'>
+    styles='{}' scroll='{"offset": [1, 20]}' wrap='{"trim": true}' alignment='{"position" : "Left"}'>
     {{#each store.console_output_lines as |line| ~}}
         <Spans>
             <Span>{{line}}</Span>

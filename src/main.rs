@@ -3,6 +3,7 @@ extern crate log;
 
 // extern crate cpython;
 extern crate handlebars;
+extern crate itertools;
 extern crate redux;
 extern crate regex;
 extern crate serde;
