@@ -3,6 +3,7 @@ use serde::de::value;
 use serde_json::Value;
 use termion::scroll;
 use treexml::{Document, Element};
+use tui::layout::Alignment;
 use tui::text::{Span, Spans};
 use tui::widgets::Paragraph;
 use tui::widgets::{Block, Wrap};
@@ -47,10 +48,15 @@ pub fn parse(template: String, v: &Value) -> Element {
     parse_xml(filled_template)
 }
 
-pub fn parse_attr(el: Element, attr_name: &'static str) -> Option<Value> {
-    //FIXME: Error not handled here.
+pub fn parse_attr<'a>(el: Element, attr_name: &'a str) -> Option<Value> {
     let parse_res = match el.attributes.contains_key(attr_name) {
-        true => Some(serde_json::from_str(&el.attributes[attr_name]).expect("JSON Parse Error")),
+        true => match serde_json::from_str(&el.attributes[attr_name]) {
+            Ok(value) => Some(value),
+            Err(err) => {
+                debug!("Attribute Parse Error: {:?}", err);
+                None
+            }
+        },
         false => None,
     };
     debug!("{}: {:?}", attr_name, parse_res);
@@ -62,6 +68,15 @@ pub fn extract_text(el: Element) -> String {
         Some(txt) => txt,
         // allows empty Spans or Span
         None => String::from(""),
+    }
+}
+
+pub fn alignment_from_text<'a>(txt_alignment: &'a str) -> Alignment {
+    // Default to Left
+    match txt_alignment {
+        "Center" => Alignment::Center,
+        "Right" => Alignment::Right,
+        "Left" | _ => Alignment::Left,
     }
 }
 
@@ -102,12 +117,18 @@ pub fn create_element(el: Element) -> El {
             };
             let mut paragraph_el = Paragraph::new(el_list);
 
-            if let Some(vjson) = wrap_json {
-                if let Some(vtrim) = vjson.get("trim") {
-                    if let Some(trim) = vtrim.as_bool() {
-                        paragraph_el = paragraph_el.wrap(Wrap { trim: trim })
-                    }
+            if let Some(v_wrap) = wrap_json {
+                if let Some(trim) = v_wrap.get("trim").and_then(|value| value.as_bool()) {
+                    paragraph_el = paragraph_el.wrap(Wrap { trim: trim })
                 }
+            }
+
+            if let Some(v_alignment) = alignment_json {
+                let alignment_str: Option<&str> =
+                    v_alignment.get("position").and_then(|value| value.as_str());
+
+                let alignment = String::from(alignment_str.unwrap()); 
+                paragraph_el = paragraph_el.alignment(alignment_from_text(&alignment))
             }
 
             // match styles {
@@ -115,12 +136,6 @@ pub fn create_element(el: Element) -> El {
             //     None => El::Paragraph( Paragraph::new(el_list))
             // }
 
-
-            // if let Some(vjson) = alignment_json {
-            //     if let Some(aligment) = vjson["alignment"].as_str() {
-            //         
-            //     }
-            // }
             El::Paragraph(paragraph_el)
         }
         "Spans" => match !children.is_empty() {
