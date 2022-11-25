@@ -124,11 +124,11 @@ pub fn create_element(el: Element) -> El {
             }
 
             if let Some(v_alignment) = alignment_json {
-                let alignment_str: Option<&str> =
-                    v_alignment.get("position").and_then(|value| value.as_str());
-
-                let alignment = String::from(alignment_str.unwrap()); 
-                paragraph_el = paragraph_el.alignment(alignment_from_text(&alignment))
+                if let Some(alignment_str) =
+                    v_alignment.get("position").and_then(|value| value.as_str())
+                {
+                    paragraph_el = paragraph_el.alignment(alignment_from_text(alignment_str))
+                }
             }
 
             // match styles {
