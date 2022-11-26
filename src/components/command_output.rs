@@ -1,4 +1,4 @@
-use serde_json::{json};
+use serde_json::json;
 use tui::backend::Backend;
 use tui::layout::Rect;
 // use tui::widgets::Block;
@@ -24,7 +24,9 @@ pub fn render<B>(frame: &mut Frame<B>, store: &AppState, area: Rect)
 where
     B: Backend,
 {
-    // let array = store.json_store["console_output_lines"].as_array().expect("Data Error");
+    let array = store.json_store["console_output_lines"]
+        .as_array()
+        .expect("Data Error");
 
     // let buf = get_buffer(
     //     area.height,
