@@ -24,9 +24,9 @@ pub fn render<B>(frame: &mut Frame<B>, store: &AppState, area: Rect)
 where
     B: Backend,
 {
-    let array = store.json_store["console_output_lines"]
-        .as_array()
-        .expect("Data Error");
+    // let array = store.json_store["console_output_lines"]
+    //     .as_array()
+    //     .expect("Data Error");
 
     // let buf = get_buffer(
     //     area.height,
