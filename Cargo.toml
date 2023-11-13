@@ -23,8 +23,3 @@ itertools = "0.10.5"
 [dependencies.ws]
 version = "*"
 features = ["ssl"]
-
-[dependencies.cpython]
-version = "0.7.1"
-default-features = false
-features = ["python3-sys"]
