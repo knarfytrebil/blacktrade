@@ -1,19 +1,16 @@
 use serde_json::json;
-use tui::backend::Backend;
-use tui::layout::Rect;
-use tui::Frame;
+use ratatui::layout::Rect;
+use ratatui::Frame;
 
 use components::xml;
 use structs::app::AppState;
 
 const DATA: &'static str = r#"
 <Paragraph>
-    <Spans>{{store.command}}</Spans>
+    <Line>{{store.command}}</Line>
 </Paragraph>"#;
 
-pub fn render<B>(frame: &mut Frame<B>, store: &AppState, area: Rect)
-where
-    B: Backend,
+pub fn render(frame: &mut Frame, store: &AppState, area: Rect)
 {
     let dom_root = xml::parse(
         DATA.to_string(),

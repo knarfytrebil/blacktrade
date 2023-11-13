@@ -1,20 +1,17 @@
 use structs::app::AppState;
-use tui::backend::Backend;
-use tui::layout::Rect;
-use tui::style::{Color, Style};
+use ratatui::layout::Rect;
+use ratatui::style::{Color, Style};
 
-use tui::text::{Span, Spans};
-use tui::widgets::Paragraph;
-use tui::Frame;
+use ratatui::text::{Span, Line};
+use ratatui::widgets::Paragraph;
+use ratatui::Frame;
 
-pub fn render<B>(frame: &mut Frame<B>, store: &AppState, area: Rect)
-where
-    B: Backend,
+pub fn render(frame: &mut Frame, store: &AppState, area: Rect)
 {
     let value = store.json_store["mode"]["symbol"]
         .as_str()
         .expect("JSON Error");
-    let text = Spans::from(vec![
+    let text = Line::from(vec![
         Span::styled(" ", Style::default().fg(Color::White).bg(Color::Black)),
         Span::styled(value, Style::default().bg(Color::Black)),
         Span::styled(" ", Style::default().fg(Color::White).bg(Color::Black)),

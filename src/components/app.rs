@@ -3,14 +3,11 @@ use components::command_output;
 use components::ele::powerline_tab::Tabs;
 use components::status_bar;
 use structs::app::AppState;
-use tui::backend::Backend;
-use tui::layout::{Constraint, Direction, Layout};
-use tui::style::{Color, Style};
-use tui::Frame;
+use ratatui::layout::{Constraint, Direction, Layout};
+use ratatui::style::{Color, Style};
+use ratatui::Frame;
 
-pub fn render<B>(frame: &mut Frame<B>, store: &AppState)
-where
-    B: Backend,
+pub fn render(frame: &mut Frame, store: &AppState)
 {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -32,8 +29,6 @@ where
         .divider_style(Style::default().fg(Color::White).bg(Color::Black))
         .select(store.tabs.selection);
 
-    frame.render_widget(tabs, chunks[0]);
-
     match store.tabs.selection {
         0 => command_output::render(frame, store, chunks[1]),
         1 => {}
@@ -42,4 +37,7 @@ where
 
     status_bar::render(frame, store, chunks[2]);
     command_bar::render(frame, store, chunks[3]);
+
+    frame.render_widget(tabs, chunks[0]);
+
 }

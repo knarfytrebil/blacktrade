@@ -1,11 +1,10 @@
 use serde_json::json;
-use tui::backend::Backend;
-use tui::layout::Rect;
+use ratatui::layout::Rect;
 // use tui::widgets::Block;
 
 // use tui::text::{Span, Spans};
 // use tui::widgets::{Paragraph, Wrap};
-use tui::Frame;
+use ratatui::Frame;
 
 use components::xml;
 use structs::app::AppState;
@@ -21,9 +20,7 @@ const DATA: &'static str = r#"
     {{/each}}
 </Paragraph>"#;
 
-pub fn render<B>(frame: &mut Frame<B>, store: &AppState, area: Rect)
-where
-    B: Backend,
+pub fn render(frame: &mut Frame, store: &AppState, area: Rect)
 {
     // let array = store.json_store["console_output_lines"]
     //     .as_array()

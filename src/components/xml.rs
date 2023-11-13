@@ -4,14 +4,14 @@ use handlebars::Handlebars;
 use serde_json::Value;
 // use termion::scroll;
 use treexml::{Document, Element};
-use tui::layout::Alignment;
-use tui::text::{Span, Spans};
-use tui::widgets::Paragraph;
-use tui::widgets::Wrap;
+use ratatui::layout::Alignment;
+use ratatui::text::{Span, Line};
+use ratatui::widgets::Paragraph;
+use ratatui::widgets::Wrap;
 
 pub enum El {
     Paragraph(Paragraph<'static>),
-    Spans(Spans<'static>),
+    Line(Line<'static>),
     Span(Span<'static>),
 }
 
@@ -67,7 +67,7 @@ pub fn parse_attr<'a>(el: Element, attr_name: &'a str) -> Option<Value> {
 pub fn extract_text(el: Element) -> String {
     match el.text {
         Some(txt) => txt,
-        // allows empty Spans or Span
+        // allows empty Line or Span
         None => String::from(""),
     }
 }
@@ -107,11 +107,11 @@ pub fn create_element(el: Element) -> El {
             let alignment_json: Option<Value> = parse_attr(el.clone(), "alignment");
 
             // Children
-            let el_list: Vec<Spans> = match !children.is_empty() {
+            let el_list: Vec<Line> = match !children.is_empty() {
                 true => children
                     .into_iter()
                     .map(|child| match child {
-                        El::Spans(s) => s,
+                        El::Line(s) => s,
                         _ => panic!("Not a Text Node!"),
                     })
                     .collect(),
@@ -157,7 +157,7 @@ pub fn create_element(el: Element) -> El {
 
             El::Paragraph(paragraph_el)
         }
-        "Spans" => match !children.is_empty() {
+        "Line" => match !children.is_empty() {
             true => {
                 let span_list: Vec<Span> = children
                     .into_iter()
@@ -166,9 +166,9 @@ pub fn create_element(el: Element) -> El {
                         _ => panic!("Not a Text Node!"),
                     })
                     .collect();
-                El::Spans(Spans::from(span_list))
+                El::Line(Line::from(span_list))
             }
-            false => El::Spans(Spans::from(extract_text(el))),
+            false => El::Line(Line::from(extract_text(el))),
         },
         "Span" => El::Span(Span::from(extract_text(el))),
         &_ => panic!("Unknown DOM Token"),

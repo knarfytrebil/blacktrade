@@ -1,13 +1,10 @@
-use tui::backend::Backend;
-use tui::layout::Rect;
-use tui::Frame;
+use ratatui::layout::Rect;
+use ratatui::Frame;
 
 use components::xml;
 use structs::app::AppState;
 
-pub fn render<B>(template: String, frame: &mut Frame<B>, store: &AppState, area: Rect)
-where
-    B: Backend,
+pub fn render(template: String, frame: &mut Frame, store: &AppState, area: Rect)
 {
     let dom_root = xml::parse(template, &store.json_store);
     let widget = match xml::create_element(dom_root) {

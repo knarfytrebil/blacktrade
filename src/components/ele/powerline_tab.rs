@@ -1,10 +1,10 @@
 use unicode_width::UnicodeWidthStr;
 
 use components::ele::powerline_symbol as PowerlineSym;
-use tui::buffer::Buffer;
-use tui::layout::Rect;
-use tui::style::Style;
-use tui::widgets::{Block, Widget};
+use ratatui::buffer::Buffer;
+use ratatui::layout::Rect;
+use ratatui::style::Style;
+use ratatui::widgets::{Block, Widget};
 
 /// A widget to display available tabs in a multiple panels context.
 ///
