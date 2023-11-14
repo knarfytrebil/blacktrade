@@ -9,7 +9,7 @@ pub fn connect(receiver: Receiver<Event>, store: Arc<Store<AppState>>, exit_tx: 
     thread::spawn(move || loop {
         match receiver.recv().unwrap() {
             Event::Dispatch(action) => {
-                debug!("ACTION DISPATCHED {:?}", &action);
+                debug!("command action dispatched {:?}", &action);
                 let _ = store.dispatch(action);
             }
             Event::Exit => {
