@@ -18,12 +18,6 @@ pub fn init(cmd_tx: &Sender<Event>) -> Arc<Store<AppState>> {
     let console_mw = Box::new(ConsoleMiddleWare {});
     let debug_mw = Box::new(DebugMiddleWare {});
 
-    // let (exit_tx, _exit_rx) = mpsc::channel();
-    // let exit_mw = Box::new(CommandMiddleWare {
-    //     tx: exit_tx,
-    //     handler: CommandHandler::default(),
-    // });
-
     Arc::new(Store::new(vec![
         console_mw,
         command_bar_mw,

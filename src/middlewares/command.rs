@@ -62,8 +62,3 @@ impl Middleware<AppState> for CommandMiddleWare {
         next(store, action)
     }
 }
-
-// self.tx.send(Event::CommandRun {
-//     func: self.handler.cmd_reg[command.clone()],
-//     uuid: uuid.to_string()
-// }).unwrap();
