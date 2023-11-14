@@ -12,14 +12,7 @@ impl Middleware<AppState> for CommandBarMiddleWare {
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
         debug!("3 {:?}", &action);
-        if let AppAction::SetMode(ref mode) = action {
-            let _action = match mode["category"].as_str() {
-                Some("normal") => AppAction::CommandBarSet(String::from("")),
-                Some("command") => AppAction::CommandBarSet(String::from(":")),
-                Some(&_) | None => panic!("Invalid Mode Category"),
-            };
-            let _ = store.dispatch(_action);
-        }
+        if let AppAction::SetMode(ref _mode) = action { }
         next(store, action)
     }
 }

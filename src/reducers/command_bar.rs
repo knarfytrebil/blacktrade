@@ -6,13 +6,14 @@ use structs::app::AppState;
 pub fn set() -> Box<ReducerFn> {
     Box::new(
         |mut state: AppState, action: &AppAction| -> Result<AppState, String> {
-            match action {
-                AppAction::CommandBarSet(str_ref) => {
-                    state.json_store["command"] = Value::String(str_ref.to_string());
-                    Ok(state)
-                }
-                _ => Ok(state),
-            }
+            if let AppAction::SetMode(ref mode) = action {
+                let _action = match mode["category"].as_str() {
+                    Some("normal") => state.json_store["command"] = Value::from(""),
+                    Some("command") => state.json_store["command"] = Value::from(":"),
+                    Some(&_) | None => panic!("Invalid Mode Category"),
+                };
+            };
+            Ok(state)
         },
     )
 }

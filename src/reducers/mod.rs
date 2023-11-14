@@ -20,11 +20,11 @@ impl Reducer for AppState {
     fn reduce(&mut self, action: Self::Action) -> Result<Self, Self::Error> {
         debug!("REDUCED {:?}", &action);
         let reducers: ReducerArray = match action {
-            AppAction::SetMode(_) => vec![mode::set()],
+            AppAction::SetMode(_) => vec![mode::set(), command_bar::set()],
             AppAction::ConsolePush(_) => vec![console::push()],
             AppAction::CommandBarPush(_) => vec![command_bar::push()],
             AppAction::CommandBarPop(_) => vec![command_bar::pop()],
-            AppAction::CommandBarSet(_) => vec![command_bar::set()],
+            // AppAction::CommandBarSet(_) => vec![command_bar::set()],
             AppAction::CommandBarEnqueueCmd(_) => vec![command_bar::enqueue_cmd()],
             AppAction::CommandCreate(_) => vec![commands::create(false)],
             AppAction::CommandInvalid(_) => vec![commands::create(true)],
