@@ -5,6 +5,7 @@
 *.swo
 *.swn
 *.log
+*.o
 node_modules
 .idea
 .python-version
