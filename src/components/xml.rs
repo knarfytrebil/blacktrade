@@ -187,12 +187,6 @@ pub fn create_element(el: Element) -> El {
             }
 
             paragraph_el = paragraph_el.style(style);
-
-            // match styles {
-            //     Some(style) => El::Paragraph( Paragraph::new(el_list).style(style)),
-            //     None => El::Paragraph( Paragraph::new(el_list))
-            // }
-
             El::Paragraph(paragraph_el)
         }
         "Line" => match !children.is_empty() {
