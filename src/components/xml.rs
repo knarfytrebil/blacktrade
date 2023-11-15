@@ -1,3 +1,4 @@
+use std::str::FromStr;
 use handlebars::Handlebars;
 // use itertools::Itertools;
 // use serde::de::value;
@@ -5,6 +6,7 @@ use serde_json::Value;
 // use termion::scroll;
 use treexml::{Document, Element};
 use ratatui::layout::Alignment;
+use ratatui::style::{Color, Style};
 use ratatui::text::{Span, Line};
 use ratatui::widgets::Paragraph;
 use ratatui::widgets::Wrap;
@@ -72,6 +74,20 @@ pub fn extract_text(el: Element) -> String {
     }
 }
 
+pub fn apply_color<'a>(style: Style, v_styles: &Value, color_attr: &'a str) -> Style {
+    match v_styles.get(color_attr).and_then(|value| value.as_str()) {
+        Some(color_str) => {
+            let color = Color::from_str(color_str).unwrap();
+            match color_attr {
+                "fg" => style.fg(color),
+                "bg" => style.bg(color),
+                _ => style
+            }
+        }
+        None => style
+    }
+}
+
 pub fn alignment_from_text<'a>(txt_alignment: &'a str) -> Alignment {
     // Default to Left
     match txt_alignment {
@@ -93,11 +109,18 @@ pub fn create_element(el: Element) -> El {
         false => vec![],
     };
 
+    let styles_json: Option<Value> = parse_attr(el.clone(), "styles");
+    let mut style = Style::default();
+
+    if let Some(ref v_styles) = styles_json {
+        style = apply_color(style, &v_styles, "fg");
+        style = apply_color(style, &v_styles, "bg");
+    }
+
     // Check Common Attributes
     // All Elements has Styles, so all styles needed to be parsed here.
-    let styles_json: Option<Value> = parse_attr(el.clone(), "styles");
-
     let this = match el.name.as_str() {
+
         // A widget to display some text.
         "Paragraph" => {
             // Attribute Unqiue to "Paragraph"
@@ -149,6 +172,21 @@ pub fn create_element(el: Element) -> El {
                     ));
                 }
             }
+
+            if let Some(v_styles) = styles_json {
+                debug!("Styles {:?}", &v_styles);
+                if let Some(fg_color_str) =
+                    v_styles.get("fg").and_then(|value| value.as_str())
+                {
+                    let color = Color::from_str(fg_color_str).unwrap();
+                    paragraph_el = paragraph_el.style(
+                        Style::default().fg(color)
+                    );
+                    debug!("Styles {:?}", &fg_color_str);
+                }
+            }
+
+            paragraph_el = paragraph_el.style(style);
 
             // match styles {
             //     Some(style) => El::Paragraph( Paragraph::new(el_list).style(style)),

@@ -12,9 +12,9 @@ use structs::app::AppState;
 //FIXME: maybe handle scroll properly later scroll='{"offset": [0, 20]}' 
 const DATA: &'static str = r#"
 <Paragraph 
-    styles='{"fg": {"Color": "red"}}' 
+    styles='{"fg": "black", "bg": "white"}' 
     wrap='{"trim": true}' 
-    alignment='{"position" : "Left"}'>
+    alignment='{"position": "Left"}'>
     {{#each store.console_output_lines as |line| ~}}
         <Line>
             <Span>{{line}}</Span>
