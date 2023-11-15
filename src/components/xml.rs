@@ -60,7 +60,7 @@ pub fn parse_attr<'a>(el: Element, attr_name: &'a str) -> Option<Value> {
         },
         false => None,
     };
-    debug!("{}: {:?}", attr_name, parse_res);
+    // debug!("{}: {:?}", attr_name, parse_res);
     parse_res
 }
 
@@ -139,13 +139,13 @@ pub fn create_element(el: Element) -> El {
             if let Some(v_scroll) = scroll_json {
                 if let Some(scroll_vec) = v_scroll.get("offset").and_then(|value| value.as_array())
                 {
-                    let (offset_1, offset_2) = match &scroll_vec[..] {
+                    let (offset_x, offset_y) = match &scroll_vec[..] {
                         [first, second, ..] => (first, second),
                         _ => unreachable!(),
                     };
                     paragraph_el = paragraph_el.scroll((
-                        offset_1.as_u64().unwrap() as u16,
-                        offset_2.as_u64().unwrap() as u16,
+                        offset_x.as_u64().unwrap() as u16,
+                        offset_y.as_u64().unwrap() as u16,
                     ));
                 }
             }

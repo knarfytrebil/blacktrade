@@ -9,10 +9,12 @@ use ratatui::Frame;
 use components::xml;
 use structs::app::AppState;
 
+//FIXME: maybe handle scroll properly later scroll='{"offset": [0, 20]}' 
 const DATA: &'static str = r#"
 <Paragraph 
     styles='{"fg": {"Color": "red"}}' 
-    scroll='{"offset": [1, 20]}' wrap='{"trim": true}' alignment='{"position" : "Left"}'>
+    wrap='{"trim": true}' 
+    alignment='{"position" : "Left"}'>
     {{#each store.console_output_lines as |line| ~}}
         <Line>
             <Span>{{line}}</Span>
