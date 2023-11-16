@@ -1,5 +1,6 @@
 use std::str::FromStr;
 use handlebars::Handlebars;
+use handlebars::handlebars_helper;
 // use itertools::Itertools;
 // use serde::de::value;
 use serde_json::Value;
@@ -22,16 +23,18 @@ pub fn parse_xml(xml: String) -> Element {
     doc.root.unwrap()
 }
 
-// fn generate_line_buffer(height: u16) -> Box<dyn Fn(Vec<Value>) -> Vec<Value>> {
-//     handlebars_helper!(line_buffer: |v: Vec| {
-//         let buffer_start = match height as usize <= lines.len() {
-//             false => 0,
-//             true => lines.len() - height as usize
-//         };
-//         (&lines[buffer_start..]).to_vec()
-//
-//     })
-// }
+// handlebars_helper!(line_buffer: |*args| {
+//     let lines = args[0];
+//     let height = args[1];
+//     debug!("height {}", height);
+//     debug!("lines {}", lines);
+//     // let buffer_start = match height as usize <= lines.len() {
+//     //     false => 0,
+//     //     true => lines.len() - height as usize
+//     // };
+//     // (&lines[buffer_start..]).to_vec()
+// 
+// });
 
 // fn inner_buffer(area_height: u16, lines: Vec<Value>) -> Vec<Value> {
 //     let buffer_start = match area_height as usize <= lines.len() {
@@ -41,9 +44,9 @@ pub fn parse_xml(xml: String) -> Element {
 //     (&lines[buffer_start..]).to_vec()
 // }
 
+
 pub fn parse(template: String, v: &Value) -> Element {
     let reg = Handlebars::new();
-    // reg.register_helper("line_buffer", line_buffer(v["metrics"]["height"].as_u16()));
 
     let filled_template = reg
         .render_template(&template, &v)
