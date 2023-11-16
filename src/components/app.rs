@@ -2,10 +2,32 @@ use components::command_bar;
 use components::command_output;
 use components::ele::powerline_tab::Tabs;
 use components::status_bar;
+use components::xml;
 use structs::app::AppState;
-use ratatui::layout::{Constraint, Direction, Layout};
+use serde_json::Value;
+use ratatui::layout::{Constraint, Direction, Layout, Rect};
 use ratatui::style::{Color, Style};
 use ratatui::Frame;
+
+pub fn p_render(
+    frame: &mut Frame, 
+    store: &AppState, 
+    area: Rect, 
+    template: fn() -> String,
+    props: fn(&Value, Rect)-> Value
+) {
+    let dom_root = xml::parse(
+        template(),
+        &props(&store.json_store, area),
+    );
+
+    let widget = match xml::create_element(dom_root) {
+        xml::El::Paragraph(p) => p,
+        _ => panic!("XML Parse Error !"),
+    };
+
+    frame.render_widget(widget, area);
+}
 
 pub fn render(frame: &mut Frame, store: &AppState)
 {
@@ -30,13 +52,13 @@ pub fn render(frame: &mut Frame, store: &AppState)
         .select(store.tabs.selection);
 
     match store.tabs.selection {
-        0 => command_output::render(frame, store, chunks[1]),
+        0 => p_render(frame, store, chunks[1], command_output::template, command_output::props),
         1 => {}
         _ => {}
     }
 
     status_bar::render(frame, store, chunks[2]);
-    command_bar::render(frame, store, chunks[3]);
+    p_render(frame, store, chunks[3], command_bar::template, command_bar::props);
 
     frame.render_widget(tabs, chunks[0]);
 

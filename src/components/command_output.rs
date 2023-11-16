@@ -1,20 +1,10 @@
-use serde_json::Value;
-use serde_json::json;
+use serde_json::{Value, json};
 use ratatui::layout::Rect;
-// use tui::widgets::Block;
 
-// use tui::text::{Span, Spans};
-// use tui::widgets::{Paragraph, Wrap};
-use ratatui::Frame;
-
-use components::xml;
-use structs::app::AppState;
-
-//FIXME: maybe handle scroll properly later scroll='{"offset": [0, 20]}' 
 const DATA: &'static str = r#"
 <Paragraph 
     styles='{"fg": "cyan", "bg": "reset"}'
-    wrap='{"trim": true}' 
+    wrap='{"trim": true}'
     alignment='{"position": "Left"}'>
     {{#each props.console_output_lines as |line| ~}}
         <Line>
@@ -23,7 +13,11 @@ const DATA: &'static str = r#"
     {{/each}}
 </Paragraph>"#;
 
-fn props(store: &Value, area: Rect) -> Value {
+pub fn template() -> String {
+    DATA.to_string()
+}
+
+pub fn props(store: &Value, area: Rect) -> Value {
     let lines = store["console_output_lines"]
         .as_array().expect("there is nothing");
     let height: usize = area.height.into();
@@ -40,19 +34,4 @@ fn props(store: &Value, area: Rect) -> Value {
             }
         }
     })
-}
-
-pub fn render(frame: &mut Frame, store: &AppState, area: Rect)
-{
-    let dom_root = xml::parse(
-        DATA.to_string(),
-        &props(&store.json_store, area),
-    );
-
-    let widget = match xml::create_element(dom_root) {
-        xml::El::Paragraph(p) => p,
-        _ => panic!("XML Parse Error !"),
-    };
-
-    frame.render_widget(widget, area);
 }
