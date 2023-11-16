@@ -1,5 +1,5 @@
-use ratatui::layout::Rect;
 use serde_json::{Value, json};
+use ratatui::layout::Rect;
 
 const DATA: &'static str = r#"
 <Paragraph>
