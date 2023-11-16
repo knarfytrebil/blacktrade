@@ -57,7 +57,7 @@ pub fn render(frame: &mut Frame, store: &AppState)
         _ => {}
     }
 
-    status_bar::render(frame, store, chunks[2]);
+    p_render(frame, store, chunks[2], status_bar::template, status_bar::props);
     p_render(frame, store, chunks[3], command_bar::template, command_bar::props);
 
     frame.render_widget(tabs, chunks[0]);

@@ -204,7 +204,10 @@ pub fn create_element(el: Element) -> El {
             }
             false => El::Line(Line::from(extract_text(el))),
         },
-        "Span" => El::Span(Span::from(extract_text(el))),
+        "Span" => { 
+            let span_el = Span::styled(extract_text(el), style);
+            El::Span(span_el)
+        },
         &_ => panic!("Unknown DOM Token"),
     };
 
