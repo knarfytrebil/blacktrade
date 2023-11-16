@@ -6,6 +6,20 @@ use ratatui::text::{Span, Line};
 use ratatui::widgets::Paragraph;
 use ratatui::Frame;
 
+const TEMPLATE: &'static str = r#"
+<Paragraph>
+    <Line>
+        <Span styles='{"fg": "white", "bg": "black"}'> </Span>
+        <Span styles='{"bg": "black"}'>{{value}}</Span>
+        <Span styles='{"fg": "white", "bg": "black"}'> </Span>
+        <Span styles='{"fg": "black", "bg": "white"}'>\u{E0B0}</Span>
+        <Span styles='{"fg": "black", "bg": "white"}'>Running Tasks</Span>
+        <Span styles='{"fg": "black", "bg": "white"}'> </Span>
+        <Span styles='{"fg": "white", "bg": "black"}'>\u{E0B0}</Span>
+    </Line>
+</Paragraph>"#;
+
+
 pub fn render(frame: &mut Frame, store: &AppState, area: Rect)
 {
     let value = store.json_store["mode"]["symbol"]

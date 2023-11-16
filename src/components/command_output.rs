@@ -1,7 +1,7 @@
 use serde_json::{Value, json};
 use ratatui::layout::Rect;
 
-const DATA: &'static str = r#"
+const TEMPLATE: &'static str = r#"
 <Paragraph 
     styles='{"fg": "cyan", "bg": "reset"}'
     wrap='{"trim": true}'
@@ -14,7 +14,7 @@ const DATA: &'static str = r#"
 </Paragraph>"#;
 
 pub fn template() -> String {
-    DATA.to_string()
+    TEMPLATE.to_string()
 }
 
 pub fn props(store: &Value, area: Rect) -> Value {
