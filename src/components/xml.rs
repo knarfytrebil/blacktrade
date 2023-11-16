@@ -1,48 +1,26 @@
 use std::str::FromStr;
 use handlebars::Handlebars;
-// use itertools::Itertools;
-// use serde::de::value;
 use serde_json::Value;
-// use termion::scroll;
 use treexml::{Document, Element};
 use ratatui::layout::Alignment;
 use ratatui::style::{Color, Style};
 use ratatui::text::{Span, Line};
 use ratatui::widgets::Paragraph;
 use ratatui::widgets::Wrap;
+use components::ele::powerline_tab::Tabs;
+use structs::ui::TopTabs;
 
 pub enum El {
     Paragraph(Paragraph<'static>),
     Line(Line<'static>),
     Span(Span<'static>),
+    Tabs(Tabs<'static>),
 }
 
 pub fn parse_xml(xml: String) -> Element {
     let doc = Document::parse(xml.as_bytes()).unwrap();
     doc.root.unwrap()
 }
-
-// handlebars_helper!(line_buffer: |*args| {
-//     let lines = args[0];
-//     let height = args[1];
-//     debug!("height {}", height);
-//     debug!("lines {}", lines);
-//     // let buffer_start = match height as usize <= lines.len() {
-//     //     false => 0,
-//     //     true => lines.len() - height as usize
-//     // };
-//     // (&lines[buffer_start..]).to_vec()
-// 
-// });
-
-// fn inner_buffer(area_height: u16, lines: Vec<Value>) -> Vec<Value> {
-//     let buffer_start = match area_height as usize <= lines.len() {
-//         false => 0,
-//         true => lines.len() - area_height as usize
-//     };
-//     (&lines[buffer_start..]).to_vec()
-// }
-
 
 pub fn parse(template: String, v: &Value) -> Element {
     let reg = Handlebars::new();
@@ -66,6 +44,19 @@ pub fn parse_attr<'a>(el: Element, attr_name: &'a str) -> Option<Value> {
     };
     // debug!("{}: {:?}", attr_name, parse_res);
     parse_res
+}
+
+pub fn parse_tabs<'a>(el: Element) -> Option<TopTabs> {
+    match el.attributes.contains_key("tabs") {
+        true => match serde_json::from_str(&el.attributes["tabs"]) {
+            Ok(tabs) => Some(tabs),
+            Err(err) => {
+                debug!("Attribute Parse Error: {:?}", err);
+                None
+            }
+        },
+        false => None,
+    }
 }
 
 pub fn extract_text(el: Element) -> String {
@@ -207,6 +198,12 @@ pub fn create_element(el: Element) -> El {
         "Span" => { 
             let span_el = Span::styled(extract_text(el), style);
             El::Span(span_el)
+        },
+        "Tabs" => {
+            let mut tabs_el = Tabs::default();
+            let tabs: TopTabs = parse_tabs(el).unwrap();
+            tabs_el = tabs_el.titles(tabs.titles);
+            El::Tabs(tabs_el)
         },
         &_ => panic!("Unknown DOM Token"),
     };

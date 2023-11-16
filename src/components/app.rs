@@ -44,8 +44,9 @@ pub fn render(frame: &mut Frame, store: &AppState)
         )
         .split(frame.size());
 
+    let titles = store.tabs.titles.clone();
     let tabs = Tabs::default()
-        .titles(&store.tabs.titles)
+        .titles(titles)
         .style(Style::default().fg(Color::Gray).bg(Color::Black))
         .highlight_style(Style::default().fg(Color::Black).bg(Color::White))
         .divider_style(Style::default().fg(Color::White).bg(Color::Black))

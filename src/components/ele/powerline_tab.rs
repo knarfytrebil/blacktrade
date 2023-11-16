@@ -22,14 +22,12 @@ use ratatui::widgets::{Block, Widget};
 ///     .divider(DOT);
 /// ```
 #[derive(Debug, Clone)]
-pub struct Tabs<'a, T>
-where
-    T: AsRef<str> + 'a,
+pub struct Tabs<'a>
 {
     /// A block to wrap this widget in if necessary
     block: Option<Block<'a>>,
     /// One title for each tab
-    titles: &'a [T],
+    titles: Vec<String>,
     /// The index of the selected tabs
     selected: usize,
     /// The style used to draw the text
@@ -44,14 +42,12 @@ where
     divider_style: Style,
 }
 
-impl<'a, T> Default for Tabs<'a, T>
-where
-    T: AsRef<str>,
+impl<'a> Default for Tabs<'a>
 {
-    fn default() -> Tabs<'a, T> {
+    fn default() -> Tabs<'a> {
         Tabs {
             block: None,
-            titles: &[],
+            titles: vec!(String::from("")),
             selected: 0,
             style: Default::default(),
             highlight_style: Default::default(),
@@ -62,49 +58,45 @@ where
     }
 }
 
-impl<'a, T> Tabs<'a, T>
-where
-    T: AsRef<str>,
+impl<'a> Tabs<'a>
 {
-    pub fn block(mut self, block: Block<'a>) -> Tabs<'a, T> {
+    pub fn block(mut self, block: Block<'a>) -> Tabs<'a> {
         self.block = Some(block);
         self
     }
 
-    pub fn titles(mut self, titles: &'a [T]) -> Tabs<'a, T> {
+    pub fn titles(mut self, titles: Vec<String>) -> Tabs<'a> {
         self.titles = titles;
         self
     }
 
-    pub fn select(mut self, selected: usize) -> Tabs<'a, T> {
+    pub fn select(mut self, selected: usize) -> Tabs<'a> {
         self.selected = selected;
         self
     }
 
-    pub fn style(mut self, style: Style) -> Tabs<'a, T> {
+    pub fn style(mut self, style: Style) -> Tabs<'a> {
         self.style = style;
         self
     }
 
-    pub fn highlight_style(mut self, style: Style) -> Tabs<'a, T> {
+    pub fn highlight_style(mut self, style: Style) -> Tabs<'a> {
         self.highlight_style = style;
         self
     }
 
-    pub fn divider(mut self, divider: &'a str) -> Tabs<'a, T> {
+    pub fn divider(mut self, divider: &'a str) -> Tabs<'a> {
         self.divider = divider;
         self
     }
 
-    pub fn divider_style(mut self, style: Style) -> Tabs<'a, T> {
+    pub fn divider_style(mut self, style: Style) -> Tabs<'a> {
         self.divider_style = style;
         self
     }
 }
 
-impl<'a, T> Widget for Tabs<'a, T>
-where
-    T: AsRef<str>,
+impl<'a> Widget for Tabs<'a>
 {
     fn render(mut self, area: Rect, buf: &mut Buffer) {
         let title_padding: u16 = 2;
@@ -143,7 +135,7 @@ where
                 break;
             } else {
                 buf.set_string(x, tabs_area.top(), &add_padding(title.as_ref()), style);
-                x += title.as_ref().width() as u16 + title_padding;
+                x += title.width() as u16 + title_padding;
                 let (divider, divider_style) = match is_selected {
                     true => (self.divider, self.style),
                     false => (self.divider_inactive, self.divider_style),
