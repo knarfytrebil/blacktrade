@@ -3,18 +3,24 @@ use std::io;
 use std::sync::mpsc::Receiver;
 use structs::app::events::Event;
 
-use termion::input::MouseTerminal;
-use termion::raw::IntoRawMode;
-use termion::screen::AlternateScreen;
+use termion::{
+    input::MouseTerminal,
+    raw::IntoRawMode,
+    screen::IntoAlternateScreen,
+};
 
 use ratatui::backend::TermionBackend;
 use ratatui::Terminal;
 
 pub fn keep_alive(receiver: Receiver<Event>) -> Result<(), io::Error> {
     // Terminal initialization
-    let stdout = io::stdout().into_raw_mode()?;
+
+    let stdout = io::stdout()
+        .into_raw_mode()
+        .unwrap()
+        .into_alternate_screen()
+        .unwrap();
     let stdout = MouseTerminal::from(stdout);
-    let stdout = AlternateScreen::from(stdout);
     let backend = TermionBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
     terminal.clear().unwrap();

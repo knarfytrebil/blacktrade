@@ -1,5 +1,5 @@
 use std::str::FromStr;
-use handlebars::Handlebars;
+use handlebars::{Handlebars,handlebars_helper};
 use serde_json::Value;
 use treexml::{Document, Element};
 use ratatui::layout::Alignment;
@@ -17,17 +17,32 @@ pub enum El {
     Tabs(Tabs<'static>),
 }
 
+// Helpers
+handlebars_helper!(stringify: |v: Json| {
+    v.to_string()
+});
+
+pub fn escape_nothing(data: &str) -> String {
+    String::from(data)
+}
+
 pub fn parse_xml(xml: String) -> Element {
-    let doc = Document::parse(xml.as_bytes()).unwrap();
-    doc.root.unwrap()
+    let doc = Document::parse(xml.as_bytes()).expect("XML Parse Error");
+    doc.root.expect("XML Parse Error")
 }
 
 pub fn parse(template: String, v: &Value) -> Element {
-    let reg = Handlebars::new();
+
+    let mut reg = Handlebars::new();
+
+    reg.register_helper("stringify", Box::new(stringify));
+    reg.register_escape_fn(escape_nothing);
 
     let filled_template = reg
         .render_template(&template, &v)
         .expect("Template Parse Error");
+
+    // debug!("filled template: {:?}", filled_template);
     parse_xml(filled_template)
 }
 
@@ -46,16 +61,19 @@ pub fn parse_attr<'a>(el: Element, attr_name: &'a str) -> Option<Value> {
     parse_res
 }
 
-pub fn parse_tabs<'a>(el: Element) -> Option<TopTabs> {
+pub fn parse_tabs(el: Element) -> Option<TopTabs> {
     match el.attributes.contains_key("tabs") {
         true => match serde_json::from_str(&el.attributes["tabs"]) {
             Ok(tabs) => Some(tabs),
-            Err(err) => {
-                debug!("Attribute Parse Error: {:?}", err);
+            Err(_) => {
+                debug!("Attribute Parse Error: {:?}", &el.attributes["tabs"]);
                 None
             }
         },
-        false => None,
+        false => {
+            debug!("Unable to find tabs attribute");
+            None
+        },
     }
 }
 
@@ -81,6 +99,17 @@ pub fn apply_color<'a>(style: Style, v_styles: &Value, color_attr: &'a str) -> S
     }
 }
 
+pub fn parse_styles<'a>(el: Element, attr_name: &'a str) -> Style {
+    let styles_json: Option<Value> = parse_attr(el.clone(), attr_name);
+    let mut style = Style::default();
+
+    if let Some(ref v_styles) = styles_json {
+        style = apply_color(style, &v_styles, "fg");
+        style = apply_color(style, &v_styles, "bg");
+    }
+    style
+}
+
 pub fn alignment_from_text<'a>(txt_alignment: &'a str) -> Alignment {
     // Default to Left
     match txt_alignment {
@@ -102,13 +131,7 @@ pub fn create_element(el: Element) -> El {
         false => vec![],
     };
 
-    let styles_json: Option<Value> = parse_attr(el.clone(), "styles");
-    let mut style = Style::default();
-
-    if let Some(ref v_styles) = styles_json {
-        style = apply_color(style, &v_styles, "fg");
-        style = apply_color(style, &v_styles, "bg");
-    }
+    let style = parse_styles(el.clone(), "styles");
 
     // Check Common Attributes
     // All Elements has Styles, so all styles needed to be parsed here.
@@ -119,7 +142,6 @@ pub fn create_element(el: Element) -> El {
             // Attribute Unqiue to "Paragraph"
             // Attribute will be tralsated into Methods
             let wrap_json: Option<Value> = parse_attr(el.clone(), "wrap");
-            let scroll_json: Option<Value> = parse_attr(el.clone(), "scroll");
             let alignment_json: Option<Value> = parse_attr(el.clone(), "alignment");
 
             // Children
@@ -138,7 +160,7 @@ pub fn create_element(el: Element) -> El {
             // Handle Wrap
             if let Some(v_wrap) = wrap_json {
                 if let Some(trim) = v_wrap.get("trim").and_then(|value| value.as_bool()) {
-                    paragraph_el = paragraph_el.wrap(Wrap { trim: trim })
+                    paragraph_el = paragraph_el.wrap(Wrap{trim:trim})
                 }
             }
 
@@ -148,34 +170,6 @@ pub fn create_element(el: Element) -> El {
                     v_alignment.get("position").and_then(|value| value.as_str())
                 {
                     paragraph_el = paragraph_el.alignment(alignment_from_text(alignment_str))
-                }
-            }
-
-            // Handle Scroll
-            if let Some(v_scroll) = scroll_json {
-                if let Some(scroll_vec) = v_scroll.get("offset").and_then(|value| value.as_array())
-                {
-                    let (offset_x, offset_y) = match &scroll_vec[..] {
-                        [first, second, ..] => (first, second),
-                        _ => unreachable!(),
-                    };
-                    paragraph_el = paragraph_el.scroll((
-                        offset_x.as_u64().unwrap() as u16,
-                        offset_y.as_u64().unwrap() as u16,
-                    ));
-                }
-            }
-
-            if let Some(v_styles) = styles_json {
-                debug!("Styles {:?}", &v_styles);
-                if let Some(fg_color_str) =
-                    v_styles.get("fg").and_then(|value| value.as_str())
-                {
-                    let color = Color::from_str(fg_color_str).unwrap();
-                    paragraph_el = paragraph_el.style(
-                        Style::default().fg(color)
-                    );
-                    debug!("Styles {:?}", &fg_color_str);
                 }
             }
 
@@ -201,8 +195,14 @@ pub fn create_element(el: Element) -> El {
         },
         "Tabs" => {
             let mut tabs_el = Tabs::default();
-            let tabs: TopTabs = parse_tabs(el).unwrap();
-            tabs_el = tabs_el.titles(tabs.titles);
+            let tabs: TopTabs = parse_tabs(el.clone()).unwrap();
+            let hightlight_style = parse_styles(el.clone(), "highlight_styles");
+            let divider_style = parse_styles(el.clone(), "divider_styles");
+            tabs_el = tabs_el
+                .titles(tabs.titles)
+                .highlight_style(hightlight_style)
+                .divider_style(divider_style)
+                .select(tabs.selection);
             El::Tabs(tabs_el)
         },
         &_ => panic!("Unknown DOM Token"),

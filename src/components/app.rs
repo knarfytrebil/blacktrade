@@ -1,12 +1,11 @@
 use components::command_bar;
 use components::command_output;
-use components::ele::powerline_tab::Tabs;
 use components::status_bar;
+use components::tabs;
 use components::xml;
 use structs::app::AppState;
 use serde_json::Value;
 use ratatui::layout::{Constraint, Direction, Layout, Rect};
-use ratatui::style::{Color, Style};
 use ratatui::Frame;
 
 pub fn p_render(
@@ -21,12 +20,11 @@ pub fn p_render(
         &props(&store.json_store, area),
     );
 
-    let widget = match xml::create_element(dom_root) {
-        xml::El::Paragraph(p) => p,
+    match xml::create_element(dom_root) {
+        xml::El::Paragraph(p) => frame.render_widget(p, area),
+        xml::El::Tabs(t) => frame.render_widget(t, area),
         _ => panic!("XML Parse Error !"),
     };
-
-    frame.render_widget(widget, area);
 }
 
 pub fn render(frame: &mut Frame, store: &AppState)
@@ -44,14 +42,7 @@ pub fn render(frame: &mut Frame, store: &AppState)
         )
         .split(frame.size());
 
-    let titles = store.tabs.titles.clone();
-    let tabs = Tabs::default()
-        .titles(titles)
-        .style(Style::default().fg(Color::Gray).bg(Color::Black))
-        .highlight_style(Style::default().fg(Color::Black).bg(Color::White))
-        .divider_style(Style::default().fg(Color::White).bg(Color::Black))
-        .select(store.tabs.selection);
-
+    p_render(frame, store, chunks[0], tabs::template, tabs::props);
     match store.tabs.selection {
         0 => p_render(frame, store, chunks[1], command_output::template, command_output::props),
         1 => {}
@@ -61,6 +52,5 @@ pub fn render(frame: &mut Frame, store: &AppState)
     p_render(frame, store, chunks[2], status_bar::template, status_bar::props);
     p_render(frame, store, chunks[3], command_bar::template, command_bar::props);
 
-    frame.render_widget(tabs, chunks[0]);
 
 }
