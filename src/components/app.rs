@@ -63,14 +63,11 @@ pub fn render(frame: &mut Frame, store: &AppState)
         .split(frame.size());
 
     p_render(frame, store, chunks[0], tabs::template, tabs::props);
+    p_render(frame, store, chunks[2], status_bar::template, status_bar::props);
+    p_render(frame, store, chunks[3], command_bar::template, command_bar::props);
     match store.tabs.selection {
         0 => p_render(frame, store, chunks[1], command_output::template, command_output::props),
         1 => {}
         _ => {}
     }
-
-    p_render(frame, store, chunks[2], status_bar::template, status_bar::props);
-    p_render(frame, store, chunks[3], command_bar::template, command_bar::props);
-
-
 }
