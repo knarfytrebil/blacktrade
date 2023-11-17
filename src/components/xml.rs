@@ -125,6 +125,23 @@ pub fn get_u16_value<'a>(obj: &Map<String, Value>, key: &'a str) -> u16 {
     obj.get(key).unwrap().as_u64().expect(&err_msg).try_into().expect(&err_msg)
 }
 
+pub fn get_ratio_value<'a>(obj: &Map<String, Value>, key: &'a str) -> Vec<u32> {
+    let obj_value = obj
+        .get(key).unwrap().as_str().expect("ratio value error");
+    let ratio: Vec<u32> = obj_value
+        .split(":")
+        .into_iter()
+        .map(|v| {
+            v.to_string().parse()
+            .expect("ratio value parse error")
+        })
+        .collect();
+    match ratio.len() {
+        2 => ratio,
+        _ => panic!("Ratio must be in the form of '1:2'"),
+    }
+}
+
 pub fn create_element(el: Element) -> El {
     // Children Section
     let children: Vec<El> = match !el.children.is_empty() {
@@ -240,8 +257,7 @@ pub fn create_element(el: Element) -> El {
             El::Layout(layout_el)
         },
         "Constraint" => {
-            let constraint_type_json = parse_attr(el.clone(), "type");
-            let constraint_el = match constraint_type_json {
+            let constraint_el = match parse_attr(el.clone(), "type") {
                 Some(value) => {
                     match value.is_object() {
                         true => {
@@ -253,26 +269,15 @@ pub fn create_element(el: Element) -> El {
                                 "max" => Constraint::Max(get_u16_value(obj, key)),
                                 "percentage" => Constraint::Percentage(get_u16_value(obj, key)),
                                 "ratio" => {
-                                    let obj_value = obj.get(key).unwrap().as_str().expect("value error");
-                                    let ratio: Vec<&str> = obj_value.split(":").collect();
-                                    match ratio.len() {
-                                        2 => {
-                                            let rx = ratio[0].to_string();
-                                            let ry = ratio[1].to_string();
-                                            Constraint::Ratio(
-                                                rx.parse().expect("Length must be u16"), 
-                                                ry.parse().expect("Length must be u16")
-                                            )
-                                        },
-                                        _ => panic!("Ratio must be in the form of '1:2'"),
-                                    }
-                                },
+                                    let rv= get_ratio_value(obj, key);
+                                    Constraint::Ratio(rv[0],rv[1])
+                               },
                                 _ => panic!("Wrong type for constraint")
                             }
                         }
                         false => panic!("Value is not json object")
                     }
-               },
+                },
                 None => {
                     panic!("Constraint Type is required")
                 }
