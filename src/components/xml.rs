@@ -45,8 +45,6 @@ pub fn parse(template: String, v: &Value) -> Element {
     let filled_template = reg
         .render_template(&template, &v)
         .expect("Template Parse Error");
-
-    // debug!("filled template: {:?}", filled_template);
     parse_xml(filled_template)
 }
 
@@ -61,7 +59,6 @@ pub fn parse_attr<'a>(el: Element, attr_name: &'a str) -> Option<Value> {
         },
         false => None,
     };
-    // debug!("{}: {:?}", attr_name, parse_res);
     parse_res
 }
 
