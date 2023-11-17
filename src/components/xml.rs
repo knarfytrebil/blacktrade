@@ -1,7 +1,7 @@
 use std::convert::TryInto;
 use std::str::FromStr;
 use handlebars::{Handlebars,handlebars_helper};
-use serde_json::Value;
+use serde_json::{Value, Map};
 use treexml::{Document, Element};
 use ratatui::layout::{Constraint, Direction, Layout, Alignment};
 use ratatui::style::{Color, Style};
@@ -10,6 +10,8 @@ use ratatui::widgets::Paragraph;
 use ratatui::widgets::Wrap;
 use components::ele::powerline_tab::Tabs;
 use structs::ui::TopTabs;
+
+use crate::structs::app::events::Key;
 
 pub enum El {
     Paragraph(Paragraph<'static>),
@@ -20,11 +22,12 @@ pub enum El {
     Constraint(Constraint),
 }
 
-// Helpers
+// Handlebar Helpers
 handlebars_helper!(stringify: |v: Json| {
     v.to_string()
 });
 
+// Handlebar escape fn
 pub fn escape_nothing(data: &str) -> String {
     String::from(data)
 }
@@ -120,6 +123,11 @@ pub fn alignment_from_text<'a>(txt_alignment: &'a str) -> Alignment {
         "Right" => Alignment::Right,
         "Left" | _ => Alignment::Left,
     }
+}
+
+pub fn get_u16_value<'a>(obj: &Map<String, Value>, key: &'a str) -> u16 {
+    let err_msg = format!("{} value error", key);
+    obj.get(key).unwrap().as_u64().expect(&err_msg).try_into().expect(&err_msg)
 }
 
 pub fn create_element(el: Element) -> El {
@@ -243,26 +251,14 @@ pub fn create_element(el: Element) -> El {
                     match value.is_object() {
                         true => {
                             let obj = value.as_object().expect("object values are wrong");
-                            let obj_key = obj.keys().last().unwrap().as_str();
-                            match obj_key {
-                                "length" => {
-                                    let obj_value = obj.get(obj_key).unwrap().as_u64().expect("value error");
-                                    Constraint::Length(obj_value.try_into().expect("length value error"))
-                                },
-                                "min" => {
-                                    let obj_value = obj.get(obj_key).unwrap().as_u64().expect("value error");
-                                    Constraint::Min(obj_value.try_into().expect("min value error"))
-                                },
-                                "max" => {
-                                    let obj_value = obj.get(obj_key).unwrap().as_u64().expect("value error");
-                                    Constraint::Max(obj_value.try_into().expect("max value error"))
-                                },
-                                "percentage" => {
-                                    let obj_value = obj.get(obj_key).unwrap().as_u64().expect("value error");
-                                    Constraint::Percentage(obj_value.try_into().expect("percent value error")
-                                )},
+                            let key = obj.keys().last().unwrap().as_str();
+                            match key {
+                                "length" => Constraint::Length(get_u16_value(obj, key)),
+                                "min" => Constraint::Min(get_u16_value(obj, key)),
+                                "max" => Constraint::Max(get_u16_value(obj, key)),
+                                "percentage" => Constraint::Percentage(get_u16_value(obj, key)),
                                 "ratio" => {
-                                    let obj_value = obj.get(obj_key).unwrap().as_str().expect("value error");
+                                    let obj_value = obj.get(key).unwrap().as_str().expect("value error");
                                     let ratio: Vec<&str> = obj_value.split(":").collect();
                                     match ratio.len() {
                                         2 => {
