@@ -11,8 +11,6 @@ use ratatui::widgets::Wrap;
 use components::ele::powerline_tab::Tabs;
 use structs::ui::TopTabs;
 
-use crate::structs::app::events::Key;
-
 pub enum El {
     Paragraph(Paragraph<'static>),
     Line(Line<'static>),
