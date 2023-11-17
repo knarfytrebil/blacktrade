@@ -252,7 +252,7 @@ pub fn create_element(el: Element) -> El {
                 false => vec![],
             };
 
-            layout_el = layout_el.constraints(el_list.as_ref());
+            layout_el = layout_el.constraints(el_list);
  
             El::Layout(layout_el)
         },
