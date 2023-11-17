@@ -8,7 +8,7 @@ use serde_json::Value;
 use ratatui::layout::{Constraint, Direction, Layout, Rect};
 use ratatui::Frame;
 
-pub fn p_render(
+pub fn render_component(
     frame: &mut Frame, 
     store: &AppState, 
     area: Rect, 
@@ -23,31 +23,48 @@ pub fn p_render(
     match xml::create_element(dom_root) {
         xml::El::Paragraph(p) => frame.render_widget(p, area),
         xml::El::Tabs(t) => frame.render_widget(t, area),
-        xml::El::Layout(l) => {
-            l.split(frame.size());
-        },
         _ => panic!("XML Parse Error !"),
     };
 }
 
+pub fn render(
+    frame: &mut Frame,
+    store: &AppState,
+) {
+    debug!("parse_xml");
+    let dom_root = xml::parse_xml(TEMPLATE.to_string());
+    
+    debug!("dom_root: {:?}", dom_root);
+    let chunks = match xml::create_element(dom_root) {
+        xml::El::Layout(l) => l.split(frame.size()),
+        _ => panic!("XML Parse Error !"),
+    };
+
+    debug!("about to render");
+    render_component(frame, store, chunks[0], tabs::template, tabs::props);
+    render_component(frame, store, chunks[2], status_bar::template, status_bar::props);
+    render_component(frame, store, chunks[3], command_bar::template, command_bar::props);
+    match store.tabs.selection {
+        0 => render_component(frame, store, chunks[1], command_output::template, command_output::props),
+        1 => {}
+        _ => {}
+    }
+
+}
 const TEMPLATE: &'static str = r#"
-<Layout direction="vertical"/>
-    <Constraint type='{"length": "1"}'>
-        <Tabs />
+<Layout direction='vertical'>
+    <Constraint type='{"length": 1}'>
     </Constraint>
-    <Constraint type='{"min": "1"}'/>
-        <CommandOutput />
+    <Constraint type='{"min": 1}'>
     </Constraint>
-    <Constraint type='{"length": "1"}'/>
-        <StatusBar />
+    <Constraint type='{"length": 1}'>
     </Constraint>
-    <Constraint type='{"length": "1"}'/>
-        <CommandBar />
+    <Constraint type='{"length": 1}'>
     </Constraint>
 </Layout>
 "#;
 
-pub fn render(frame: &mut Frame, store: &AppState)
+pub fn _render(frame: &mut Frame, store: &AppState)
 {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -62,11 +79,11 @@ pub fn render(frame: &mut Frame, store: &AppState)
         )
         .split(frame.size());
 
-    p_render(frame, store, chunks[0], tabs::template, tabs::props);
-    p_render(frame, store, chunks[2], status_bar::template, status_bar::props);
-    p_render(frame, store, chunks[3], command_bar::template, command_bar::props);
+    render_component(frame, store, chunks[0], tabs::template, tabs::props);
+    render_component(frame, store, chunks[2], status_bar::template, status_bar::props);
+    render_component(frame, store, chunks[3], command_bar::template, command_bar::props);
     match store.tabs.selection {
-        0 => p_render(frame, store, chunks[1], command_output::template, command_output::props),
+        0 => render_component(frame, store, chunks[1], command_output::template, command_output::props),
         1 => {}
         _ => {}
     }
