@@ -80,10 +80,6 @@ pub fn parse_tabs(el: Element) -> Option<TopTabs> {
     }
 }
 
-pub fn extract_number<'a>(value: &Value, key: &'a str) -> Option<u64> {
-    value.get(key).expect(&format!("wrong value for {:?}", key)).as_u64()
-}
-
 pub fn extract_text(el: Element) -> String {
     match el.text {
         Some(txt) => txt,
@@ -127,8 +123,6 @@ pub fn alignment_from_text<'a>(txt_alignment: &'a str) -> Alignment {
 }
 
 pub fn create_element(el: Element) -> El {
-
-    debug!("children");
     // Children Section
     let children: Vec<El> = match !el.children.is_empty() {
         // recursive till there is no more child elements
@@ -141,10 +135,8 @@ pub fn create_element(el: Element) -> El {
         false => vec![],
     };
 
-    debug!("style");
     let style = parse_styles(el.clone(), "styles");
 
-    debug!("styled");
     // Check Common Attributes
     // All Elements has Styles, so all styles needed to be parsed here.
     let this = match el.name.as_str() {
@@ -245,37 +237,51 @@ pub fn create_element(el: Element) -> El {
             El::Layout(layout_el)
         },
         "Constraint" => {
-            debug!("constraint");
             let constraint_type_json = parse_attr(el.clone(), "type");
-            debug!("constraint_type_json: {:?}", constraint_type_json);
             let constraint_el = match constraint_type_json {
                 Some(value) => {
-                    debug!("value: {:?}", value);
-                    if let Some(length) = extract_number(&value, "length") {
-                        Constraint::Length(length.try_into().expect("Length must be u16"))
-                    } else if let Some(min) = extract_number(&value, "min") {
-                        Constraint::Min(min.try_into().expect("Min must be u16"))
-                    } else if let Some(max) = extract_number(&value, "max") {
-                        Constraint::Max(max.try_into().expect("Max must be u16"))
-                    } else if let Some(percent) = extract_number(&value, "percentage") {
-                        Constraint::Percentage(percent.try_into().expect("Percentage must be u16"))
-                    } else if let Some(ratio) = value.get("ratio").and_then(|value| value.as_str()) {
-                        let ratio: Vec<&str> = ratio.split(":").collect();
-                        match ratio.len() {
-                            2 => {
-                                let rx = ratio[0].to_string();
-                                let ry = ratio[1].to_string();
-                                Constraint::Ratio(
-                                    rx.parse().expect("Length must be u16"), 
-                                    ry.parse().expect("Length must be u16")
-                                )
-                            },
-                            _ => panic!("Ratio must be in the form of '1:2'"),
+                    match value.is_object() {
+                        true => {
+                            let obj = value.as_object().expect("object values are wrong");
+                            let obj_key = obj.keys().last().unwrap().as_str();
+                            match obj_key {
+                                "length" => {
+                                    let obj_value = obj.get(obj_key).unwrap().as_u64().expect("value error");
+                                    Constraint::Length(obj_value.try_into().expect("length value error"))
+                                },
+                                "min" => {
+                                    let obj_value = obj.get(obj_key).unwrap().as_u64().expect("value error");
+                                    Constraint::Min(obj_value.try_into().expect("min value error"))
+                                },
+                                "max" => {
+                                    let obj_value = obj.get(obj_key).unwrap().as_u64().expect("value error");
+                                    Constraint::Max(obj_value.try_into().expect("max value error"))
+                                },
+                                "percentage" => {
+                                    let obj_value = obj.get(obj_key).unwrap().as_u64().expect("value error");
+                                    Constraint::Percentage(obj_value.try_into().expect("percent value error")
+                                )},
+                                "ratio" => {
+                                    let obj_value = obj.get(obj_key).unwrap().as_str().expect("value error");
+                                    let ratio: Vec<&str> = obj_value.split(":").collect();
+                                    match ratio.len() {
+                                        2 => {
+                                            let rx = ratio[0].to_string();
+                                            let ry = ratio[1].to_string();
+                                            Constraint::Ratio(
+                                                rx.parse().expect("Length must be u16"), 
+                                                ry.parse().expect("Length must be u16")
+                                            )
+                                        },
+                                        _ => panic!("Ratio must be in the form of '1:2'"),
+                                    }
+                                },
+                                _ => panic!("Wrong type for constraint")
+                            }
                         }
-                    } else {
-                        panic!("Constraint Type is empty")
+                        false => panic!("Value is not json object")
                     }
-                },
+               },
                 None => {
                     panic!("Constraint Type is required")
                 }

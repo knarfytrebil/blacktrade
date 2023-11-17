@@ -31,16 +31,13 @@ pub fn render(
     frame: &mut Frame,
     store: &AppState,
 ) {
-    debug!("parse_xml");
     let dom_root = xml::parse_xml(TEMPLATE.to_string());
     
-    debug!("dom_root: {:?}", dom_root);
     let chunks = match xml::create_element(dom_root) {
         xml::El::Layout(l) => l.split(frame.size()),
         _ => panic!("XML Parse Error !"),
     };
 
-    debug!("about to render");
     render_component(frame, store, chunks[0], tabs::template, tabs::props);
     render_component(frame, store, chunks[2], status_bar::template, status_bar::props);
     render_component(frame, store, chunks[3], command_bar::template, command_bar::props);
@@ -63,28 +60,3 @@ const TEMPLATE: &'static str = r#"
     </Constraint>
 </Layout>
 "#;
-
-pub fn _render(frame: &mut Frame, store: &AppState)
-{
-    let chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints(
-            [
-                Constraint::Length(1),
-                Constraint::Min(1),
-                Constraint::Length(1),
-                Constraint::Length(1),
-            ]
-            .as_ref(),
-        )
-        .split(frame.size());
-
-    render_component(frame, store, chunks[0], tabs::template, tabs::props);
-    render_component(frame, store, chunks[2], status_bar::template, status_bar::props);
-    render_component(frame, store, chunks[3], command_bar::template, command_bar::props);
-    match store.tabs.selection {
-        0 => render_component(frame, store, chunks[1], command_output::template, command_output::props),
-        1 => {}
-        _ => {}
-    }
-}
