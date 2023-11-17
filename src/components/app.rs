@@ -5,7 +5,7 @@ use components::tabs;
 use components::xml;
 use structs::app::AppState;
 use serde_json::Value;
-use ratatui::layout::{Constraint, Direction, Layout, Rect};
+use ratatui::layout::Rect;
 use ratatui::Frame;
 
 pub fn render_component(
