@@ -257,32 +257,28 @@ pub fn create_element(el: Element) -> El {
             El::Layout(layout_el)
         },
         "Constraint" => {
-            let constraint_el = match parse_attr(el.clone(), "type") {
-                Some(value) => {
-                    match value.is_object() {
-                        true => {
-                            let obj = value.as_object().expect("object values are wrong");
-                            let key = obj.keys().last().unwrap().as_str();
-                            match key {
-                                "length" => Constraint::Length(get_u16_value(obj, key)),
-                                "min" => Constraint::Min(get_u16_value(obj, key)),
-                                "max" => Constraint::Max(get_u16_value(obj, key)),
-                                "percentage" => Constraint::Percentage(get_u16_value(obj, key)),
-                                "ratio" => {
-                                    let rv= get_ratio_value(obj, key);
-                                    Constraint::Ratio(rv[0],rv[1])
-                               },
-                                _ => panic!("Wrong type for constraint")
-                            }
-                        }
-                        false => panic!("Value is not json object")
-                    }
-                },
-                None => {
-                    panic!("Constraint Type is required")
+            if let Some(value) = parse_attr(el.clone(), "type") {
+                if value.is_object() {
+                    let obj = value.as_object().expect("object values are wrong");
+                    let key = obj.keys().last().unwrap().as_str();
+                    let constraint_el = match key {
+                        "length" => Constraint::Length(get_u16_value(obj, key)),
+                        "min" => Constraint::Min(get_u16_value(obj, key)),
+                        "max" => Constraint::Max(get_u16_value(obj, key)),
+                        "percentage" => Constraint::Percentage(get_u16_value(obj, key)),
+                        "ratio" => {
+                            let rv= get_ratio_value(obj, key);
+                            Constraint::Ratio(rv[0],rv[1])
+                        },
+                        _ => panic!("Wrong type for constraint")
+                    };
+                    El::Constraint(constraint_el)
+                } else {
+                    panic!("constraint type value must be a json object");
                 }
-            };
-            El::Constraint(constraint_el)
+            } else {
+                panic!("constraint type value must be a json object");
+            }
         }
         &_ => panic!("Unknown DOM Token"),
     };
