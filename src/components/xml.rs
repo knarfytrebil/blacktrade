@@ -259,7 +259,8 @@ pub fn create_element(el: Element) -> El {
         "Constraint" => {
             if let Some(value) = parse_attr(el.clone(), "type") {
                 if value.is_object() {
-                    let obj = value.as_object().expect("object values are wrong");
+                    let obj = value.as_object()
+                        .expect("object values are wrong");
                     let key = obj.keys().last().unwrap().as_str();
                     let constraint_el = match key {
                         "length" => Constraint::Length(get_u16_value(obj, key)),
