@@ -1,5 +1,5 @@
 [package]
-name = "polorust"
+name = "blacktrade"
 version = "0.0.1"
 authors = ["Frank Yao <frank.yao@cyanide.io>"]
 
