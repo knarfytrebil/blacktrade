@@ -23,9 +23,29 @@ pub fn p_render(
     match xml::create_element(dom_root) {
         xml::El::Paragraph(p) => frame.render_widget(p, area),
         xml::El::Tabs(t) => frame.render_widget(t, area),
+        xml::El::Layout(l) => {
+            l.split(frame.size());
+        },
         _ => panic!("XML Parse Error !"),
     };
 }
+
+const TEMPLATE: &'static str = r#"
+<Layout direction="vertical"/>
+    <Constraint type='{"length": "1"}'>
+        <Tabs />
+    </Constraint>
+    <Constraint type='{"min": "1"}'/>
+        <CommandOutput />
+    </Constraint>
+    <Constraint type='{"length": "1"}'/>
+        <StatusBar />
+    </Constraint>
+    <Constraint type='{"length": "1"}'/>
+        <CommandBar />
+    </Constraint>
+</Layout>
+"#;
 
 pub fn render(frame: &mut Frame, store: &AppState)
 {

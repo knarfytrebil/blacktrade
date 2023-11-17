@@ -1,8 +1,9 @@
+use std::convert::TryInto;
 use std::str::FromStr;
 use handlebars::{Handlebars,handlebars_helper};
 use serde_json::Value;
 use treexml::{Document, Element};
-use ratatui::layout::Alignment;
+use ratatui::layout::{Constraint, Direction, Layout, Alignment};
 use ratatui::style::{Color, Style};
 use ratatui::text::{Span, Line};
 use ratatui::widgets::Paragraph;
@@ -15,6 +16,8 @@ pub enum El {
     Line(Line<'static>),
     Span(Span<'static>),
     Tabs(Tabs<'static>),
+    Layout(Layout),
+    Constraint(Constraint),
 }
 
 // Helpers
@@ -120,6 +123,7 @@ pub fn alignment_from_text<'a>(txt_alignment: &'a str) -> Alignment {
 }
 
 pub fn create_element(el: Element) -> El {
+    // Children Section
     let children: Vec<El> = match !el.children.is_empty() {
         // recursive till there is no more child elements
         true => el
@@ -205,6 +209,68 @@ pub fn create_element(el: Element) -> El {
                 .select(tabs.selection);
             El::Tabs(tabs_el)
         },
+        "Layout" => {
+            let direction_json: Option<Value> = parse_attr(el.clone(), "direction");
+            let mut layout_el = Layout::default();
+            if let Some(v_direction) = direction_json {
+                match v_direction.as_str() {
+                    Some("vertical") => layout_el = layout_el.direction(Direction::Vertical),
+                    Some("horizontal") => layout_el = layout_el.direction(Direction::Horizontal),
+                    _ => panic!("Unknown Direction"),
+                }
+            }
+
+            // Children
+            let el_list: Vec<Constraint> = match !children.is_empty() {
+                true => children
+                    .into_iter()
+                    .map(|child| match child {
+                        El::Constraint(s) => s,
+                        _ => panic!("Not a Constraint Node!"),
+                    })
+                    .collect(),
+                false => vec![],
+            };
+
+            layout_el = layout_el.constraints(el_list);
+ 
+            El::Layout(layout_el)
+        },
+        "Constraint" => {
+            let constraint_type_json = parse_attr(el.clone(), "type");
+            let constraint_el = match constraint_type_json {
+                Some(value) => {
+                    if let Some(length) = value.get("length").and_then(|value| value.as_u64()) {
+                        Constraint::Length(length.try_into().expect("Length must be u16"))
+                    } else if let Some(min) = value.get("min").and_then(|value| value.as_u64()) {
+                        Constraint::Min(min.try_into().expect("Length must be u16"))
+                    } else if let Some(max) = value.get("max").and_then(|value| value.as_u64()) {
+                        Constraint::Max(max.try_into().expect("Length must be u16"))
+                    } else if let Some(percent) = value.get("percent").and_then(|value| value.as_u64()) {
+                        Constraint::Percentage(percent.try_into().expect("Length must be u16"))
+                    } else if let Some(ratio) = value.get("ratio").and_then(|value| value.as_str()) {
+                        let ratio: Vec<&str> = ratio.split(":").collect();
+                        match ratio.len() {
+                            2 => {
+                                let rx = ratio[0].to_string();
+                                let ry = ratio[1].to_string();
+                                Constraint::Ratio(
+                                    rx.parse().expect("Length must be u16"), 
+                                    ry.parse().expect("Length must be u16")
+                                )
+                            },
+                            _ => panic!("Ratio must be in the form of '1:2'"),
+                        }
+                    } else {
+                        panic!("Constraint Type is empty")
+                    }
+                },
+                None => {
+                    panic!("Constraint Type is required")
+                }
+            };
+            El::Constraint(constraint_el)
+        }
         &_ => panic!("Unknown DOM Token"),
     };
 
