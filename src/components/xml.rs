@@ -18,6 +18,7 @@ pub enum El {
     Tabs(Tabs<'static>),
     Layout(Layout),
     Constraint(Constraint),
+    Component(String),
 }
 
 // Handlebar Helpers
@@ -288,8 +289,8 @@ pub fn create_element(el: Element) -> El {
                 panic!("constraint type value must be a json object");
             }
         },
-        &_ => {
-            panic!("Unknown DOM Token")
+        components => {
+            El::Component(String::from(components))
         } 
     };
 

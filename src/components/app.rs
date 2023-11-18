@@ -23,6 +23,9 @@ pub fn render_component(
     match xml::create_element(dom_root) {
         xml::El::Paragraph(p) => frame.render_widget(p, area),
         xml::El::Tabs(t) => frame.render_widget(t, area),
+        xml::El::Layout(l) => {
+            l.split(frame.size());
+        },
         _ => panic!("XML Parse Error !"),
     };
 }
@@ -51,15 +54,12 @@ pub fn render(
     }
 
 }
+
 const TEMPLATE: &'static str = r#"
 <Layout direction='vertical'>
-    <Constraint type='{"length":1}'>
-    </Constraint>
-    <Constraint type='{"min":1}'>
-    </Constraint>
-    <Constraint type='{"length":1}'>
-    </Constraint>
-    <Constraint type='{"length":1}'>
-    </Constraint>
+    <Constraint type='{"length":1}' />
+    <Constraint type='{"min":1}' />
+    <Constraint type='{"length":1}' />
+    <Constraint type='{"length":1}' />
 </Layout>
 "#;
