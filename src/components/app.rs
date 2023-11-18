@@ -17,7 +17,7 @@ pub fn render_component(
 ) {
     let dom_root = xml::parse(
         template(),
-        &props(&store.json_store, area),
+        Some(&props(&store.json_store, area)),
     );
 
     match xml::create_element(dom_root) {
@@ -31,7 +31,10 @@ pub fn render(
     frame: &mut Frame,
     store: &AppState,
 ) {
-    let dom_root = xml::parse_xml(TEMPLATE.to_string());
+    let dom_root = xml::parse(
+        TEMPLATE.to_string(), 
+        None
+    );
     
     let chunks = match xml::create_element(dom_root) {
         xml::El::Layout(l) => l.split(frame.size()),

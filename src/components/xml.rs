@@ -35,16 +35,23 @@ pub fn parse_xml(xml: String) -> Element {
     doc.root.expect("XML Parse Error")
 }
 
-pub fn parse(template: String, v: &Value) -> Element {
+pub fn parse(template: String, v: Option<&Value>) -> Element {
+    let filled_template = match v {
+        Some(v) => {
+            let mut reg = Handlebars::new();
 
-    let mut reg = Handlebars::new();
+            reg.register_helper("stringify", Box::new(stringify));
+            reg.register_escape_fn(escape_nothing);
 
-    reg.register_helper("stringify", Box::new(stringify));
-    reg.register_escape_fn(escape_nothing);
+            reg
+                .render_template(&template, &v)
+                .expect("Template Parse Error")
 
-    let filled_template = reg
-        .render_template(&template, &v)
-        .expect("Template Parse Error");
+        },
+        None => {
+            template
+        }
+    };
     parse_xml(filled_template)
 }
 
@@ -280,8 +287,10 @@ pub fn create_element(el: Element) -> El {
             } else {
                 panic!("constraint type value must be a json object");
             }
-        }
-        &_ => panic!("Unknown DOM Token"),
+        },
+        &_ => {
+            panic!("Unknown DOM Token")
+        } 
     };
 
     this
