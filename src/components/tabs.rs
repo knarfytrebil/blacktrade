@@ -1,16 +1,15 @@
 use serde_json::{Value, json};
 use ratatui::layout::Rect;
 
-const TEMPLATE: &'static str = r#"
-<Tabs 
-    tabs='{{stringify props.tabs}}'
-    styles='{"fg":"grey", "bg":"reset"}'
-    highlight_styles='{"fg":"reset", "bg":"white"}'
-    divider_styles='{"fg":"white", "bg":"reset"}'  
-/>"#;
-
 pub fn template() -> String {
-    TEMPLATE.to_string()
+    String::from(r#"
+        <Tabs 
+            tabs='{{stringify props.tabs}}'
+            styles='{"fg":"grey", "bg":"reset"}'
+            highlight_styles='{"fg":"reset", "bg":"white"}'
+            divider_styles='{"fg":"white", "bg":"reset"}'  
+        />"#
+    )
 }
 
 pub fn props(store: &Value, area: Rect) -> Value {

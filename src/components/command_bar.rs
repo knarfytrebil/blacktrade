@@ -1,13 +1,12 @@
 use serde_json::{Value, json};
 use ratatui::layout::Rect;
 
-const TEMPLATE: &'static str = r#"
-<Paragraph>
-    <Line>{{props.command}}</Line>
-</Paragraph>"#;
-
 pub fn template() -> String {
-    TEMPLATE.to_string()
+    String::from(r#"
+        <Paragraph>
+            <Line>{{props.command}}</Line>
+        </Paragraph>"#
+    )
 }
 
 pub fn props(store: &Value, area: Rect) -> Value {

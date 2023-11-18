@@ -1,20 +1,19 @@
 use serde_json::{Value, json};
 use ratatui::layout::Rect;
 
-const TEMPLATE: &'static str = r#"
-<Paragraph 
-    styles='{"fg": "cyan", "bg": "reset"}'
-    wrap='{"trim": true}'
-    alignment='{"position": "Left"}'>
-    {{#each props.console_output_lines as |line| ~}}
-        <Line>
-            <Span>{{line}}</Span>
-        </Line>
-    {{/each}}
-</Paragraph>"#;
-
 pub fn template() -> String {
-    TEMPLATE.to_string()
+    String::from(r#"
+        <Paragraph 
+            styles='{"fg": "cyan", "bg": "reset"}'
+            wrap='{"trim": true}'
+            alignment='{"position": "Left"}'>
+            {{#each props.console_output_lines as |line| ~}}
+                <Line>
+                    <Span>{{line}}</Span>
+                </Line>
+            {{/each}}
+        </Paragraph>"#
+    )
 }
 
 pub fn props(store: &Value, area: Rect) -> Value {
