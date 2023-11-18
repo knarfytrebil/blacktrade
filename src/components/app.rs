@@ -57,9 +57,17 @@ pub fn render(
 
 const TEMPLATE: &'static str = r#"
 <Layout direction='vertical'>
-    <Constraint type='{"length":1}' />
-    <Constraint type='{"min":1}' />
-    <Constraint type='{"length":1}' />
-    <Constraint type='{"length":1}' />
+    <Constraint
+        type='{"length":1}'
+    />
+    <Constraint
+        type='{"min":1}'
+    />
+    <Constraint
+        type='{"length":1}'
+    />
+    <Constraint
+        type='{"length":1}'
+    />
 </Layout>
 "#;
