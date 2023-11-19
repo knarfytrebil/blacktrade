@@ -58,15 +58,19 @@ pub fn render(
 const TEMPLATE: &'static str = r#"
 <Layout direction='vertical'>
     <Constraint
+        view='basic_tabs'
         type='{"length":1}'
     />
     <Constraint
+        view='CommandOutput'
         type='{"min":1}'
     />
     <Constraint
+        view='status_bar'
         type='{"length":1}'
     />
     <Constraint
+        view='CommandBar'
         type='{"length":1}'
     />
 </Layout>

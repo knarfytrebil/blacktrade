@@ -14,8 +14,7 @@ pub fn template() -> String {
                 <Span styles='{"fg": "black", "bg": "white"}'> </Span>
                 <Span styles='{"fg": "white", "bg": "black"}'>{{props.divider}}</Span>
             </Line>
-        </Paragraph>"#
-    )
+        </Paragraph>"#)
 }
 
 pub fn props(store: &Value, area: Rect) -> Value {
