@@ -3,6 +3,7 @@ use components::command_output;
 use components::status_bar;
 use components::tabs;
 use components::xml;
+use components::parsing::xml::parse;
 use structs::app::AppState;
 use serde_json::Value;
 use ratatui::layout::Rect;
@@ -15,7 +16,7 @@ pub fn render_component(
     template: fn() -> String,
     props: fn(&Value, Rect)-> Value
 ) {
-    let dom_root = xml::parse(
+    let dom_root = parse(
         template(),
         Some(&props(&store.json_store, area)),
     );
@@ -34,7 +35,7 @@ pub fn render(
     frame: &mut Frame,
     store: &AppState,
 ) {
-    let dom_root = xml::parse(
+    let dom_root = parse(
         TEMPLATE.to_string(), 
         None
     );
