@@ -20,6 +20,7 @@ pub fn parse(template: String, v: Option<&Value>) -> Element {
             let mut reg = Handlebars::new();
 
             reg.register_helper("stringify", Box::new(hb_macros::stringify));
+            reg.register_helper("powerline_symbol", Box::new(hb_macros::powerline_symbol));
             reg.register_helper("height_buffer", Box::new(HEIGHT_BUFFER_HELPER));
             reg.register_escape_fn(hb_utils::escape_nothing);
 
