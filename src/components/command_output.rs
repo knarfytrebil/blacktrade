@@ -7,7 +7,7 @@ pub fn template() -> String {
             styles='{"fg": "cyan", "bg": "reset"}'
             wrap='{"trim": true}'
             alignment='{"position": "Left"}'>
-            {{#height_buffer props.console_output_lines as |lines|}}
+            {{#height_buffer props.console_output_lines as |lines| ~}}
                 {{#each lines as |line| ~}}
                     <Line>
                         <Span>{{line}}</Span>
