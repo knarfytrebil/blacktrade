@@ -67,7 +67,6 @@ impl HelperDef for HeightBufferHelper {
                 s_json
             );
 
-
             // debug!("buffered_param {:?}", buffered_param);
             // debug!("helper {:?}", h);
 
@@ -90,7 +89,6 @@ impl HelperDef for HeightBufferHelper {
         } else {
             Err(RenderError::new("Param 0 must be an array"))
         }
-    // write!(out, "{}", param.value().render())?;
     }
 }
 
