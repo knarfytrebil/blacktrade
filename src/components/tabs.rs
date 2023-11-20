@@ -11,7 +11,6 @@ pub fn template() -> String {
 }
 
 pub fn props(store: &Value, area: Rect) -> Value {
-    debug!("{:?}", store["tabs"]);
     json!({
         "props": {
             "tabs": store["tabs"],
