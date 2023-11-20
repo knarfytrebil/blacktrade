@@ -50,7 +50,9 @@ pub fn keep_alive(receiver: Receiver<Event>) -> Result<(), io::Error> {
                     app::render(
                         &mut f,
                         &app_state,
-                        &mut reg
+                        &mut reg,
+                        None,
+                        "app"
                     )
                 });
             }

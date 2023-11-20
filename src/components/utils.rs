@@ -1,4 +1,6 @@
 use itertools::Itertools;
+use serde_json::{Value, json};
+use ratatui::layout::Rect;
 use walkdir::{WalkDir, DirEntry};
 use handlebars::Handlebars;
 
@@ -25,4 +27,24 @@ pub fn load_templates(templates: Vec<DirEntry>, reg: &mut Handlebars<'_>) {
             prefix[0],
             entry.path()).expect("template registration error");
     }
+}
+
+pub fn props(store: &Value, area: Option<Rect>) -> Value {
+    match area {
+        Some(v) => {
+            json!({
+                "props": {
+                    "store": store,
+                    "area": {
+                        "height": v.height,
+                        "width": v.width
+                    }
+                }
+            })
+        }
+        None => {
+            json!({"props": {"store": store, "area": {}}})
+        }
+    }
+    
 }
