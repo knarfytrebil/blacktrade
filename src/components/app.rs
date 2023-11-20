@@ -1,3 +1,8 @@
+use serde_json::Value;
+use ratatui::layout::Rect;
+use ratatui::Frame;
+use handlebars::Handlebars;
+
 use components::command_bar;
 use components::command_output;
 use components::status_bar;
@@ -5,13 +10,12 @@ use components::tabs;
 use components::xml;
 use components::parsing::xml::parse;
 use structs::app::AppState;
-use serde_json::Value;
-use ratatui::layout::Rect;
-use ratatui::Frame;
+
 
 pub fn render_component(
     frame: &mut Frame, 
     store: &AppState, 
+    reg: Handlebars<'_>,
     area: Rect, 
     template: fn() -> String,
     props: fn(&Value, Rect)-> Value
@@ -19,6 +23,7 @@ pub fn render_component(
     let dom_root = parse(
         template(),
         Some(&props(&store.json_store, area)),
+        reg
     );
 
     match xml::create_element(dom_root) {
@@ -34,10 +39,12 @@ pub fn render_component(
 pub fn render(
     frame: &mut Frame,
     store: &AppState,
+    reg: Handlebars<'_>
 ) {
     let dom_root = parse(
         TEMPLATE.to_string(), 
-        None
+        None,
+        reg.clone()
     );
     
     let chunks = match xml::create_element(dom_root) {
@@ -45,11 +52,11 @@ pub fn render(
         _ => panic!("XML Parse Error !"),
     };
 
-    render_component(frame, store, chunks[0], tabs::template, tabs::props);
-    render_component(frame, store, chunks[2], status_bar::template, status_bar::props);
-    render_component(frame, store, chunks[3], command_bar::template, command_bar::props);
+    render_component(frame, store, reg.clone(), chunks[0], tabs::template, tabs::props);
+    render_component(frame, store, reg.clone(), chunks[2], status_bar::template, status_bar::props);
+    render_component(frame, store, reg.clone(), chunks[3], command_bar::template, command_bar::props);
     match store.tabs.selection {
-        0 => render_component(frame, store, chunks[1], command_output::template, command_output::props),
+        0 => render_component(frame, store, reg.clone(), chunks[1], command_output::template, command_output::props),
         1 => {}
         _ => {}
     }

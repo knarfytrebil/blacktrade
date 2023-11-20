@@ -6,28 +6,18 @@ use handlebars::Handlebars;
 use ratatui::style::{Color, Style};
 use ratatui::layout::Alignment;
 use structs::ui::TopTabs;
-use components::helpers::{hb_macros, hb_utils};
-use components::helpers::height_buffer::HEIGHT_BUFFER_HELPER;
 
 pub fn parse_xml(xml: String) -> Element {
     let doc = Document::parse(xml.as_bytes()).expect("XML Parse Error");
     doc.root.expect("XML Parse Error")
 }
 
-pub fn parse(template: String, v: Option<&Value>) -> Element {
+pub fn parse(template: String, v: Option<&Value>, reg: Handlebars<'_>) -> Element {
     let filled_template = match v {
         Some(v) => {
-            let mut reg = Handlebars::new();
-
-            reg.register_helper("stringify", Box::new(hb_macros::stringify));
-            reg.register_helper("powerline_symbol", Box::new(hb_macros::powerline_symbol));
-            reg.register_helper("height_buffer", Box::new(HEIGHT_BUFFER_HELPER));
-            reg.register_escape_fn(hb_utils::escape_nothing);
-
             reg
                 .render_template(&template, &v)
                 .expect("Template Parse Error")
-
         },
         None => {
             template
