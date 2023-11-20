@@ -7,6 +7,7 @@ use ratatui::style::{Color, Style};
 use ratatui::layout::Alignment;
 use structs::ui::TopTabs;
 use components::helpers::{hb_macros, hb_utils};
+use components::helpers::height_buffer::HEIGHT_BUFFER_HELPER;
 
 pub fn parse_xml(xml: String) -> Element {
     let doc = Document::parse(xml.as_bytes()).expect("XML Parse Error");
@@ -19,6 +20,7 @@ pub fn parse(template: String, v: Option<&Value>) -> Element {
             let mut reg = Handlebars::new();
 
             reg.register_helper("stringify", Box::new(hb_macros::stringify));
+            reg.register_helper("height_buffer", Box::new(HEIGHT_BUFFER_HELPER));
             reg.register_escape_fn(hb_utils::escape_nothing);
 
             reg
@@ -34,6 +36,7 @@ pub fn parse(template: String, v: Option<&Value>) -> Element {
 }
 
 pub fn parse_attr<'a>(el: Element, attr_name: &'a str) -> Option<Value> {
+
     let parse_res = match el.attributes.contains_key(attr_name) {
         true => match serde_json::from_str(&el.attributes[attr_name]) {
             Ok(value) => Some(value),
