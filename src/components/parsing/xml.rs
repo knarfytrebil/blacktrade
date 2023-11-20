@@ -12,7 +12,7 @@ pub fn parse_xml(xml: String) -> Element {
     doc.root.expect("XML Parse Error")
 }
 
-pub fn parse(template: String, v: Option<&Value>, reg: Handlebars<'_>) -> Element {
+pub fn parse(template: String, v: Option<&Value>, reg: &mut Handlebars<'_>) -> Element {
     let filled_template = match v {
         Some(v) => {
             reg

@@ -3,6 +3,7 @@ use std::sync::mpsc::Receiver;
 
 use structs::app::events::Event;
 use components::app;
+use components::utils::{get_templates, load_templates};
 use components::helpers::{hb_macros, hb_utils};
 use components::helpers::height_buffer::HEIGHT_BUFFER_HELPER;
 
@@ -37,6 +38,11 @@ pub fn keep_alive(receiver: Receiver<Event>) -> Result<(), io::Error> {
     reg.register_helper("height_buffer", Box::new(HEIGHT_BUFFER_HELPER));
     reg.register_escape_fn(hb_utils::escape_nothing);
 
+    load_templates(get_templates(
+        "./packages/default/templates", 
+        ".hbs"
+    ), &mut reg);
+
     loop {
         match receiver.recv().unwrap() {
             Event::Render(app_state) => { 
@@ -44,7 +50,7 @@ pub fn keep_alive(receiver: Receiver<Event>) -> Result<(), io::Error> {
                     app::render(
                         &mut f,
                         &app_state,
-                        reg.clone()
+                        &mut reg
                     )
                 });
             }

@@ -11,6 +11,7 @@ extern crate serde_json;
 extern crate simplelog;
 extern crate termion;
 extern crate treexml;
+extern crate walkdir;
 extern crate ratatui;
 extern crate unicode_width;
 extern crate uuid;

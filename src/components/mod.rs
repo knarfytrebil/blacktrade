@@ -7,3 +7,4 @@ pub mod helpers;
 pub mod status_bar;
 pub mod xml;
 pub mod parsing;
+pub mod utils;

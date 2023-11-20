@@ -15,7 +15,7 @@ use structs::app::AppState;
 pub fn render_component(
     frame: &mut Frame, 
     store: &AppState, 
-    reg: Handlebars<'_>,
+    reg: &mut Handlebars<'_>,
     area: Rect, 
     template: fn() -> String,
     props: fn(&Value, Rect)-> Value
@@ -39,12 +39,12 @@ pub fn render_component(
 pub fn render(
     frame: &mut Frame,
     store: &AppState,
-    reg: Handlebars<'_>
+    reg: &mut Handlebars<'_>
 ) {
     let dom_root = parse(
         TEMPLATE.to_string(), 
         None,
-        reg.clone()
+        reg
     );
     
     let chunks = match xml::create_element(dom_root) {
@@ -52,11 +52,11 @@ pub fn render(
         _ => panic!("XML Parse Error !"),
     };
 
-    render_component(frame, store, reg.clone(), chunks[0], tabs::template, tabs::props);
-    render_component(frame, store, reg.clone(), chunks[2], status_bar::template, status_bar::props);
-    render_component(frame, store, reg.clone(), chunks[3], command_bar::template, command_bar::props);
+    render_component(frame, store, reg, chunks[0], tabs::template, tabs::props);
+    render_component(frame, store, reg, chunks[2], status_bar::template, status_bar::props);
+    render_component(frame, store, reg, chunks[3], command_bar::template, command_bar::props);
     match store.tabs.selection {
-        0 => render_component(frame, store, reg.clone(), chunks[1], command_output::template, command_output::props),
+        0 => render_component(frame, store, reg, chunks[1], command_output::template, command_output::props),
         1 => {}
         _ => {}
     }
