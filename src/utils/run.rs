@@ -27,17 +27,13 @@ pub fn keep_alive(receiver: Receiver<Event>) -> Result<(), io::Error> {
     terminal.hide_cursor()?;
 
     loop {
-        let _ = match receiver.recv().unwrap() {
+        match receiver.recv().unwrap() {
             Event::Render(app_state) => { 
                 _ = terminal.draw(|mut f| app::render(&mut f, &app_state));
             }
-            Event::Exit => {
-                break;
-            }
-            _ =>  {
-                break;
-            }
-        };
+            Event::Exit => { break; }
+            _ =>  { break; }
+        }
     }
 
     // show cursor on end
