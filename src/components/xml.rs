@@ -1,6 +1,7 @@
 use serde_json::Value;
 use treexml::Element;
 use ratatui::layout::{Constraint, Direction, Layout};
+use ratatui::Frame;
 use ratatui::text::{Span, Line};
 use ratatui::widgets::Paragraph;
 use ratatui::widgets::Wrap;
@@ -25,14 +26,15 @@ pub enum El {
 pub fn create_element(
     self_is_component: bool,
     el_index: usize, 
-    el: Element
+    el: Element,
+    frame: &mut Frame
 ) -> El {
-    let has_one_child = el.children.len() == 1;
-    let is_constraint = el.name.as_str() == "Constraint";
     let mut has_component = false;
-    if has_one_child && is_constraint {
+    if el.children.len() == 1 && el.name.as_str() == "Constraint" {
         if el.children.first().unwrap().name.as_str() != "Layout" {
             has_component = true;
+        } else {
+            debug!("Nested Layout !!")
         }
     }
     // Children Section
@@ -44,7 +46,12 @@ pub fn create_element(
             .into_iter()
             .enumerate()
             .map(|(idx, el)|{
-                create_element(has_component, idx, el)
+                create_element(
+                    has_component, 
+                    idx, 
+                    el,
+                    frame,
+                )
             })
             .collect(),
         false => vec![],

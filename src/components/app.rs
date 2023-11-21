@@ -25,7 +25,8 @@ pub fn render_component<'a>(
     match xml::create_element(
         false, 
         0, 
-        dom_root
+        dom_root,
+        frame
     ) {
         xml::El::Paragraph(p) => frame.render_widget(p, area.unwrap()),
         xml::El::Tabs(t) => frame.render_widget(t, area.unwrap()),
@@ -53,7 +54,8 @@ pub fn render<'a>(
     let chunks = match xml::create_element(
         false, 
         0, 
-        dom_root
+        dom_root,
+        frame
     ) {
         xml::El::Layout(l) => l.split(frame.size()),
         _ => panic!("XML Parse Error !"),
