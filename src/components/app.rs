@@ -15,6 +15,7 @@ pub fn render_component<'a>(
     area: Option<Rect>, 
     template: &'a str,
 ) {
+
     let dom_root = parse(
         template,
         &props(&store.json_store, area),
@@ -29,6 +30,7 @@ pub fn render_component<'a>(
         },
         _ => panic!("XML Parse Error !"),
     };
+
 }
 
 pub fn render<'a>(

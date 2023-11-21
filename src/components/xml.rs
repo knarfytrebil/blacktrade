@@ -124,7 +124,8 @@ pub fn create_element(el: Element) -> El {
             let el_list: Vec<Constraint> = match !children.is_empty() {
                 true => children
                     .into_iter()
-                    .map(|child| match child {
+                    .enumerate()
+                    .map(|(i, child)| match child {
                         El::Constraint(s) => s,
                         _ => panic!("Not a Constraint Node!"),
                     })
