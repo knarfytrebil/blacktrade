@@ -1,16 +1,12 @@
 <Layout direction='vertical'>
-    <Constraint
-        component="tabs"
-        type='{"length":1}' />
-    <Constraint
-        {{#if (eq props.store.tabs.selection 0)}}
-            component="command_output"
-        {{/if}}
-        type='{"min":1}' />
-    <Constraint
-        component="status_bar"
-        type='{"length":1}' />
-    <Constraint
-        component="command_bar"
-        type='{"length":1}' />
+    <Constraint type='{"length":1}'>
+    </Constraint>
+    <Constraint type='{"min":1}'>
+    {{#if (eq props.store.tabs.selection 0)}}
+    {{/if}}
+    </Constraint>
+    <Constraint type='{"length":1}'>
+    </Constraint>
+    <Constraint type='{"length":1}'>
+    </Constraint>
 </Layout>
