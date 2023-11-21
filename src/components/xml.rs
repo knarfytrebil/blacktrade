@@ -29,6 +29,8 @@ pub fn create_element(
     el: Element,
     frame: &mut Frame
 ) -> El {
+
+    // Decide if this Constraint has Component or Layout
     let mut has_component = false;
     if el.children.len() == 1 && el.name.as_str() == "Constraint" {
         if el.children.first().unwrap().name.as_str() != "Layout" {
@@ -86,7 +88,7 @@ pub fn create_element(
             // Handle Wrap
             if let Some(v_wrap) = wrap_json {
                 if let Some(trim) = v_wrap.get("trim").and_then(|value| value.as_bool()) {
-                    paragraph_el = paragraph_el.wrap(Wrap{trim:trim})
+                    paragraph_el = paragraph_el.wrap(Wrap{trim})
                 }
             }
 
@@ -100,6 +102,7 @@ pub fn create_element(
             }
 
             paragraph_el = paragraph_el.style(style);
+
             El::Paragraph(paragraph_el)
         }
         "Line" => match !children.is_empty() {
@@ -156,6 +159,8 @@ pub fn create_element(
 
             layout_el = layout_el.constraints(el_list);
  
+            // x.chunks = layout_el.split(frame.size());
+
             El::Layout(layout_el)
         },
         "Constraint" => {
@@ -188,6 +193,10 @@ pub fn create_element(
             El::Component(String::from(components))
         } 
     };
+
+    // if self_is_component {
+    //     frame.render_widget(paragraph_el, x.chunks[el_index])
+    // }
 
     this
 }
