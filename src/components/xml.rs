@@ -18,11 +18,23 @@ pub enum El {
     Span(Span<'static>),
     Tabs(Tabs<'static>),
     Layout(Layout),
-    Constraint(Constraint),
+    Constraint((usize, Constraint)),
     Component(String),
 }
 
-pub fn create_element(el: Element) -> El {
+pub fn create_element(
+    self_is_component: bool,
+    el_index: usize, 
+    el: Element
+) -> El {
+    let has_one_child = el.children.len() == 1;
+    let is_constraint = el.name.as_str() == "Constraint";
+    let mut has_component = false;
+    if has_one_child && is_constraint {
+        if el.children.first().unwrap().name.as_str() != "Layout" {
+            has_component = true;
+        }
+    }
     // Children Section
     let children: Vec<El> = match !el.children.is_empty() {
         // recursive till there is no more child elements
@@ -30,7 +42,10 @@ pub fn create_element(el: Element) -> El {
             .children
             .clone()
             .into_iter()
-            .map(create_element)
+            .enumerate()
+            .map(|(idx, el)|{
+                create_element(has_component, idx, el)
+            })
             .collect(),
         false => vec![],
     };
@@ -124,8 +139,8 @@ pub fn create_element(el: Element) -> El {
             let el_list: Vec<Constraint> = match !children.is_empty() {
                 true => children
                     .into_iter()
-                    .map(| child| match child {
-                        El::Constraint(s) => s,
+                    .map(|child| match child {
+                        El::Constraint((_, c)) => c,
                         _ => panic!("Not a Constraint Node!"),
                     })
                     .collect(),
@@ -154,7 +169,7 @@ pub fn create_element(el: Element) -> El {
                         },
                         _ => panic!("Wrong type for constraint")
                     };
-                    El::Constraint(constraint_el)
+                    El::Constraint((el_index, constraint_el))
                 } else {
                     panic!("constraint type value must be a json object");
                 }

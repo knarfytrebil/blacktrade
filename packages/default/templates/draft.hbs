@@ -1,0 +1,44 @@
+<Layout direction='vertical'>
+    <Constraint type='{"length":1}'>
+        <Tabs 
+            tabs='{{stringify props.store.tabs}}'
+            styles='{"fg":"grey", "bg":"reset"}'
+            highlight_styles='{"fg":"reset", "bg":"white"}'
+            divider_styles='{"fg":"white", "bg":"reset"}'  
+        />
+    </Constraint>
+    <Constraint type='{"min":1}'>
+    {{#if (eq props.store.tabs.selection 0)}}
+        <Paragraph 
+            styles='{"fg": "cyan", "bg": "reset"}'
+            wrap='{"trim": true}'
+            alignment='{"position": "Left"}'>
+            {{#height_buffer props.store.console_output_lines as |lines| ~}}
+                {{#each lines as |line| ~}}
+                    <Line>
+                        <Span>{{line}}</Span>
+                    </Line>
+                {{/each}}
+            {{/height_buffer}}
+        </Paragraph>
+    {{/if}}
+    </Constraint>
+    <Constraint type='{"length":1}'>
+        <Paragraph>
+            <Line>
+                <Span styles='{"fg": "white", "bg": "black"}'> </Span>
+                <Span styles='{"bg": "black"}'> {{props.store.mode.symbol}} </Span>
+                <Span styles='{"fg": "white", "bg": "black"}'> </Span>
+                <Span styles='{"fg": "black", "bg": "white"}'>{{powerline_symbol "right_arrow"}}</Span>
+                <Span styles='{"fg": "black", "bg": "white"}'> Running Tasks </Span>
+                <Span styles='{"fg": "black", "bg": "white"}'> </Span>
+                <Span styles='{"fg": "white", "bg": "black"}'>{{powerline_symbol "right_arrow"}}</Span>
+            </Line>
+        </Paragraph>
+    </Constraint>
+    <Constraint type='{"length":1}'>
+        <Paragraph>
+            <Line>{{props.store.command}}</Line>
+        </Paragraph>
+    </Constraint>
+</Layout>
