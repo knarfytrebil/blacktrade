@@ -58,6 +58,7 @@ impl<'a> Default for Tabs<'a>
     }
 }
 
+#[allow(dead_code)]
 impl<'a> Tabs<'a>
 {
     pub fn block(mut self, block: Block<'a>) -> Tabs<'a> {
