@@ -40,7 +40,7 @@ pub fn create_element(
         }
     }
     // Children Section
-    let children: Vec<El> = match !el.children.is_empty() {
+    let mut children: Vec<El> = match !el.children.is_empty() {
         // recursive till there is no more child elements
         true => el
             .children
@@ -159,7 +159,7 @@ pub fn create_element(
 
             layout_el = layout_el.constraints(el_list);
  
-            // x.chunks = layout_el.split(frame.size());
+            // let chunks = layout_el.split(frame.size());
 
             El::Layout(layout_el)
         },
@@ -195,7 +195,7 @@ pub fn create_element(
     };
 
     // if self_is_component {
-    //     frame.render_widget(paragraph_el, x.chunks[el_index])
+    //     frame.render_widget(paragraph_el, area)
     // }
 
     this
