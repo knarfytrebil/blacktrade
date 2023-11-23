@@ -3,9 +3,9 @@
         <Component template="tabs"/>
     </Constraint>
     <Constraint type='{"min":1}'>
-    {{#if (eq props.store.tabs.selection 0)}}
-        <Component template="command_output"/>
-    {{/if}}
+        {{#if (eq props.store.tabs.selection 0)}}
+            <Component template="command_output"/>
+        {{/if}}
     </Constraint>
     <Constraint type='{"length":1}'>
         <Component template="status_bar"/>
