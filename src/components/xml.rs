@@ -197,7 +197,6 @@ pub fn create_element(el: Element) -> El {
             }
         },
         "Component" => {
-            debug!("Component: {:?}", el);
             let template = parse_text_attr(el.clone(), "template");
             El::Component(template)
         }, 
