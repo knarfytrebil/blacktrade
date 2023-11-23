@@ -6,22 +6,6 @@ fn get_index_by_uuid(arr: &[Command], uuid: &str) -> usize {
     arr.iter().position(|ref r| r.id == uuid).unwrap()
 }
 
-// Reducer Functions
-// pub fn run_command() -> Box<ReducerFn> {
-//     Box::new(
-//         move |state: AppState, action: &AppAction| -> Result<AppState, String> {
-//             match action {
-//                 AppAction::CommandCreate(uuid) => {
-//                     let cmd_str_index = get_index_by_uuid(&state.cmd_running, uuid);
-//                     let cmd_str = &state.cmd_running[cmd_str_index].name.clone();
-//                 }
-//                 _ => {}
-//             }
-//             Ok(state)
-//         },
-//     )
-// }
-
 pub fn do_nothing() -> Box<ReducerFn> {
     Box::new(move |state: AppState, _action: &AppAction| -> Result<AppState, String> { Ok(state) })
 }

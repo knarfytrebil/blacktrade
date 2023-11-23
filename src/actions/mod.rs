@@ -10,10 +10,6 @@ pub enum AppAction {
     Keyboard(Key),
     CommandInvalid(String),
     CommandCreate(String),
-    //    CommandRun {
-    //        func: CommandGen,
-    //        uuid: String,
-    //    },
     CommandEnd {
         uuid: String,
         success: bool,
