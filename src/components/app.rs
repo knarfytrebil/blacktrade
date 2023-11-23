@@ -1,12 +1,13 @@
 use std::rc::Rc;
-use ratatui::layout::Rect;
-use ratatui::Frame;
 use handlebars::Handlebars;
+use ratatui::{layout::Rect, Frame};
 
-use components::xml;
-use components::parsing::xml::parse;
-use components::utils::props;
 use structs::app::AppState;
+use components::{
+    xml,
+    utils::props,
+    parsing::xml::parse,
+};
 
 pub fn render<'a>(
     frame: &mut Frame,
@@ -21,7 +22,7 @@ pub fn render<'a>(
         reg
     );
     
-    let chunks: Option<Rc<[Rect]>>= match xml::create_element(dom_root) {
+    let chunks: Option<Rc<[Rect]>> = match xml::create_element(dom_root) {
         xml::El::Paragraph(p) => { 
             frame.render_widget(p, area.unwrap());
             None

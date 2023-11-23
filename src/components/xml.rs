@@ -22,9 +22,7 @@ pub enum El {
     Component(String),
 }
 
-pub fn create_element(
-    el: Element,
-) -> El {
+pub fn create_element(el: Element) -> El {
 
    // Children Section
     let children: Vec<El> = match !el.children.is_empty() {
