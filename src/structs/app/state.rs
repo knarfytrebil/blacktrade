@@ -36,7 +36,8 @@ pub struct AppState {
 
 impl AppState {
     pub fn new() -> AppState {
-        let state: Value = serde_json::from_str(DATA).expect("JSON Error!");
+        let state: Value = serde_json::from_str(DATA)
+            .expect("JSON Error!");
 
         AppState {
             json_store: state,
