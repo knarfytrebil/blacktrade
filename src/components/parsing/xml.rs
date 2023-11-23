@@ -20,7 +20,6 @@ pub fn parse<'a>(template_name: &'a str, v: &Value, reg: &mut Handlebars<'_>) ->
 }
 
 pub fn parse_attr<'a>(el: Element, attr_name: &'a str) -> Option<Value> {
-
     let parse_res = match el.attributes.contains_key(attr_name) {
         true => match serde_json::from_str(&el.attributes[attr_name]) {
             Ok(value) => Some(value),
@@ -32,6 +31,13 @@ pub fn parse_attr<'a>(el: Element, attr_name: &'a str) -> Option<Value> {
         false => None,
     };
     parse_res
+}
+
+pub fn parse_text_attr<'a>(el: Element, attr_name: &'a str) -> Option<String> {
+    match el.attributes.contains_key(attr_name) {
+        true => Some(String::from(&el.attributes[attr_name])),
+        false => None
+    }
 }
 
 pub fn parse_tabs(el: Element) -> Option<TopTabs> {

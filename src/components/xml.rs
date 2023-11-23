@@ -6,25 +6,28 @@ use ratatui::widgets::Paragraph;
 use ratatui::widgets::Wrap;
 use components::ele::powerline_tab::Tabs;
 use components::parsing::xml::{
-    parse_attr, parse_tabs, parse_styles,
+    parse_attr,
+    parse_text_attr,
+    parse_tabs,
+    parse_styles,
     extract_text, alignment_from_text, 
     get_ratio_value, get_u16_value
 };
 use structs::ui::TopTabs;
 
+#[derive(Clone)]
 pub enum El {
     Paragraph(Paragraph<'static>),
     Line(Line<'static>),
     Span(Span<'static>),
     Tabs(Tabs<'static>),
-    Layout(Layout),
-    Constraint(Constraint),
-    Component(String),
+    Layout(Layout, Vec<Option<String>>),
+    Constraint(Constraint, Option<String>),
+    Component(Option<String>),
 }
 
 pub fn create_element(el: Element) -> El {
-
-   // Children Section
+    // Children Section
     let children: Vec<El> = match !el.children.is_empty() {
         // recursive till there is no more child elements
         true => el
@@ -125,9 +128,23 @@ pub fn create_element(el: Element) -> El {
             // Children
             let el_list: Vec<Constraint> = match !children.is_empty() {
                 true => children
+                    .clone()
                     .into_iter()
                     .map(|child| match child {
-                        El::Constraint(c) => c,
+                        El::Constraint(c, _) => c,
+                        _ => panic!("Not a Constraint Node!"),
+                    })
+                    .collect(),
+                false => vec![],
+            };
+
+            let template_list: Vec<Option<String>> = match !children.clone().is_empty() {
+                true => children
+                    .into_iter()
+                    .map(|child| match child {
+                        El::Constraint(_, s) => {
+                           s
+                        },
                         _ => panic!("Not a Constraint Node!"),
                     })
                     .collect(),
@@ -136,7 +153,7 @@ pub fn create_element(el: Element) -> El {
 
             layout_el = layout_el.constraints(el_list);
  
-            El::Layout(layout_el)
+            El::Layout(layout_el, template_list)
         },
         "Constraint" => {
             if let Some(value) = parse_attr(el.clone(), "type") {
@@ -156,7 +173,22 @@ pub fn create_element(el: Element) -> El {
                         },
                         _ => panic!("Wrong type for constraint")
                     };
-                    El::Constraint(constraint_el)
+                    // Children
+                    match !children.is_empty() {
+                        true => {
+                            let components: Vec<Option<String>> = children
+                            .into_iter()
+                            .map(|child| match child {
+                                El::Component(c) => c,
+                                _ => panic!("Not a Component Node!"),
+                            })
+                            .collect();
+                            El::Constraint(constraint_el, components[0].clone())
+                        },
+                        false => {
+                            El::Constraint(constraint_el, None)
+                        },
+                    }
                 } else {
                     panic!("constraint type value must be a json object");
                 }
@@ -164,9 +196,12 @@ pub fn create_element(el: Element) -> El {
                 panic!("constraint type value must be a json object");
             }
         },
-        components => {
-            El::Component(String::from(components))
-        } 
+        "Component" => {
+            debug!("Component: {:?}", el);
+            let template = parse_text_attr(el.clone(), "template");
+            El::Component(template)
+        }, 
+        _ => panic!("Unknown Element"),
     };
 
     this
