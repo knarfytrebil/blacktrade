@@ -1,4 +1,3 @@
-use std::rc::Rc;
 use handlebars::Handlebars;
 use ratatui::{layout::Rect, Frame};
 
