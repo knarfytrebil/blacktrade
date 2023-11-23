@@ -1,3 +1,4 @@
+use std::rc::Rc;
 use ratatui::layout::Rect;
 use ratatui::Frame;
 use handlebars::Handlebars;
@@ -20,7 +21,7 @@ pub fn render<'a>(
         reg
     );
     
-    let chunks: Option<_>= match xml::create_element( dom_root) {
+    let chunks: Option<Rc<[Rect]>>= match xml::create_element(dom_root) {
         xml::El::Paragraph(p) => { 
             frame.render_widget(p, area.unwrap());
             None
@@ -29,7 +30,9 @@ pub fn render<'a>(
             frame.render_widget(t, area.unwrap());
             None
         },
-        xml::El::Layout(l) => Some(l.split(frame.size())),
+        xml::El::Layout(l) => {
+            Some(l.split(area.unwrap()))
+        },
         _ => panic!("XML Parse Error !"),
     };
 

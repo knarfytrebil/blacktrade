@@ -47,11 +47,12 @@ pub fn keep_alive(receiver: Receiver<Event>) -> Result<(), io::Error> {
         match receiver.recv().unwrap() {
             Event::Render(app_state) => { 
                 _ = terminal.draw(|mut f| {
+                    let area = f.size();
                     app::render(
                         &mut f,
                         &app_state,
                         &mut reg,
-                        None,
+                        Some(area),
                         "app"
                     )
                 });
