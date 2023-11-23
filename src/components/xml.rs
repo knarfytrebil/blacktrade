@@ -1,7 +1,6 @@
 use serde_json::Value;
 use treexml::Element;
 use ratatui::layout::{Constraint, Direction, Layout};
-use ratatui::Frame;
 use ratatui::text::{Span, Line};
 use ratatui::widgets::Paragraph;
 use ratatui::widgets::Wrap;
@@ -19,42 +18,22 @@ pub enum El {
     Span(Span<'static>),
     Tabs(Tabs<'static>),
     Layout(Layout),
-    Constraint((usize, Constraint)),
+    Constraint(Constraint),
     Component(String),
 }
 
 pub fn create_element(
-    self_is_component: bool,
-    el_index: usize, 
     el: Element,
-    frame: &mut Frame
 ) -> El {
 
-    // Decide if this Constraint has Component or Layout
-    let mut has_component = false;
-    if el.children.len() == 1 && el.name.as_str() == "Constraint" {
-        if el.children.first().unwrap().name.as_str() != "Layout" {
-            has_component = true;
-        } else {
-            debug!("Nested Layout !!")
-        }
-    }
-    // Children Section
-    let mut children: Vec<El> = match !el.children.is_empty() {
+   // Children Section
+    let children: Vec<El> = match !el.children.is_empty() {
         // recursive till there is no more child elements
         true => el
             .children
             .clone()
             .into_iter()
-            .enumerate()
-            .map(|(idx, el)|{
-                create_element(
-                    has_component, 
-                    idx, 
-                    el,
-                    frame,
-                )
-            })
+            .map(create_element)
             .collect(),
         false => vec![],
     };
@@ -150,7 +129,7 @@ pub fn create_element(
                 true => children
                     .into_iter()
                     .map(|child| match child {
-                        El::Constraint((_, c)) => c,
+                        El::Constraint(c) => c,
                         _ => panic!("Not a Constraint Node!"),
                     })
                     .collect(),
@@ -159,8 +138,6 @@ pub fn create_element(
 
             layout_el = layout_el.constraints(el_list);
  
-            // let chunks = layout_el.split(frame.size());
-
             El::Layout(layout_el)
         },
         "Constraint" => {
@@ -181,7 +158,7 @@ pub fn create_element(
                         },
                         _ => panic!("Wrong type for constraint")
                     };
-                    El::Constraint((el_index, constraint_el))
+                    El::Constraint(constraint_el)
                 } else {
                     panic!("constraint type value must be a json object");
                 }
@@ -193,10 +170,6 @@ pub fn create_element(
             El::Component(String::from(components))
         } 
     };
-
-    // if self_is_component {
-    //     frame.render_widget(paragraph_el, area)
-    // }
 
     this
 }
