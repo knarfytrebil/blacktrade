@@ -13,10 +13,7 @@ const DATA: &'static str = r#"
     "tabs_titles": ["Console"],
     "tabs_selection": 0,
     "command": "",
-    "console_output_lines": [],
-    "cmd_str_queue": {},
-    "cmd_running": [],
-    "cmd_ended":[] 
+    "console_output_lines": []
 }
 "#;
 
