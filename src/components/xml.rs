@@ -13,7 +13,6 @@ use components::parsing::xml::{
     extract_text, alignment_from_text, 
     get_ratio_value, get_u16_value
 };
-use structs::ui::TopTabs;
 
 #[derive(Clone)]
 pub enum El {
@@ -104,7 +103,6 @@ pub fn create_element(el: Element) -> El {
         },
         "Tabs" => {
             let mut tabs_el = Tabs::default();
-            let tabs: TopTabs = parse_tabs(el.clone()).unwrap();
             let hightlight_style = parse_styles(el.clone(), "highlight_styles");
             let divider_style = parse_styles(el.clone(), "divider_styles");
             tabs_el = tabs_el
