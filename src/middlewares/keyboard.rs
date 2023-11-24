@@ -8,20 +8,6 @@ use uuid::Uuid;
 
 pub struct KeyboardMiddleWare {}
 
-const NORMALMODE: &'static str = r#"
-{
-    "category": "normal",
-    "symbol": "NORM"
-}
-"#;
-
-const COMMANDMODE: &'static str = r#"
-{
-    "category": "command",
-    "symbol": "CTRL"
-}
-"#;
-
 impl Middleware<AppState> for KeyboardMiddleWare {
     fn dispatch(
         &self,
@@ -45,7 +31,7 @@ impl Middleware<AppState> for KeyboardMiddleWare {
 
 fn get_key_action(_key: SerializableKey, _state: AppState) -> Result<AppAction, String> {
     let key_event = to_unserializable(_key);
-    match _state.json_store["mode"]["category"].as_str() {
+    match _state.json_store["mode"].as_str() {
         Some("normal") => normal_key(key_event, _state),
         Some("command") => command_key(key_event, _state),
         Some(&_) | None => panic!("Unknown Category !"),
@@ -55,8 +41,7 @@ fn get_key_action(_key: SerializableKey, _state: AppState) -> Result<AppAction, 
 fn normal_key(_key: Key, _state: AppState) -> Result<AppAction, String> {
     match _key {
         Key::Char(':') => {
-            let data = serde_json::from_str(COMMANDMODE).expect("JSON Error!");
-            let action = AppAction::SetMode(data);
+            let action = AppAction::SetMode("command".to_string());
             Ok(action)
         }
         _ => Err(String::from("There is no settings for this key yet")),
@@ -66,8 +51,7 @@ fn normal_key(_key: Key, _state: AppState) -> Result<AppAction, String> {
 fn command_key(_key: Key, mut _state: AppState) -> Result<AppAction, String> {
     match _key {
         Key::Esc => {
-            let data = serde_json::from_str(NORMALMODE).expect("JSON Error!");
-            let action = AppAction::SetMode(data);
+            let action = AppAction::SetMode("normal".to_string());
             Ok(action)
         }
         Key::Backspace => Ok(AppAction::CommandBarPop(1)),

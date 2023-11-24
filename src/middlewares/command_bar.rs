@@ -12,7 +12,6 @@ impl Middleware<AppState> for CommandBarMiddleWare {
         next: &DispatchFunc<AppState>,
     ) -> Result<AppState, String> {
         debug!("CommandBar Middleware {:?}", &action);
-        if let AppAction::SetMode(ref _mode) = action { }
         next(store, action)
     }
 }

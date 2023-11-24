@@ -6,10 +6,7 @@ use structs::app::Command;
 
 const DATA: &'static str = r#"
 {
-    "mode": {
-        "category": "normal",
-        "symbol": "NORM"
-    },
+    "mode": "normal",
     "tabs_titles": ["Console"],
     "tabs_selection": 0,
     "command": "",
