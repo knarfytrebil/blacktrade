@@ -32,15 +32,7 @@ impl Reducer for AppState {
                 success,
                 reason: _,
             } => vec![commands::end(uuid.to_string(), success)],
-
-            // AppAction::Keyboard(key_evt) => {
-            //     Self::key_event_handler(self, key_evt);
-            // }
-            // AppAction::Error(error) => {
-            //     Self::error_handler(self, error);
-            //     commands::end(uuid.to_string())
-            // }
-            _ => vec![],
+           _ => vec![],
         };
         let _state = combined_reducer(reducers)(self.clone(), &action).unwrap();
         Ok(_state)
