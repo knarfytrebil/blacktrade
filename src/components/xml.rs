@@ -8,7 +8,8 @@ use components::ele::powerline_tab::Tabs;
 use components::parsing::xml::{
     parse_attr,
     parse_text_attr,
-    parse_tabs,
+    parse_str_list,
+    parse_usize,
     parse_styles,
     extract_text, alignment_from_text, 
     get_ratio_value, get_u16_value
@@ -103,13 +104,15 @@ pub fn create_element(el: Element) -> El {
         },
         "Tabs" => {
             let mut tabs_el = Tabs::default();
+            let tabs_titles = parse_str_list(el.clone(), "tab_titles").unwrap();
+            let tabs_selection = parse_usize(el.clone(), "tab_selection").unwrap();
             let hightlight_style = parse_styles(el.clone(), "highlight_styles");
             let divider_style = parse_styles(el.clone(), "divider_styles");
             tabs_el = tabs_el
-                .titles(tabs.titles)
+                .titles(tabs_titles)
                 .highlight_style(hightlight_style)
                 .divider_style(divider_style)
-                .select(tabs.selection);
+                .select(tabs_selection);
             El::Tabs(tabs_el)
         },
         "Layout" => {

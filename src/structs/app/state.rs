@@ -10,12 +10,8 @@ const DATA: &'static str = r#"
         "category": "normal",
         "symbol": "NORM"
     },
-    "tabs": {
-        "titles": [
-            "Console"
-        ],
-        "selection": 0
-    },
+    "tabs_titles": ["Console"],
+    "tabs_selection": 0,
     "command": "",
     "console_output_lines": [],
     "cmd_str_queue": {},

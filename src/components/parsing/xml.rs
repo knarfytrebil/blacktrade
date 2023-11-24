@@ -5,7 +5,6 @@ use serde_json::{Value, Map};
 use handlebars::Handlebars;
 use ratatui::style::{Color, Style};
 use ratatui::layout::Alignment;
-use structs::ui::TopTabs;
 
 pub fn parse_xml(xml: String) -> Element {
     let doc = Document::parse(xml.as_bytes()).expect("XML Parse Error");
@@ -40,18 +39,35 @@ pub fn parse_text_attr<'a>(el: Element, attr_name: &'a str) -> Option<String> {
     }
 }
 
-pub fn parse_tabs(el: Element) -> Option<TopTabs> {
-    match el.attributes.contains_key("tabs") {
-        true => match serde_json::from_str(&el.attributes["tabs"]) {
-            Ok(tabs) => Some(tabs),
+pub fn parse_str_list<'a>(el: Element, attr_name: &'a str) -> Option<Vec<String>> {
+    match el.attributes.contains_key(attr_name) {
+        true => match serde_json::from_str(&el.attributes[attr_name]) {
+            Ok(str_list) => Some(str_list),
             Err(_) => {
-                debug!("Attribute Parse Error: {:?}", &el.attributes["tabs"]);
+                debug!("Attribute Parse Error: {:?}", &el.attributes[attr_name]);
                 None
             }
         },
         false => {
             debug!("Unable to find tabs attribute");
             None
+        },
+    }
+}
+
+pub fn parse_usize<'a>(el: Element, attr_name: &'a str) -> Result<usize, String> {
+    let err_message = format!("{} value error", attr_name);
+    match el.attributes.contains_key(attr_name) {
+        true => match &el.attributes[attr_name].parse::<usize>() {
+            Ok(num) => Ok(num.clone()),
+            Err(e) => {
+                debug!("Attribute Parse Error: {:?}", &el.attributes[attr_name]);
+                Err(format!("Attribute Parse Error {:?}", e))
+            }
+        },
+        false => {
+            debug!("{} value error", attr_name);
+            Err(err_message)
         },
     }
 }
