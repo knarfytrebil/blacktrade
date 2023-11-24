@@ -7,7 +7,7 @@ use structs::app::Command;
 const DATA: &'static str = r#"
 {
     "mode": "normal",
-    "tabs_titles": ["Console"],
+    "tabs_titles": ["Console", "Chat", "Settings"],
     "tabs_selection": 0,
     "command": "",
     "console_output_lines": []
