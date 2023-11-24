@@ -110,6 +110,7 @@ pub fn create_element(el: Element) -> El {
             let divider_style = parse_styles(el.clone(), "divider_styles");
             tabs_el = tabs_el
                 .titles(tabs_titles)
+                .style(style)
                 .highlight_style(hightlight_style)
                 .divider_style(divider_style)
                 .select(tabs_selection);
