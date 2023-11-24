@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+// use std::collections::HashMap;
 use std::fmt;
-use structs::app::Command;
-use structs::ui::TopTabs;
+// use structs::app::Command;
+// use structs::ui::TopTabs;
 
 const DATA: &'static str = r#"
 {
@@ -28,10 +28,10 @@ const DATA: &'static str = r#"
 #[derive(Clone, Serialize, Deserialize)]
 pub struct AppState {
     pub json_store: Value,
-    pub tabs: TopTabs,
-    pub cmd_str_queue: HashMap<String, String>,
-    pub cmd_running: Vec<Command>,
-    pub cmd_ended: Vec<Command>,
+    // pub tabs: TopTabs,
+    // pub cmd_str_queue: HashMap<String, String>,
+    // pub cmd_running: Vec<Command>,
+    // pub cmd_ended: Vec<Command>,
 }
 
 impl AppState {
@@ -41,15 +41,15 @@ impl AppState {
 
         AppState {
             json_store: state,
-            tabs: TopTabs {
-                titles: vec![
-                    String::from("Console")
-                ],
-                selection: 0,
-            },
-            cmd_str_queue: HashMap::new(),
-            cmd_running: Vec::new(),
-            cmd_ended: Vec::new(),
+            // tabs: TopTabs {
+            //     titles: vec![
+            //         String::from("Console")
+            //     ],
+            //     selection: 0,
+            // },
+            // cmd_str_queue: HashMap::new(),
+            // cmd_running: Vec::new(),
+            // cmd_ended: Vec::new(),
         }
     }
 }
@@ -63,7 +63,7 @@ impl Default for AppState {
 impl fmt::Debug for AppState {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         fmt.debug_struct("AppState")
-            .field("tabs", &self.tabs)
+            .field("tabs", &self.json_store)
             .finish()
     }
 }

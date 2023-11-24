@@ -71,8 +71,8 @@ pub fn enqueue_cmd() -> Box<ReducerFn> {
                         .expect("command is not str");
                     let mut process_value = value.to_string();
 
-                    state
-                        .cmd_str_queue
+                    let cmd_str_queue = state
+                        .json_store["cmd_str_queue"]
                         .insert(uuid.clone(), process_value.split_off(1));
 
                     state.json_store["command"] = Value::String(process_value);
