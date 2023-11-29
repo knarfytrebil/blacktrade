@@ -1,8 +1,8 @@
-<Paragraph>
+<paragraph>
     {{#with props.store}}
-    <Line>
-        <Span styles='{"fg": "white", "bg": "black"}'> </Span>
-        <Span
+    <line>
+        <span styles='{"fg": "white", "bg": "black"}'> </span>
+        <span
         {{~ #if (eq mode "command")}}
             styles='{"bg": "green","fg": "black"}'
         {{/if ~}}
@@ -12,16 +12,16 @@
         >
             {{~ #if (eq mode "command")}} CMD {{/if ~}}
             {{~ #if (eq mode "normal")}} NOM {{/if ~}}
-        </Span>
+        </span>
         {{~ #if (eq mode "command")}}
-            <Span styles='{"fg": "green", "bg": "white"}'>{{powerline_symbol "right_arrow"}}</Span>
+            <span styles='{"fg": "green", "bg": "white"}'>{{powerline_symbol "right_arrow"}}</span>
         {{/if ~}}
         {{~ #if (eq mode "normal")}}
-            <Span styles='{"fg": "black", "bg": "white"}'>{{powerline_symbol "right_arrow"}}</Span>
+            <span styles='{"fg": "black", "bg": "white"}'>{{powerline_symbol "right_arrow"}}</span>
         {{/if ~}}
-        <Span styles='{"fg": "black", "bg": "white"}'> Running Tasks </Span>
-        <Span styles='{"fg": "black", "bg": "white"}'> </Span>
-        <Span styles='{"fg": "white", "bg": "black"}'>{{powerline_symbol "right_arrow"}}</Span>
-    </Line>
+        <span styles='{"fg": "black", "bg": "white"}'> Running Tasks </span>
+        <span styles='{"fg": "black", "bg": "white"}'> </span>
+        <span styles='{"fg": "white", "bg": "black"}'>{{powerline_symbol "right_arrow"}}</span>
+    </line>
     {{/with}}
-</Paragraph>
+</paragraph>

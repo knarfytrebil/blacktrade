@@ -46,7 +46,7 @@ pub fn create_element(el: Element) -> El {
     let this = match el.name.as_str() {
 
         // A widget to display some text.
-        "Paragraph" => {
+        "paragraph" => {
             // Attribute Unqiue to "Paragraph"
             // Attribute will be tralsated into Methods
             let wrap_json: Option<Value> = parse_attr(el.clone(), "wrap");
@@ -85,7 +85,7 @@ pub fn create_element(el: Element) -> El {
 
             El::Paragraph(paragraph_el)
         }
-        "Line" => match !children.is_empty() {
+        "line" => match !children.is_empty() {
             true => {
                 let span_list: Vec<Span> = children
                     .into_iter()
@@ -98,11 +98,11 @@ pub fn create_element(el: Element) -> El {
             }
             false => El::Line(Line::from(extract_text(el))),
         },
-        "Span" => { 
+        "span" => { 
             let span_el = Span::styled(extract_text(el), style);
             El::Span(span_el)
         },
-        "Tabs" => {
+        "tabs" => {
             let mut tabs_el = Tabs::default();
             let tabs_titles = parse_str_list(el.clone(), "tab_titles").unwrap();
             let tabs_selection = parse_usize(el.clone(), "tab_selection").unwrap();
@@ -116,7 +116,7 @@ pub fn create_element(el: Element) -> El {
                 .select(tabs_selection);
             El::Tabs(tabs_el)
         },
-        "Layout" => {
+        "layout" => {
             let direction_json: Option<Value> = parse_attr(el.clone(), "direction");
             let mut layout_el = Layout::default();
             if let Some(v_direction) = direction_json {
@@ -157,7 +157,7 @@ pub fn create_element(el: Element) -> El {
  
             El::Layout(layout_el, template_list)
         },
-        "Constraint" => {
+        "constraint" => {
             if let Some(value) = parse_attr(el.clone(), "type") {
                 if value.is_object() {
                     let obj = value
@@ -198,7 +198,7 @@ pub fn create_element(el: Element) -> El {
                 panic!("constraint type value must be a json object");
             }
         },
-        "Component" => {
+        "component" => {
             let template = parse_text_attr(el.clone(), "template");
             El::Component(template)
         }, 

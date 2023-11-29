@@ -1,12 +1,12 @@
-<Paragraph 
+<paragraph 
     styles='{"fg": "cyan", "bg": "reset"}'
     wrap='{"trim": true}'
     alignment='{"position": "Left"}'>
     {{#height_buffer props.store.console_output_lines as |lines| ~}}
         {{#each lines as |line| ~}}
-            <Line>
-                <Span>{{line}}</Span>
-            </Line>
+            <line>
+                <span>{{line}}</span>
+            </line>
         {{/each}}
     {{/height_buffer}}
-</Paragraph>
+</paragraph>
